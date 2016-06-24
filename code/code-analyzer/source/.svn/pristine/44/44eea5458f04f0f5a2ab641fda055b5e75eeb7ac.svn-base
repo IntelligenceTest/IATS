@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.VehicleMapper" >
+	<resultMap id="selectByMapResultMap" type="com.autostreets.biz.auction.model.Vehicle" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+        <result column="first_photo_url" property="firstPhotoUrl" jdbcType="VARCHAR" />
+        <result column="brand" property="brand" jdbcType="VARCHAR" />
+        <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+        <result column="swept_volume_standard" property="sweptVolumeStandard" jdbcType="VARCHAR" />
+        <result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+        <result column="vehicle_desc" property="vehicleDesc" jdbcType="VARCHAR" />
+        <result column="is_certified" property="certified" jdbcType="BIT" />
+        <result column="is_guaranteed" property="guaranteed" jdbcType="BIT" />
+        <result column="city" property="currentCity" jdbcType="VARCHAR" />
+        <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+        <result column="register_license_years" property="registerLicenseYears" jdbcType="DATE" />
+        <result column="display_mileage" property="displayMileage" jdbcType="VARCHAR" />
+        <result column="is_hidden" property="hidden" jdbcType="BIT" />
+        <result column="price" property="finalTransactionPrice" jdbcType="DECIMAL" />
+        <result column="tax_buy" property="taxBuy" jdbcType="DECIMAL" />
+        <result column="price_newcar" property="priceNewcar" jdbcType="DECIMAL" />
+        <result column="status" property="fpStatus" jdbcType="BIT" />
+        <result column="vehicle_src_type" property="vehicleSrcType" jdbcType="VARCHAR" />
+        <result column="vehicle_src_id" property="vehicleSrcId" jdbcType="INTEGER" />
+        <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+        <result column="auction_vehicle_order" property="auctionVehicleOrder" jdbcType="BIT" />
+        <result column="new_vehicle_suggestion_price" property="newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<!-- 店铺首页  二手车列表：二手车店铺 -->
+    <select id="selectByOrgMap" resultMap="selectByMapResultMap" parameterType="java.util.Map">
+        SELECT 
+		    fp.id sid, v.id vehicle_id, v.first_photo_url, v.brand, v.vehicle_model, v.swept_volume_standard, 
+		    v.selled_name, v.vehicle_desc, fp.sell_time selltime, v.is_certified, v.is_guaranteed, fp.city, 
+		    v.license_code, v.register_license_years, v.display_mileage, fp.is_hidden, fp.price price, 
+		    fp.tax_buy, fp.status STATUS, v.vehicle_src_type, v.vehicle_src_id ,v.new_vehicle_suggestion_price
+		FROM
+		    fixed_price fp 
+		    JOIN vehicle v 
+		        ON fp.vehicle_id = v.id 
+         where (fp.status != 0 and fp.status != 1 and fp.status != 6)  and fp.is_latest = 1 
+        <if test="orgSid != null">
+        	and v.vehicle_src_id = #{orgSid,jdbcType=VARCHAR}
+      	</if>
+        <if test="brand != null and brand != ''">
+            and v.brand = #{brand,jdbcType=VARCHAR} 
+        </if>
+        <if test="vehicleAgeMin != null">
+	      <![CDATA[
+	        and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+	      ]]>
+	    </if>
+	    <if test="vehicleAgeMax != null">
+	      <![CDATA[
+	        and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+	      ]]>
+	    </if>
+      	<if test="startPriceMin != null">
+      	<![CDATA[
+        	and fp.price >= #{startPriceMin}
+      	]]>
+      	</if>
+      	<if test="startPriceMax != null">
+      	<![CDATA[
+        	and fp.price < #{startPriceMax}
+      	]]>
+      	</if>
+      	<if test="displayMileageMin != null">
+      	<![CDATA[
+        	and v.display_mileage >= #{displayMileageMin}
+      	]]>
+      	</if>
+      	<if test="displayMileageMax != null">
+      	<![CDATA[
+        	and v.display_mileage < #{displayMileageMax}
+      	]]>
+      	</if>
+		order by fp.sell_time DESC 
+        limit #{offset}, #{limit} 
+    </select>
+    
+    <!-- 店铺首页  二手车列表获取数量：二手车店铺 -->
+    <select id="countByOrgMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+         select count(*) 
+         FROM
+		    fixed_price fp 
+		    JOIN vehicle v 
+		        ON fp.vehicle_id = v.id 
+         where (fp.status != 0 and fp.status != 1 and fp.status != 6)  and fp.is_latest = 1 
+        <if test="orgSid != null">
+        	and v.vehicle_src_id = #{orgSid,jdbcType=VARCHAR}
+      	</if>
+        <if test="brand != null and brand != ''">
+            and v.brand = #{brand,jdbcType=VARCHAR} 
+        </if>
+        <if test="vehicleAgeMin != null">
+	      <![CDATA[
+	        and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+	      ]]>
+	    </if>
+	    <if test="vehicleAgeMax != null">
+	      <![CDATA[
+	        and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+	      ]]>
+	    </if>
+      	<if test="startPriceMin != null">
+      	<![CDATA[
+        	and fp.price >= #{startPriceMin}
+      	]]>
+      	</if>
+      	<if test="startPriceMax != null">
+      	<![CDATA[
+        	and fp.price < #{startPriceMax}
+      	]]>
+      	</if>
+      	<if test="displayMileageMin != null">
+      	<![CDATA[
+        	and v.display_mileage >= #{displayMileageMin}
+      	]]>
+      	</if>
+      	<if test="displayMileageMax != null">
+      	<![CDATA[
+        	and v.display_mileage < #{displayMileageMax}
+      	]]>
+      	</if>
+    </select>
+
+    <select id="selectUsedVehicleByMap" resultType="java.util.Map" parameterType="java.util.Map">
+        select v.code,v.brand,v.brand_series brandSeries,v.current_city currentCity,v.display_mileage displayMileage,v.source,fp.sell_time sellTime,1 auditedStatus,
+        v.swept_volume_standard sweptVolumeStandard,v.register_license_years registerLicenseDate,fp.price,v.modify_time modifyTime,v.id sid,v.vehicle_src_id vehicleSrcSid,
+        fp.status|'' status, fp.fav_count favCount,fp.click_count clickCount,v.vehicle_model vehicleModel,v.selled_name selledName,fp.off_shelves_remark offShelvesRemark,
+        v.first_photo_url firstPhoto
+          from autost_auction.fixed_price fp 
+          right outer join autost_auction.vehicle v on fp.vehicle_id = v.id 
+         where 1=1  and ((fp.is_latest = 1 and fp.is_enabled = 1)  or fp.id is NULL) and v.requirement_type = 1
+        <if test="startTime != null">
+            <![CDATA[
+                and v.modify_time >= #{startTime}
+            ]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[
+                and v.modify_time < #{endTime}
+            ]]>
+        </if>
+        
+        <if test="code != null">
+        <![CDATA[
+            and v.code like '%${code}%'
+        ]]>
+        </if>
+        
+        <if test="brand != null">
+        <![CDATA[
+            and v.brand = #{brand}
+        ]]>
+        </if>
+        
+        <if test="status != null">
+            <choose>   
+                <when test="status == 99">   
+                        and fp.status is null
+                </when>   
+                <otherwise>   
+                        and fp.status = #{status}
+                </otherwise>   
+            </choose> 
+        </if>
+        
+        <if test="vehicleSrcId != null">
+            and v.vehicle_src_id = #{vehicleSrcId}
+        </if>
+        order by v.created_time desc
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit} 
+        </if>
+    </select>
+    
+    <select id="selectUsedVehicleCountByMap" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*)
+          from autost_auction.fixed_price fp 
+          right outer join autost_auction.vehicle v on fp.vehicle_id = v.id 
+         where 1=1  and ((fp.is_latest = 1 and fp.is_enabled = 1)  or fp.id is NULL) and v.requirement_type = 1
+        <if test="startTime != null">
+            <![CDATA[
+                and v.modify_time >= #{startTime}
+            ]]>
+        </if>
+        <if test="endTime != null">
+            <![CDATA[
+                and v.modify_time < #{endTime}
+            ]]>
+        </if>
+        
+        <if test="code != null">
+        <![CDATA[
+            and v.code like '%${code}%'
+        ]]>
+        </if>
+        
+        <if test="brand != null">
+        <![CDATA[
+            and v.brand = #{brand}
+        ]]>
+        </if>
+        
+        <if test="status != null">
+            <choose>   
+                <when test="status == 99">   
+                        and fp.status is null
+                </when>   
+                <otherwise>   
+                        and fp.status = #{status}
+                </otherwise>   
+            </choose> 
+        </if>
+        
+        <if test="vehicleSrcId != null">
+            and v.vehicle_src_id = #{vehicleSrcId}
+        </if>
+    </select>
+    
+    <select id="selectByMap" resultMap="selectByMapResultMap" parameterType="java.util.Map">
+        SELECT fp.id id, v.id vehicle_id, v.first_photo_url, v.brand, v.vehicle_model, v.swept_volume_standard, v.selled_name, v.vehicle_desc, fp.sell_time selltime,
+               v.is_certified, v.is_guaranteed, fp.city, v.license_code, v.register_license_years, v.display_mileage, fp.is_hidden, fp.price price, fp.tax_buy, 
+               v.new_vehicle_suggestion_price, fp.status STATUS, v.vehicle_src_type, v.vehicle_src_id  
+          FROM fixed_price fp 
+          JOIN vehicle v ON fp.vehicle_id = v.id 
+         WHERE (fp.status != 0 AND fp.status != 1 AND fp.status != 6 AND fp.status != 7) AND fp.is_latest = 1
+        <if test="brand != null and brand != ''">
+            and v.brand = #{brand,jdbcType=VARCHAR} 
+        </if>
+        <if test="province != null and province != ''">
+            and fp.province = #{province,jdbcType=VARCHAR} 
+        </if>
+        <if test="city != null and city != ''">
+            and fp.city = #{city,jdbcType=VARCHAR} 
+        </if>
+        <if test="vehicleAgeMin != null">
+	      <![CDATA[
+	        and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+	      ]]>
+	    </if>
+	    <if test="vehicleAgeMax != null">
+	      <![CDATA[
+	        and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+	      ]]>
+	    </if>
+      	<if test="startPriceMin != null">
+      	<![CDATA[
+        	and fp.price >= #{startPriceMin}
+      	]]>
+      	</if>
+      	<if test="startPriceMax != null">
+      	<![CDATA[
+        	and fp.price < #{startPriceMax}
+      	]]>
+      	</if>
+      	<if test="displayMileageMin != null">
+      	<![CDATA[
+        	and v.display_mileage >= #{displayMileageMin}
+      	]]>
+      	</if>
+      	<if test="displayMileageMax != null">
+      	<![CDATA[
+        	and v.display_mileage < #{displayMileageMax}
+      	]]>
+      	</if>
+      	<if test="cert != null">
+      	<![CDATA[
+        	and v.is_certified = #{cert}
+      	]]>
+      	</if>
+      	<if test="sortBy != null and sortBy == 'selltime'">
+        	order by fp.sell_time 
+      	</if>
+      	<if test="sortBy != null and sortBy == 'price'">
+        	order by fp.price 
+      	</if>
+        <if test="sortBy != null and sortBy == 'age'">
+            order by v.produced_date 
+        </if>
+        <if test="sortBy != null and sortBy == 'mileage'">
+            order by (v.display_mileage + 0) 
+        </if>
+      	<if test="sort != null and sort == 'asc'">
+        	 ASC, fp.is_hidden ASC 
+      	</if>
+      	<if test="sort != null and sort == 'desc'">
+        	 DESC, fp.is_hidden ASC 
+      	</if>
+        limit #{offset}, #{limit} 
+    </select>
+    <!-- add by zxf -->
+    <resultMap id="pricingCenterMap" type="com.autostreets.biz.auction.model.Vehicle" extends="BaseResultMap">
+        <id column="id" property="id" jdbcType="INTEGER" />
+    </resultMap>
+    <!-- 商家后台定价中心列表 -->
+    <select id="selectForPricingCenter" resultMap="pricingCenterMap"  parameterType="com.autostreets.biz.auction.model.Vehicle">
+		select v.id,v.`code`,v.brand,v.brand_series,v.selled_name,v.vehicle_model,v.requirement_type,v.sale_status,
+			   v.license_code, v.vin_code,v.current_province,v.current_city,v.vehicle_src_id,v.created_time,
+			   av.`status` avStatus,av.created_by avCreatedBy,av.created_timestamp avCreatedTime,v.modify_time,fp.status fpStatus,fp.update_time fpUpdateTime,
+			   fp.update_user fpUpdateUser
+ 		from vehicle v 
+ 			LEFT JOIN auction_vehicle av 
+ 			on v.id = av.vehicle_id and av.is_latest=1
+ 			LEFT JOIN fixed_price fp 
+ 			on v.id = fp.vehicle_id and fp.is_latest=1
+ 			where  v.audit_flag = 1 
+ 			<if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+       		 </if>
+       		 <if test="brand !=null and  brand != '' ">
+       		 	and v.brand = #{brand,jdbcType=VARCHAR} 
+       		 </if>
+       		 <if test="requirementType != null ">
+       		 	and v.requirement_type = #{requirementType,jdbcType=INTEGER} 
+       		 </if>
+       		 <choose>
+       		 	<when test="avStatus != null">
+       		 		<choose>
+	       		 		<!-- 待售,这里只查询没有上过拍卖的待售车辆 -->
+	       		 		<when test="avStatus == 9 ">
+	       		 			and v.sale_status = 0
+	       		 			and av.id is null
+	       		 			and fp.id is null
+	       		 		</when>
+	       		 		<!-- 针对拍品查询 -->
+	       		 		<otherwise>
+	       		 			and av.is_latest=1 
+			       		 	and av.status = #{avStatus,jdbcType=INTEGER} 
+	       		 		</otherwise>
+       		 		</choose>
+       		 	</when>
+       		 	<when test="fpStatus != null">
+       		 		<choose>
+	       		 		<!-- 待售,这里只查询没有上过拍卖的待售车辆 -->
+	       		 		<when test="fpStatus == 9 ">
+	       		 			and v.sale_status = 0
+	       		 			and fp.id is null              
+	       		 			and av.id is null
+	       		 		</when>
+	       		 		<!-- 针对展品查询 -->
+	       		 		<otherwise>
+	       		 			and fp.is_latest=1 
+			       		 	and fp.status = #{fpStatus,jdbcType=INTEGER} 
+	       		 		</otherwise>
+       		 		</choose>
+       		 	</when>
+       		 	<otherwise>
+       		 		<!-- 查询所有 (is_latest is null)：待售（不包含流拍等），(is_latest=1)：拍品-->
+       		 		and (av.is_latest is null or av.is_latest =1 or fp.is_latest is null or fp.is_latest =1)
+       		 	</otherwise>
+       		 </choose>
+       		 <if test="code !=null and code !='' ">
+       		 	and v.code like concat('%',#{code,jdbcType=VARCHAR},'%')
+       		 </if>
+       		 <if test="vinCode !=null and vinCode !='' ">
+       		 	and v.vin_code like concat('%',#{vinCode,jdbcType=VARCHAR},'%')
+       		 </if>
+       		 <if test="licenseCode !=null and licenseCode !='' ">
+       		 	and v.license_code like concat('%',#{licenseCode,jdbcType=VARCHAR},'%')
+       		 </if>
+       		 <if test="startAssessmentDatetime != null ">
+       		 	<![CDATA[
+       		 		and v.created_time >= #{startAssessmentDatetime,jdbcType=TIMESTAMP}
+       		 	]]> 
+       		 </if>
+       		 <if test="endAssessmentDatetime != null ">
+       		 	<![CDATA[
+       		 		and v.created_time <= #{endAssessmentDatetime,jdbcType=TIMESTAMP}
+       		 	]]>
+       		 </if>       		 
+ 			order by ifnull(ifnull(av.created_timestamp,fp.update_time),v.modify_time) desc
+			<if test="pagination != null and pagination.begin >= 0" >
+			  limit #{pagination.begin}, #{pagination.length}
+			</if> 			
+    </select>
+    <!-- 商家后台定价中心列表数量 -->
+    <select id="countForPricingCenter" resultType="java.lang.Integer"  parameterType="com.autostreets.biz.auction.model.Vehicle">
+    		select count(*)	from vehicle v 	
+ 				 LEFT JOIN auction_vehicle av 
+		 			on v.id = av.vehicle_id and av.is_latest=1
+		 		 LEFT JOIN fixed_price fp 
+ 					on v.id = fp.vehicle_id and fp.is_latest=1
+		 		where  v.audit_flag = 1 
+ 			<if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+       		 </if>
+        	 <if test="brand !=null and  brand != '' ">
+       		 	and v.brand = #{brand,jdbcType=VARCHAR} 
+       		 </if>
+       		 <if test="requirementType != null ">
+       		 	and v.requirement_type = #{requirementType,jdbcType=INTEGER} 
+       		 </if>
+       		 <choose>
+       		 	<when test="avStatus != null">
+       		 		<choose>
+	       		 		<!-- 待售 -->
+	       		 		<when test="avStatus == 9 ">
+	       		 			and v.sale_status = 0
+	       		 			and av.id is null
+	       		 			and fp.id is null
+	       		 		</when>
+	       		 		<!-- 针对拍品查询 -->
+	       		 		<otherwise>
+	       		 			and av.is_latest=1 
+			       		 	and av.status = #{avStatus,jdbcType=INTEGER} 
+	       		 		</otherwise>
+       		 		</choose>
+       		 	</when>
+       		 	<when test="fpStatus != null">
+       		 		<choose>
+	       		 		<!-- 待售,这里只查询没有上过拍卖的待售车辆 -->
+	       		 		<when test="fpStatus == 9 ">
+	       		 			and v.sale_status = 0
+	       		 			and fp.id is null              
+	       		 			and av.id is null
+	       		 		</when>
+	       		 		<!-- 针对展品查询 -->
+	       		 		<otherwise>
+	       		 			and fp.is_latest=1 
+			       		 	and fp.status = #{fpStatus,jdbcType=INTEGER} 
+	       		 		</otherwise>
+       		 		</choose>
+       		 	</when>
+       		 	<otherwise>
+       		 		<!-- 查询所有 (is_latest is null)：待售（不包含流拍等），(is_latest=1)：拍品-->
+       		 		and (av.is_latest is null or av.is_latest =1 or fp.is_latest is null or fp.is_latest =1)
+       		 	</otherwise>
+       		 </choose>
+       		 <if test="code !=null and code !='' ">
+       		 	and v.code = #{code,jdbcType=VARCHAR}
+       		 </if>
+       		 <if test="vinCode !=null and vinCode !='' ">
+       		 	and v.vin_code = #{vinCode,jdbcType=VARCHAR}
+       		 </if>
+       		 <if test="licenseCode !=null and licenseCode !='' ">
+       		 	and v.license_code=#{licenseCode,jdbcType=VARCHAR}
+       		 </if>
+       		 <if test="startAssessmentDatetime != null ">
+       		 	<![CDATA[
+       		 		and v.created_time >= #{startAssessmentDatetime,jdbcType=TIMESTAMP}
+       		 	]]> 
+       		 </if>
+       		 <if test="endAssessmentDatetime != null ">
+       		 	<![CDATA[
+       		 		and v.created_time <= #{endAssessmentDatetime,jdbcType=TIMESTAMP}
+       		 	]]>
+       		 </if>      		 
+    </select>
+    <select id="getReferencePriceList" resultMap="pricingCenterMap"  parameterType="java.util.Map">
+    	select  v.id,v.brand,v.vehicle_model,v.selled_name,v.register_license_years,v.display_mileage,v.current_city,oi.final_price finalPrice,
+    		    o.deal_timestamp closingTime,vs.requirement_type  requirementType
+          from  vehicle v join order_item oi
+				on v.id = oi.vehicle_id
+				inner join vehicle_sales vs
+				on v.id = vs.id
+				join `order` o on o.id = oi.order_id 
+				where 1=1
+			<if test="brand != null and brand != ''">
+				and v.brand = #{brand}
+			</if>
+			<if test="vehicleModel != null and vehicleModel != ''">
+				and v.vehicle_model = #{vehicleModel}
+			</if>
+				order by oi.final_price desc
+			<if test="limit != null">
+				limit 0,#{limit}
+			</if>
+
+    </select>
+</mapper>

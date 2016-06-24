@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+        
+    <util:properties id="appProperties" location="classpath:config.properties"/>
+    <context:property-placeholder properties-ref="appProperties" ignore-unresolvable="true"/>
+        
+	<dubbo:application name="biz-auction-web" owner="youpeng.zhang" organization="autostreets" logger="slf4j" />
+
+    <dubbo:registry protocol="zookeeper" address="${dubbo.registry.servers}" check="false"/>
+	<dubbo:consumer timeout="12000" check="false"/>
+    <!--service -->
+    <dubbo:reference interface="com.autostreets.biz.auction.service.AuctionDictionaryService" id="auctionDictionaryService" version="1.0.0" owner="youpeng.zhang" />
+    <dubbo:reference interface="com.autostreets.biz.auction.service.AuctionService" id="auctionService" version="1.0.0" owner="youpeng.zhang" />
+    <dubbo:reference interface="com.autostreets.biz.auction.service.AuctionPlaceService" id="auctionPlaceService" version="1.0.0" owner="youpeng.zhang" />
+    <dubbo:reference interface="com.autostreets.biz.auction.service.MemberVehicleBatchService" id="memberVehicleBatchService" version="1.0.0" owner="youpeng.zhang"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.MemberVehicleFavoriteService" id="memberVehicleFavoriteService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.AuctionVehicleService" id="auctionVehicleService" version="1.0.0" owner="youpeng.zhang"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.FixedPriceService" id="fixedPriceService" version="1.0.0" owner="youpeng.zhang"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.OrderService" id="orderService" version="1.0.0" owner="youpeng.zhang"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.OrderItemService" id="orderItemService" version="1.0.0" owner="youpeng.zhang"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.BidService" id="bidService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.SchedulerService" id="schedulerService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.AppointmentUsedcarService" id="appointmentUsedcarService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.MemberVehicleService" id="memberVehicleService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.auction.service.VehicleService" id="vehicleService" version="1.0.0"/>
+	<!-- sys service; -->
+	<dubbo:reference interface="com.autostreets.biz.sys.service.user.OrganizationService" id="organizationService" version="1.0.0" owner="meng.zhao" />
+    <dubbo:reference interface="com.autostreets.biz.sys.service.dict.DictAreaService" id="dictAreaService" version="1.0.0" owner="youpeng.zhang"/>
+	<!-- 二手车 service -->
+    <dubbo:reference interface="com.autostreets.biz.usedvehicle.service.UsedvehicleDictionaryService" check="false" id="usedvehicleDictionaryService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.usedvehicle.service.vehicle.BrandseriesService" check="false" id="brandseriesService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.usedvehicle.service.vehicle.VehicleService" id="vehicleInfoService" version="1.0.0"/>
+    <!--支付 -->
+    <dubbo:reference interface="com.autostreets.biz.payment.service.PayMerchantService" id="payMerchantService" version="1.0.0"/>
+    <!-- old service -->
+    <dubbo:reference interface="com.autostreets.service.NewsService" id="newsService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.service.ad.AdPositionsService" id="adPositionsService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.service.FinInterestRateService" id="finInterestRateService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.service.MemberService" id="memberService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.service.MemberFavoriteService" id="memberFavoriteService" version="1.0.0"/>
+    <dubbo:reference interface="com.autostreets.biz.sms.service.SyncSmsService" id="syncSmsService" version="1.0.0"/>
+        <!-- 引用bi-api的service -->
+    <dubbo:reference interface="com.autostreets.biz.bi.service.OrderSourceInfoService" id="orderSourceInfoService" version="1.0.0" />
+    
+   <dubbo:reference interface="com.autostreets.cache.CacheService" id="cacheService" version="1.0.0"/>
+   <dubbo:reference interface="com.autostreets.service.RepBrandService" id="repBrandService" version="1.0.0"/>
+   <dubbo:reference interface="com.autostreets.service.DictionaryService" id="dictionaryService" version="1.0.0"/>
+</beans>

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.OnlineAuctionLogMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.OnlineAuctionLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+    <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+    <result column="plus_range" property="plusRange" jdbcType="SMALLINT" />
+    <result column="av_type" property="avType" jdbcType="BIT" />
+    <result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
+    <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="is_activity" property="activity" jdbcType="BIT" />
+    <result column="activity_title" property="activityTitle" jdbcType="VARCHAR" />
+    <result column="vehilce_list" property="vehilceList" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, start_price, reserve_price, plus_range, av_type, plan_start_time, plan_end_time, 
+    province, city, is_activity, activity_title, vehilce_list, user_id, create_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.OnlineAuctionLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from online_auction_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from online_auction_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from online_auction_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.OnlineAuctionLogExample" >
+    delete from online_auction_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.autostreets.biz.auction.model.OnlineAuctionLog" >
+    insert into online_auction_log (id, start_price, reserve_price, 
+      plus_range, av_type, plan_start_time, 
+      plan_end_time, province, city, 
+      is_activity, activity_title, vehilce_list, 
+      user_id, create_time)
+    values (#{id,jdbcType=INTEGER}, #{startPrice,jdbcType=DECIMAL}, #{reservePrice,jdbcType=DECIMAL}, 
+      #{plusRange,jdbcType=SMALLINT}, #{avType,jdbcType=BIT}, #{planStartTime,jdbcType=TIMESTAMP}, 
+      #{planEndTime,jdbcType=TIMESTAMP}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{activity,jdbcType=BIT}, #{activityTitle,jdbcType=VARCHAR}, #{vehilceList,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.autostreets.biz.auction.model.OnlineAuctionLog" >
+    insert into online_auction_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="startPrice != null" >
+        start_price,
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price,
+      </if>
+      <if test="plusRange != null" >
+        plus_range,
+      </if>
+      <if test="avType != null" >
+        av_type,
+      </if>
+      <if test="planStartTime != null" >
+        plan_start_time,
+      </if>
+      <if test="planEndTime != null" >
+        plan_end_time,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="activity != null" >
+        is_activity,
+      </if>
+      <if test="activityTitle != null" >
+        activity_title,
+      </if>
+      <if test="vehilceList != null" >
+        vehilce_list,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="startPrice != null" >
+        #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="plusRange != null" >
+        #{plusRange,jdbcType=SMALLINT},
+      </if>
+      <if test="avType != null" >
+        #{avType,jdbcType=BIT},
+      </if>
+      <if test="planStartTime != null" >
+        #{planStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="planEndTime != null" >
+        #{planEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="activity != null" >
+        #{activity,jdbcType=BIT},
+      </if>
+      <if test="activityTitle != null" >
+        #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="vehilceList != null" >
+        #{vehilceList,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.OnlineAuctionLogExample" >
+    select count(*) from online_auction_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update online_auction_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.startPrice != null" >
+        start_price = #{record.startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.reservePrice != null" >
+        reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.plusRange != null" >
+        plus_range = #{record.plusRange,jdbcType=SMALLINT},
+      </if>
+      <if test="record.avType != null" >
+        av_type = #{record.avType,jdbcType=BIT},
+      </if>
+      <if test="record.planStartTime != null" >
+        plan_start_time = #{record.planStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.planEndTime != null" >
+        plan_end_time = #{record.planEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.province != null" >
+        province = #{record.province,jdbcType=VARCHAR},
+      </if>
+      <if test="record.city != null" >
+        city = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.activity != null" >
+        is_activity = #{record.activity,jdbcType=BIT},
+      </if>
+      <if test="record.activityTitle != null" >
+        activity_title = #{record.activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehilceList != null" >
+        vehilce_list = #{record.vehilceList,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update online_auction_log
+    set id = #{record.id,jdbcType=INTEGER},
+      start_price = #{record.startPrice,jdbcType=DECIMAL},
+      reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      plus_range = #{record.plusRange,jdbcType=SMALLINT},
+      av_type = #{record.avType,jdbcType=BIT},
+      plan_start_time = #{record.planStartTime,jdbcType=TIMESTAMP},
+      plan_end_time = #{record.planEndTime,jdbcType=TIMESTAMP},
+      province = #{record.province,jdbcType=VARCHAR},
+      city = #{record.city,jdbcType=VARCHAR},
+      is_activity = #{record.activity,jdbcType=BIT},
+      activity_title = #{record.activityTitle,jdbcType=VARCHAR},
+      vehilce_list = #{record.vehilceList,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.OnlineAuctionLog" >
+    update online_auction_log
+    <set >
+      <if test="startPrice != null" >
+        start_price = #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="plusRange != null" >
+        plus_range = #{plusRange,jdbcType=SMALLINT},
+      </if>
+      <if test="avType != null" >
+        av_type = #{avType,jdbcType=BIT},
+      </if>
+      <if test="planStartTime != null" >
+        plan_start_time = #{planStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="planEndTime != null" >
+        plan_end_time = #{planEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="activity != null" >
+        is_activity = #{activity,jdbcType=BIT},
+      </if>
+      <if test="activityTitle != null" >
+        activity_title = #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="vehilceList != null" >
+        vehilce_list = #{vehilceList,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.OnlineAuctionLog" >
+    update online_auction_log
+    set start_price = #{startPrice,jdbcType=DECIMAL},
+      reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      plus_range = #{plusRange,jdbcType=SMALLINT},
+      av_type = #{avType,jdbcType=BIT},
+      plan_start_time = #{planStartTime,jdbcType=TIMESTAMP},
+      plan_end_time = #{planEndTime,jdbcType=TIMESTAMP},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      is_activity = #{activity,jdbcType=BIT},
+      activity_title = #{activityTitle,jdbcType=VARCHAR},
+      vehilce_list = #{vehilceList,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

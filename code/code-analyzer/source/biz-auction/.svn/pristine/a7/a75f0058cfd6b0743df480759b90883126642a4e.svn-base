@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AuctionMemberUploadMapper" >
+	
+	<update id="deleteUploadData" parameterType="java.util.Map">
+		update auction_member_upload set del_flag=1 where auction_id = #{auctionId,jdbcType=INTEGER}
+         <if test="userId != null">
+         	and created_by=#{userId}
+         </if>
+	</update>
+	
+ <insert id="insertBatch" parameterType="java.util.List" >
+    insert into auction_member_upload (auction_id, name, id_card_num, 
+      cellphone, auction_number, wechat, 
+      province, city, register_time,create_time,created_by,del_flag
+      )
+     values
+      <foreach collection="list" item="item" index="index" separator="," >
+	  (#{item.auctionId,jdbcType=INTEGER}, #{item.name,jdbcType=VARCHAR}, #{item.idCardNum,jdbcType=VARCHAR}, 
+      #{item.cellphone,jdbcType=VARCHAR}, #{item.auctionNumber,jdbcType=INTEGER}, #{item.wechat,jdbcType=VARCHAR}, 
+      #{item.province,jdbcType=VARCHAR}, #{item.city,jdbcType=VARCHAR}, #{item.registerTime,jdbcType=TIMESTAMP}, 
+      #{item.createTime,jdbcType=TIMESTAMP}, #{item.createdBy,jdbcType=INTEGER}, #{item.delFlag,jdbcType=BIT}
+      )
+	  </foreach>
+ </insert>
+	
+</mapper>

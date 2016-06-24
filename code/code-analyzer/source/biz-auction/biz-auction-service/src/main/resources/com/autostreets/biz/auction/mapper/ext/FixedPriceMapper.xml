@@ -1,0 +1,876 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.FixedPriceMapper">
+    <resultMap id="fixedPriceResultMap" type="com.autostreets.biz.auction.model.FixedPrice">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="vehicle_id" property="vehicleId" jdbcType="VARCHAR" />
+        <result column="deposit" property="deposit" jdbcType="DECIMAL" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="where_store" property="whereStore" jdbcType="VARCHAR" />
+        <result column="address_detail_store" property="addressDetailStore" jdbcType="VARCHAR" />
+        <result column="service_time" property="serviceTime" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="BIT" />
+        <result column="is_hidden" property="hidden" jdbcType="BIT" />
+        <result column="is_latest" property="latest" jdbcType="BIT" />
+        <result column="apply_shelves_time" property="applyShelvesTime" jdbcType="TIMESTAMP" />
+        <result column="sell_time" property="sellTime" jdbcType="TIMESTAMP" />
+        <result column="off_shelves_time" property="offShelvesTime" jdbcType="TIMESTAMP" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="is_enabled" property="enabled" jdbcType="BIT" />
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+        <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+        <result column="vCode" property="vehicle.code" jdbcType="VARCHAR" />
+        <result column="first_photo_url" property="vehicle.firstPhotoUrl" jdbcType="VARCHAR" />
+        <result column="brand" property="vehicle.brand" jdbcType="VARCHAR" />
+        <result column="vehicle_model" property="vehicle.vehicleModel" jdbcType="VARCHAR" />
+        <result column="selled_name" property="vehicle.selledName" jdbcType="VARCHAR" />
+        <result column="saleStatus" property="vehicle.saleStatus" jdbcType="VARCHAR" />
+        <result column="vin_code" property="vehicle.vinCode" jdbcType="VARCHAR" />
+        <result column="license_code" property="vehicle.licenseCode" jdbcType="VARCHAR" />
+        <result column="swept_volume" property="vehicle.sweptVolume" jdbcType="VARCHAR" />
+        <result column="swept_volume_type" property="vehicle.sweptVolumeType" jdbcType="VARCHAR" />
+        <result column="swept_volume_standard" property="vehicle.sweptVolumeStandard" jdbcType="VARCHAR" />
+        <result column="body_color" property="vehicle.bodyColor" jdbcType="VARCHAR" />
+        <result column="register_license_years" property="vehicle.registerLicenseYears" jdbcType="TIMESTAMP" />
+        <result column="display_mileage" property="vehicle.displayMileage" jdbcType="TIMESTAMP" />
+        <result column="appraiser_id" property="vehicle.appraiserId" jdbcType="INTEGER" />
+        <result column="vehicle_appraiser" property="vehicle.vehicleAppraiser" jdbcType="VARCHAR" />
+        <result column="evaluation_dept" property="vehicle.evaluationDept" jdbcType="VARCHAR" />
+        <result column="bidder_name" property="order.bidderName" jdbcType="VARCHAR" />
+        <result column="final_price" property="orderItem.finalPrice" jdbcType="DECIMAL" />
+        <result column="low_price_group" property="lowPriceGroup" jdbcType="DECIMAL" />
+        <result column="new_vehicle_suggestion_price" property="vehicle.newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+        <result column="fpNewVehicleSuggestionPrice" property="newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+        <result column="tax_buy" property="taxBuy" jdbcType="DECIMAL" />
+        <result column="has_tax_buy" property="hasTaxBuy" jdbcType="BIT" />
+        <result column="vehicle_id" property="vehicle.id" jdbcType="INTEGER" />
+        <result column="orderSid" property="order.sid" jdbcType="VARCHAR" />
+        <result column="bidder_sid" property="order.bidderSid" jdbcType="VARCHAR" />
+        <result column="orderItemSid" property="orderItem.sid" jdbcType="VARCHAR" />
+        <result column="client" property="client" jdbcType="VARCHAR" />
+        <result column="off_shelves_remark" property="offShelvesRemark" jdbcType="VARCHAR" />
+        <result column="fav_count" property="favCount" jdbcType="BIGINT" />
+        <result column="click_count" property="clickCount" jdbcType="BIGINT" />
+        <result column="source" property="vehicle.source" jdbcType="VARCHAR" />
+        <result column="current_city" property="vehicle.currentCity" jdbcType="VARCHAR" />
+        <result column="vehicle_src_type" property="vehicle.vehicleSrcType" jdbcType="INTEGER" />
+        <result column="vehicle_src_id" property="vehicle.vehicleSrcId" jdbcType="BIGINT" />
+        <result column="is_certified" property="vehicle.certified" jdbcType="BIT" />
+        <result column="audit_flag" property="vehicle.auditFlag" jdbcType="BIT" />
+    </resultMap>
+
+    <select id="selectAllProvince" resultType="java.lang.String">
+        select distinct province from fixed_price fp
+        where (fp.status != 0
+        and fp.status != 1 and fp.status != 6 and fp.status != 7) and fp.is_latest = 1
+    </select>
+
+    <select id="countByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from fixed_price fp
+        join vehicle v on fp.vehicle_id = v.id
+        where (fp.status != 0 and fp.status != 1
+        and fp.status != 6 and fp.status != 7) and fp.is_latest = 1
+        <if test="brand != null">
+            and v.brand = #{brand,jdbcType=VARCHAR}
+        </if>
+        <if test="province != null">
+            and fp.province = #{province,jdbcType=VARCHAR}
+        </if>
+        <if test="city != null">
+            and fp.city = #{city,jdbcType=VARCHAR}
+        </if>
+        <if test="vehicleAgeMin != null">
+        <![CDATA[
+        	and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+        ]]>
+        </if>
+        <if test="vehicleAgeMax != null">
+        <![CDATA[
+        	and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+        ]]>
+        </if>
+        <if test="startPriceMin != null">
+        <![CDATA[
+            and fp.price >= #{startPriceMin}
+        ]]>
+        </if>
+        <if test="startPriceMax != null">
+        <![CDATA[
+            and fp.price < #{startPriceMax}
+        ]]>
+        </if>
+        <if test="displayMileageMin != null">
+        <![CDATA[
+            and v.display_mileage >= #{displayMileageMin}
+        ]]>
+        </if>
+        <if test="displayMileageMax != null">
+        <![CDATA[
+            and v.display_mileage < #{displayMileageMax}
+        ]]>
+        </if>
+        <if test="cert != null">
+        <![CDATA[
+            and v.is_certified = #{cert}
+        ]]>
+        </if>
+    </select>
+
+    <select id="selectByMap" resultMap="fixedPriceResultMap" parameterType="java.util.Map">
+        select fp.id id,
+        v.id vehicle_id,
+        v.first_photo_url,
+        v.brand,
+        v.vehicle_model,
+        v.swept_volume_standard,
+        v.selled_name,
+        v.vehicle_desc,
+        fp.sell_time selltime,
+        v.is_certified,
+        v.is_guaranteed,
+        fp.city,
+        v.license_code,
+        v.register_license_years,
+        v.display_mileage,
+        fp.is_hidden,
+        fp.price price,
+        fp.tax_buy,
+        <!-- 兼容旧的新车指导价获取方法fixedPrice.vehicle.newVehicleSuggestionPrice-->
+        fp.new_vehicle_suggestion_price,
+        <!-- 新的新车指导价获取方法fixedPrice.newVehicleSuggestionPrice-->
+        fp.new_vehicle_suggestion_price as fpNewVehicleSuggestionPrice,
+        fp.status status,
+        v.vehicle_src_type,
+        v.vehicle_src_id,
+        v.current_city
+        from
+        fixed_price fp
+        join vehicle v on fp.vehicle_id = v.id
+        where (fp.status != 0 and fp.status != 1 and fp.status != 6
+        and fp.status != 7)
+        and fp.is_latest = 1
+        <if test="brand != null and brand != ''">
+            and v.brand = #{brand,jdbcType=VARCHAR}
+        </if>
+        <if test="province != null and province != ''">
+            and fp.province = #{province,jdbcType=VARCHAR}
+        </if>
+        <if test="city != null and city != ''">
+            and fp.city = #{city,jdbcType=VARCHAR}
+        </if>
+        <if test="vehicleAgeMin != null">
+        <![CDATA[
+        	and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+        ]]>
+        </if>
+        <if test="vehicleAgeMax != null">
+        <![CDATA[
+        	and (to_days(now()) - to_days(str_to_date(concat(v.register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+        ]]>
+        </if>
+        <if test="startPriceMin != null">
+        <![CDATA[
+            and fp.price >= #{startPriceMin}
+        ]]>
+        </if>
+        <if test="startPriceMax != null">
+        <![CDATA[
+            and fp.price < #{startPriceMax}
+        ]]>
+        </if>
+        <if test="displayMileageMin != null">
+        <![CDATA[
+            and v.display_mileage >= #{displayMileageMin}
+        ]]>
+        </if>
+        <if test="displayMileageMax != null">
+        <![CDATA[
+            and v.display_mileage < #{displayMileageMax}
+        ]]>
+        </if>
+        <if test="cert != null">
+        <![CDATA[
+            and v.is_certified = #{cert}
+        ]]>
+        </if>
+        <if test="sortBy != null and sortBy == 'selltime'">
+            order by fp.sell_time
+        </if>
+        <if test="sortBy != null and sortBy == 'price'">
+            order by fp.price
+        </if>
+        <if test="sortBy != null and sortBy == 'age'">
+            order by v.register_license_years 
+        </if>
+        <if test="sortBy != null and sortBy == 'mileage'">
+            order by (v.display_mileage + 0) 
+        </if>
+        <if test="sort != null and sort == 'asc'">
+            ASC, fp.is_hidden ASC
+        </if>
+        <if test="sort != null and sort == 'desc'">
+            DESC, fp.is_hidden ASC
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="selectFavoriteByMap" resultMap="fixedPriceResultMap" parameterType="java.util.Map">
+        select fp.id id
+        ,v.id vehicle_id
+        ,v.first_photo_url
+        ,v.brand
+        ,v.vehicle_model
+        ,v.swept_volume_standard
+        ,v.selled_name
+        ,v.vehicle_desc
+        ,v.is_certified
+        ,v.is_guaranteed
+        ,fp.city
+        ,v.license_code
+        ,v.register_license_years
+        ,v.display_mileage
+        ,v.current_city
+        ,fp.is_hidden
+        ,fp.price
+        from fixed_price fp
+        join vehicle v on fp.vehicle_id = v.id
+        where fp.status
+        = 3 and fp.is_latest = 1 and fp.is_enabled = 1
+        <if test="startPriceMin != null">
+        <![CDATA[
+            and fp.price >= #{startPriceMin}
+        ]]>
+        </if>
+        <if test="startPriceMax != null">
+        <![CDATA[
+            and fp.price < #{startPriceMax}
+        ]]>
+        </if>
+        <if test="id != null">
+        <![CDATA[
+            and fp.id <> #{id}
+        ]]>
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+    <!-- 展品首页查询条件 ***************************** C:2014年8月25日 18:12:07 U:2014年12月5日 15:25:40（增加展品编号查询） V:1.1 Roceys -->
+    <sql id="fixedPrice_Where_Clause">
+        <where>
+            <if test="status != null">
+                <if test='status==9'>
+                    <!-- 待销售车辆查询 -->
+                    and v.sale_status = 0
+                    <choose>
+				    	<when test="isDealer">
+				    		 and vs.requirement_type=1
+				    	</when>
+				    	<otherwise>
+				    		 and v.requirement_type=1
+				    	</otherwise>
+			    	</choose>
+                    and not exists ( select 0 from fixed_price fp where
+                    fp.vehicle_id = v.id)
+                </if>
+                <if test='status !=9 and status != 99'>
+                    and fp.status= #{status}
+                </if>
+                <if test='status == 99'>
+                    and v.sale_status is not null
+                    <choose>
+				    	<when test="isDealer">
+				    		 and vs.requirement_type=1
+				    	</when>
+				    	<otherwise>
+				    		 and v.requirement_type=1
+				    	</otherwise>
+			    	</choose>
+                </if>
+                <if test='status != 9'>
+                    <if test="startTimestamp != null">
+               <![CDATA[ and fp.sell_time >= #{startTimestamp, jdbcType=TIMESTAMP} ]]>
+                    </if>
+                    <if test="endTimestamp != null">
+                <![CDATA[ and fp.sell_time <= #{endTimestamp, jdbcType=TIMESTAMP} ]]>
+                    </if>
+                    <if test="code != null and code !=''">
+                        and fp.code like CONCAT('%','${code}','%')
+                    </if>
+                    <if test="startOffShelvesTime != null">
+               <![CDATA[ and fp.off_shelves_time >= #{startOffShelvesTime, jdbcType=TIMESTAMP} ]]>
+                    </if>
+                    <if test="endOffShelvesTime != null">
+                <![CDATA[ and fp.off_shelves_time <= #{endOffShelvesTime, jdbcType=TIMESTAMP} ]]>
+                    </if>                    
+                </if>
+                <if test='vehicle.brand != null and vehicle.brand !=""'>
+                    and v.brand = #{vehicle.brand}
+                </if>
+                <if test='vehicle.vinCode != null and vehicle.vinCode !=""'>
+                    and v.vin_code like CONCAT('%','${vehicle.vinCode}','%')
+                </if>
+                <if test='vehicle.licenseCode != null and vehicle.licenseCode !=""'>
+                    and v.license_code like CONCAT('%','${vehicle.licenseCode}','%')
+                </if>
+                <if test='vehicle.code != null and vehicle.code !=""'>
+                    and v.code like CONCAT('%','${vehicle.code}','%')
+                </if>
+                <if test='vehicle.evaluationDept != null and vehicle.evaluationDept !=""'>
+                    and v.evaluation_dept like CONCAT('%','${vehicle.evaluationDept}','%')
+                </if>
+                <if test='vehicle.requirementType != null and vehicle.requirementType !=""'>
+<!--                     and v.requirement_type = #{vehicle.requirementType} -->
+                    <choose>
+				    	<when test="isDealer">
+				    		 and vs.requirement_type=#{vehicle.requirementType}
+				    	</when>
+				    	<otherwise>
+				    		 and v.requirement_type=#{vehicle.requirementType}
+				    	</otherwise>
+			    	</choose>
+                </if>
+                <if test='vehicle.registerProvince != null and vehicle.registerProvince !=""'>
+                    and v.register_province = #{vehicle.registerProvince}
+                </if>
+                <if test='vehicle.registerCity != null and vehicle.registerCity !=""'>
+                    and v.register_city = #{vehicle.registerCity}
+                </if>
+                <if test='vehicle.vehicleType != null and vehicle.vehicleType !=""'>
+                    and v.vehicle_type = #{vehicle.vehicleType}
+                </if>
+                <if test='vehicle.currentProvince != null and vehicle.currentProvince !=""'>
+                    and v.current_province = #{vehicle.currentProvince}
+                </if>
+                <if test='vehicle.currentCity != null and vehicle.currentCity !=""'>
+                    and v.current_city = #{vehicle.currentCity}
+                </if>
+                <if test='vehicle.source != null and vehicle.source !=""'>
+                    and v.source = #{vehicle.source}
+                </if>
+                <if test='vehicle.vehicleSrcId != null and vehicle.vehicleSrcId !=""'>
+                    and v.vehicle_src_id = #{vehicle.vehicleSrcId}
+                </if>
+                <if test='vehicle.vehicleAppraiser != null and vehicle.vehicleAppraiser !=""'>
+                    and v.vehicle_appraiser = #{vehicle.vehicleAppraiser}
+                </if>
+	       		 <if test="vehicle.startAssessmentDatetime != null ">
+	       		 	<![CDATA[
+	       		 		and v.created_time >= #{vehicle.startAssessmentDatetime,jdbcType=TIMESTAMP}
+	       		 	]]> 
+	       		 </if>
+	       		 <if test="vehicle.endAssessmentDatetime != null ">
+	       		 	<![CDATA[
+	       		 		and v.created_time <= #{vehicle.endAssessmentDatetime,jdbcType=TIMESTAMP}
+	       		 	]]>
+	       		 </if>  
+                
+	             <!-- 商家后台权限控制 edit by zxf at 2015-12-04 ,for usedVehicle fixedPrice management at dealerPage  -->
+		         <if test="vehicle != null and vehicle.vehicleSrcIds != null  and vehicle.vehicleSrcIds.size() > 0">
+		         	  and v.vehicle_src_id in
+		     				<foreach item="item" index="index" collection="vehicle.vehicleSrcIds" 
+		                    				open="(" separator="," close=")">
+		                   				#{item}
+		            		</foreach> 
+		         </if>
+		         <!-- 只查询已定价(销售方式已确定:展厅)的车辆 -->
+		         <if test="vehicle != null and vehicle.pricing!=null">
+		         	  and v.is_pricing = #{vehicle.pricing,jdbcType=BIT}
+		         </if>
+		         <!-- 商家审核通过的车辆 -->
+		         <if test="vehicle != null and vehicle.auditFlag!=null">
+		         	  and v.audit_flag = #{vehicle.auditFlag,jdbcType=BIT}
+		         </if>
+		         
+            </if>
+        </where>
+    </sql>
+    <!-- 加载展品首页数据 ****************************** 2014年8月25日 18:18:51 Roceys V1.0 -->
+    <select id="queryFixedPrices" resultMap="fixedPriceResultMap" parameterType="com.autostreets.biz.auction.model.FixedPrice">
+        <if test="status != null">
+            <if test='status==9'>
+                <include refid="queryVehicleBySaleStatus" />
+            </if>
+            <if test='status !=9 and status !=99'>
+                <include refid="queryFixedPrice" />
+            </if>
+            <if test='status == 99'>
+                <include refid="queryAll" />
+            </if>
+            <if test="orderByClause != null">
+                order by ${orderByClause}
+            </if>
+            <if test="pagination != null and pagination.begin >= 0">
+                limit #{pagination.begin}, #{pagination.length}
+            </if>
+        </if>
+    </select>
+
+    <!-- 查询条件处理：车辆待售状态查询加载 -->
+    <sql id="queryVehicleBySaleStatus">
+        select v.code vCode,
+        v.first_photo_url,
+        v.brand,
+        v.vehicle_model,
+        v.selled_name,
+        v.sale_status saleStatus,
+        NULL bidder_name,
+        NULL final_price,
+        null price,
+        v.vin_code,
+        v.license_code,
+        v.swept_volume,
+        v.swept_volume_type,
+        v.body_color,
+        v.register_license_years,
+        v.evaluation_dept,
+        v.id vehicle_id,
+        null id,
+        null orderId,
+        null bidder_sid,
+        null orderItemId,
+        v.current_province province,
+        v.current_city city,
+        v.new_vehicle_suggestion_price,
+        v.new_vehicle_suggestion_price as fpNewVehicleSuggestionPrice,
+        v.appraiser_id,
+        v.vehicle_appraiser,
+        v.audit_flag
+        from vehicle v
+        <if test="isDealer">
+         		inner join vehicle_sales vs
+         		on v.id= vs.id
+	     </if>
+        <include refid="fixedPrice_Where_Clause" />
+    </sql>
+
+    <!-- 查询条件处理：展品查询加载 *********************************** U:2014年8月25日 18:26:06 U:2014年8月28日 14:33:16（添加and oi.sale_type 
+        = 0） Roceys V:2.0 -->
+    <sql id="queryFixedPrice">
+        SELECT
+        <include refid="fixedPrice_Index_Column_List" />
+        FROM fixed_price fp
+        inner join vehicle v
+        on v.id = fp.vehicle_id
+        <if test="isDealer">
+          		inner join vehicle_sales vs
+          		on v.id= vs.id
+	     </if>
+        and fp.is_latest = 1
+        <choose>
+	    	<when test="isDealer">
+	    		 and vs.requirement_type=1
+	    	</when>
+	    	<otherwise>
+	    		 and v.requirement_type=1
+	    	</otherwise>
+	    </choose>
+        left
+        outer join order_item oi on oi.auction_vehicle_id = fp.id
+        and oi.sale_type = 0
+        and oi.status in (0,4,5,8)
+        left
+        outer join `order` o on o.id=oi.order_id
+        <include refid="fixedPrice_Where_Clause" />
+        order by fp.update_time desc
+    </sql>
+
+    <!-- 查询条件处理：车辆与展品全部加载 U:2014年8月28日 14:32:49（更新SID为Varchar类型） Roceys V2.0 -->
+    <sql id="queryAll">
+        SELECT
+        <include refid="fixedPrice_Index_Column_List" />
+        FROM vehicle v
+        <if test="isDealer">
+          		inner join vehicle_sales vs
+          		on v.id= vs.id
+	     </if>
+        LEFT OUTER JOIN fixed_price fp
+        ON v.id = fp.vehicle_id and fp.is_latest = 1
+        <!-- <include refid="queryAdvMemberName"/> -->
+        LEFT OUTER JOIN order_item oi
+        ON oi.auction_vehicle_id = fp.id and oi.sale_type = 0
+        <!-- and oi.is_enabled = 1 -->
+        and oi.status in (0,4,5,8)
+        LEFT OUTER JOIN `order` o
+        ON o.id = oi.order_id
+        <include refid="fixedPrice_Where_Clause" />
+        order by fp.update_time desc
+    </sql>
+
+    <!-- 首页分页总数查询 ****************************** 2014年8月25日 18:07:38 Roceys V1.0 -->
+    <select id="queryFixedPriceTotal" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.FixedPrice">
+        <if test="status != null">
+            SELECT count(*)
+            <if test='status==9'>
+                FROM vehicle v
+                <if test="isDealer">
+	          		inner join vehicle_sales vs
+	          		on v.id= vs.id
+	     		</if>
+                <include refid="fixedPrice_Where_Clause" />
+            </if>
+            <if test='status !=9 and status !=99'>
+                FROM fixed_price fp
+                inner join vehicle v
+                on v.id = fp.vehicle_id and fp.is_latest = 1
+                <if test="isDealer">
+	          		inner join vehicle_sales vs
+	          		on v.id= vs.id
+	     		</if>
+                    <choose>
+				    	<when test="isDealer">
+				    		 and vs.requirement_type=1
+				    	</when>
+				    	<otherwise>
+				    		 and v.requirement_type=1
+				    	</otherwise>
+				    </choose>
+                left outer join order_item oi on
+                oi.auction_vehicle_id = fp.id and oi.sale_type = 0
+                and oi.status in (0,4,5,8)
+                left outer join `order` o on o.id=oi.order_id
+                <include refid="fixedPrice_Where_Clause" />
+            </if>
+            <if test='status ==99'>
+                FROM vehicle v
+                <if test="isDealer">
+          		inner join vehicle_sales vs
+          		on v.id= vs.id
+	     		</if>
+                LEFT OUTER JOIN fixed_price fp
+                ON v.id = fp.vehicle_id and fp.is_latest = 1
+                LEFT OUTER JOIN
+                order_item oi
+                ON oi.auction_vehicle_id = fp.id and oi.sale_type = 0
+                and oi.status in (0,4,5,8)
+                LEFT OUTER
+                JOIN `order` o
+                ON o.id = oi.order_id
+                <include refid="fixedPrice_Where_Clause" />
+            </if>
+        </if>
+    </select>
+
+    <!-- 首页列表加载 ******************************* C:2014年8月25日 18:01:15 U:2014年8月26日 14:02:04 U:2014年11月13日 15:06:57（增加下架原因、上架申请时间功能） 
+        U:2014年12月2日 17:00:07（评估师取User表name） U:2014年12月5日 15:23:07（增加展品编辑查询） Roceys V3.2 -->
+    <sql id="fixedPrice_Index_Column_List">
+        v.code vCode,
+        v.first_photo_url,
+        v.brand,
+        v.vehicle_model,
+        v.selled_name,
+        v.sale_status saleStatus,
+        fp.status,
+        v.body_color,
+        v.register_license_years,
+        v.source,
+        v.vehicle_src_id,
+        case when fp.province is null then
+        v.current_province else fp.province end province,
+        case when fp.city is null then v.current_city else fp.city end
+        city,
+        fp.off_shelves_remark,
+        fp.create_time,
+        fp.apply_shelves_time,
+        fp.sell_time,
+        fp.off_shelves_time,
+        fp.is_hidden,
+        <!-- 兼容旧的新车指导价获取方法fixedPrice.vehicle.newVehicleSuggestionPrice-->
+        fp.new_vehicle_suggestion_price,
+        <!-- 新的新车指导价获取方法fixedPrice.newVehicleSuggestionPrice-->
+        fp.new_vehicle_suggestion_price as fpNewVehicleSuggestionPrice,
+        fp.low_price_group,
+        fp.has_tax_buy,
+        fp.tax_buy,
+        v.vehicle_appraiser,
+        v.evaluation_dept,
+        v.id vehicle_id,
+        fp.id,
+        o.id orderId,
+        o.bidder_name,
+        oi.final_price,
+        o.bidder_sid,
+        oi.id orderItemId,
+        fp.code,
+        v.vin_code,
+        v.display_mileage,
+        v.license_code,
+        v.swept_volume,
+        v.swept_volume_type,
+        fp.price,
+        v.appraiser_id,
+        fp.fav_count,
+        fp.click_count,
+        v.audit_flag,
+        fp.deposit
+    </sql>
+
+    <!-- 更新车辆销售状态为指定状态，可根据某一状态筛选 ********************** C:2014年7月12日 22:55:04 V:1.0 Roceys -->
+    <update id="updateVehicleSaleStatus">
+        UPDATE vehicle
+        SET sale_status = #{saleStatus}
+        WHERE sale_status = #{saleStatusCond} AND sid =
+        #{vehicleSid,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 根据车辆SID查询及展品最新状态、展品状态获得对应展品 ********************************** C:2014年8月25日 17:25:20 V1.0 Roceys -->
+    <select id="querySidByCond" resultType="com.autostreets.biz.auction.model.FixedPrice" parameterType="java.util.HashMap">
+        select
+        sid, code, vehicle_id, price, province, city, status, is_hidden, is_latest, create_time, update_time,
+        is_enabled,
+        update_user, create_user
+        from fixed_price fp where fp.vehicle_id = #{vehicleId} and fp.is_latest =
+        #{isLatest} and fp.status = #{status}
+    </select>
+
+    <!-- 通过展品SID或车辆SID查询有效展品订单数 订单状态：0-已创建(未支付),1-后台业务取消,2-用户取消,3-超时未支付取消,4-已支付订金,5-已支付全款,6-已退订金,7-已退全款,8-交易成功 ************************************************** 
+        C:2014年11月25日 18:25:04 V1.0 Roceys -->
+    <select id="queryUsedCarOrderNum" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        select count(*) from order_item
+        <where>
+            <!-- is_enabled = 1 and -->
+            sale_type = 0 and status in (0,4,5,8)
+            <if test='fpSid != null and fpSid != ""'>
+                and auction_vehicle_id = #{fpId}
+            </if>
+            <if test='vSid != null and vSid != ""'>
+                and vehicle_id = #{vId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 通过车辆SID查询有效参展数据 ************************************************** C:2014年11月26日 16:50:08 V1.0 Roceys -->
+    <select id="queryUsedCarLatest" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List" />
+        from fixed_price where is_latest = 1 and vehicle_id = #{vId}
+    </select>
+
+    <!-- 通过展品SID或车辆SID查询有效预订展品订单（已预订、已付定金） ************************************************** C:2014年11月26日 17:28:32 V1.1 
+        Roceys -->
+    <select id="queryUsedCarOrderEnabled" resultType="java.lang.String" parameterType="java.util.HashMap">
+        select sid from order_item
+        <where>
+            <!-- is_enabled = 1 and -->
+            sale_type = 0 and status in (0,4)
+            <if test='fpSid != null and fpSid != ""'>
+                and auction_vehicle_id = #{fpId}
+            </if>
+            <if test='vSid != null and vSid != ""'>
+                and vehicle_id = #{vId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCityByFixedPrice" resultType="java.lang.String">
+        select fp.city 
+          from autost_auction.fixed_price fp 
+          join autost_auction.vehicle v on fp.vehicle_id = v.id 
+         where (fp.status != 0 and fp.status != 1 and fp.status != 6 and fp.status != 7) and fp.is_latest = 1 
+         group by fp.city 
+         order by count(*) desc 
+    </select>
+
+    <select id="selectBrandByFixedPrice" resultType="java.lang.String" parameterType="java.lang.Integer">
+        select v.brand
+          from autost_auction.fixed_price fp
+         inner join autost_auction.vehicle v on fp.vehicle_id = v.id
+         where (fp.status != 0 and fp.status != 1 and fp.status != 6 and fp.status != 7) and fp.is_latest = 1
+        <if test='orgId != null'>
+           and v.vehicle_src_id = #{orgId} 
+        </if>
+         group by v.brand
+    </select>
+
+    <resultMap id="online_orderItem_resultMap" type="com.autostreets.biz.auction.model.OrderItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="order_id" jdbcType="INTEGER" property="orderId" />
+        <result column="vehicle_id" jdbcType="INTEGER" property="vehicleId" />
+        <result column="auction_vehicle_id" jdbcType="INTEGER" property="auctionVehicleId" />
+        <result column="created_timestamp" jdbcType="TIMESTAMP" property="createdTimestamp" />
+        <result column="final_price" jdbcType="DECIMAL" property="finalPrice" />
+        <result column="sale_type" jdbcType="SMALLINT" property="saleType" />
+        <result column="status" jdbcType="SMALLINT" property="status" />
+        <result column="pre_price" jdbcType="DECIMAL" property="prePrice" />
+        <result column="" jdbcType="BIT" property="enabled" />
+        <result column="fin_audit" jdbcType="SMALLINT" property="finAudit" />
+        <result column="buyer_cellphone" jdbcType="VARCHAR" property="order.buyerCellphone" />
+        <result column="bidder_sid" jdbcType="VARCHAR" property="order.bidderSid" />
+        <result column="bidder_name" jdbcType="VARCHAR" property="order.bidderName" />
+    </resultMap>
+
+    <!-- 通过展品SID或车辆SID查询线上预订展品订单（已预订、已付定金） 黄春风修改订单成交处理逻辑后的解决方案 ************************************************** C:2014年12月4日 
+        10:37:19 V1.0 Roceys -->
+    <select id="queryUsedCarOrderOnline" resultMap="online_orderItem_resultMap" parameterType="java.util.HashMap">
+        select oi.id,
+        oi.order_id,oi.vehicle_id, oi.auction_vehicle_id,oi.created_timestamp,
+        oi.final_price,
+        oi.sale_type,oi.status, oi.pre_price, oi.fin_audit, oi.is_enabled,
+        o.buyer_cellphone,o.bidder_sid,o.bidder_name
+        from order_item oi left join `order` o
+        on oi.order_id = o.id
+        <where>
+            oi.sale_type = 0 and oi.status in (0,4)
+            <if test='fpId != null and fpId != ""'>
+                and oi.auction_vehicle_id = #{fpId}
+            </if>
+            <if test='vId != null and vId != ""'>
+                and oi.vehicle_id = #{vId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 通过展品SID或车辆SID查询有效线上订单 ************************************************** C:2014年11月27日 10:59:09 U:2014年12月1日 13:12:59（只取未支付定金、已支付定金状态） 
+        U:2014年12月1日 14:10:44（订单来源李振兴修改为varchar类型，张瑜确认过） V1.2 Roceys -->
+    <select id="queryNonOffLineOrder" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        select o.order_no,o.bidder_name,o.buyer_cellphone,
+        case when oi.status = 0 then '未支付定金'
+        <!-- when oi.status = 1 then '后台取消' when oi.status = 2 then '用户取消' when oi.status = 3 then '交易关闭' -->
+        when oi.status = 4 then '已支付订金'
+        <!-- when oi.status = 5 then '已支付全款' when oi.status = 6 then '已退订金' when oi.status = 7 then '已退全款' when oi.status 
+            = 8 then '交易成功' -->
+        end status
+        from order_item oi,`order` o
+        where oi.order_id=o.id
+        <!-- and oi.is_enabled = 1 -->
+        and oi.sale_type = 0
+        and oi.status in (0,4)
+        <!-- <![CDATA[ and o.source <> 2 ]]> -->
+		    <![CDATA[ and o.source <> '线下' ]]>
+        and oi.auction_vehicle_id = #{fpId}
+        and oi.vehicle_id = #{vId}
+    </select>
+
+    <!-- 查询可以推荐到首页的二手车 已停用 -->
+    <select id="queryForFpRecommend" resultMap="fixedPriceResultMap" parameterType="com.autostreets.biz.auction.model.FixedPrice">
+        SELECT
+        v. CODE vCode,
+        v.first_photo_url,
+        v.brand,
+        v.vehicle_model,
+        v.selled_name,
+        v.sale_status saleStatus,
+        fp. STATUS,
+        fp.price,
+        fp.fav_count,
+        fp.click_count,
+        v.vin_code,
+        v.license_code,
+        v.swept_volume,
+        v.swept_volume_type,
+        v.body_color,
+        CASE
+        WHEN fp.province IS NULL THEN
+        v.current_province
+        ELSE
+        fp.province
+        END province,
+        CASE
+        WHEN fp.city IS NULL THEN
+        v.current_city
+        ELSE
+        fp.city
+        END city,
+        fp.off_shelves_remark,
+        fp.create_time,
+        fp.apply_shelves_time,
+        fp.sell_time,
+        fp.off_shelves_time,
+        fp.is_hidden,
+        <!-- 兼容旧的新车指导价获取方法fixedPrice.vehicle.newVehicleSuggestionPrice-->
+        fp.new_vehicle_suggestion_price,
+        <!-- 新的新车指导价获取方法fixedPrice.newVehicleSuggestionPrice-->
+        fp.new_vehicle_suggestion_price as fpNewVehicleSuggestionPrice,
+        fp.low_price_group,
+        fp.has_tax_buy,
+        fp.tax_buy,
+        v.evaluation_dept,
+        v.id vehicle_id,
+        v.register_license_years,
+        v.display_mileage,
+        fp.id,
+        fp.code
+        FROM
+        vehicle v
+        JOIN
+        fixed_price fp ON v.id = fp.vehicle_id
+        AND fp.is_latest = 1
+        WHERE
+        v.requirement_type=1
+        <if test='status != null'>
+            AND fp.status =#{status}
+        </if>
+        <if test='vehicle.vinCode != null and vehicle.vinCode != ""'>
+            and v.vin_code like CONCAT('%','${vehicle.vinCode}','%')
+        </if>
+        <if test='vehicle.code != null and vehicle.code !=""'>
+            and v.code like CONCAT('%','${vehicle.code}','%')
+        </if>
+        <if test="startTimestamp != null">
+               <![CDATA[ and fp.sell_time >= #{startTimestamp, jdbcType=TIMESTAMP} ]]>
+        </if>
+        <if test="endTimestamp != null">
+                <![CDATA[ and fp.sell_time <= #{endTimestamp, jdbcType=TIMESTAMP} ]]>
+        </if>
+        AND fp.id not in(SELECT fp_id from fp_recommend)
+        ORDER BY
+        fp.update_time DESC
+        <if test='pagination != null'>
+            limit #{pagination.begin},#{pagination.end}
+        </if>
+    </select>
+
+
+    <!-- 查询可以推荐到首页的二手车 已停用 -->
+    <select id="countForFpRecommend" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.FixedPrice">
+        SELECT
+        count(*)
+        FROM
+        vehicle v
+        JOIN fixed_price fp ON v.id = fp.vehicle_id
+        AND fp.is_latest = 1
+        WHERE
+        v.requirement_type=1
+        <if test='status != null'>
+            AND fp.status =#{status}
+        </if>
+        <if test='vehicle.vinCode != null and vehicle.vinCode !=""'>
+            and v.vin_code like CONCAT('%','${vehicle.vinCode}','%')
+        </if>
+        <if test='vehicle.code != null and vehicle.code !=""'>
+            and v.code like CONCAT('%','${vehicle.code}','%')
+        </if>
+        <if test="startTimestamp != null">
+               <![CDATA[ and fp.sell_time >= #{startTimestamp, jdbcType=TIMESTAMP} ]]>
+        </if>
+        <if test="endTimestamp != null">
+                <![CDATA[ and fp.sell_time <= #{endTimestamp, jdbcType=TIMESTAMP} ]]>
+        </if>
+        AND fp.sid not in(SELECT fp_sid from fp_recommend)
+    </select>
+    
+    <update id="updateFavCount" parameterType="java.util.Map">
+    	update fixed_price
+		set fav_count=
+		<choose>
+			<when test="isAdd">
+				ifnull(fav_count,0)+1
+			</when>
+			<otherwise>
+				ifnull(fav_count,0)-1
+			</otherwise>
+		</choose>
+		where id = #{fpId,jdbcType=INTEGER}
+    </update>
+    
+    <!-- job调用，下架超过下架时间的车 -->
+    <select id="queryExpirationFixedPrice" resultMap="BaseResultMap">
+    	SELECT id,vehicle_id,status FROM fixed_price 
+    	<![CDATA[ 
+    		WHERE off_shelves_time <= DATE_FORMAT(NOW(),'%Y-%m-%d') AND status=3 AND is_latest=1
+    	 ]]>
+    </select>
+</mapper>

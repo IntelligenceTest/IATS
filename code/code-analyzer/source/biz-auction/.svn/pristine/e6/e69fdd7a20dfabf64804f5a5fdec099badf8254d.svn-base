@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AuctionDataUploadMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.AuctionDataUpload" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="auction_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="auction_vehicle_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="auction_number" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="auction_vehicle_order" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="deal_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="deal_price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="created_by" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="del_flag" jdbcType="BIT" javaType="java.lang.Boolean" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, auction_id, auction_vehicle_id, auction_number, auction_vehicle_order, deal_time, 
+    deal_price, create_time, created_by, del_flag
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.AuctionDataUploadExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from auction_data_upload
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from auction_data_upload
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from auction_data_upload
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.AuctionDataUploadExample" >
+    delete from auction_data_upload
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.autostreets.biz.auction.model.AuctionDataUpload" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into auction_data_upload (auction_id, auction_vehicle_id, auction_number, 
+      auction_vehicle_order, deal_time, deal_price, 
+      create_time, created_by, del_flag
+      )
+    values (#{auctionId,jdbcType=INTEGER}, #{auctionVehicleId,jdbcType=INTEGER}, #{auctionNumber,jdbcType=INTEGER}, 
+      #{auctionVehicleOrder,jdbcType=INTEGER}, #{dealTime,jdbcType=TIMESTAMP}, #{dealPrice,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, #{delFlag,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.autostreets.biz.auction.model.AuctionDataUpload" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into auction_data_upload
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="auctionId != null" >
+        auction_id,
+      </if>
+      <if test="auctionVehicleId != null" >
+        auction_vehicle_id,
+      </if>
+      <if test="auctionNumber != null" >
+        auction_number,
+      </if>
+      <if test="auctionVehicleOrder != null" >
+        auction_vehicle_order,
+      </if>
+      <if test="dealTime != null" >
+        deal_time,
+      </if>
+      <if test="dealPrice != null" >
+        deal_price,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="auctionId != null" >
+        #{auctionId,jdbcType=INTEGER},
+      </if>
+      <if test="auctionVehicleId != null" >
+        #{auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="auctionNumber != null" >
+        #{auctionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="auctionVehicleOrder != null" >
+        #{auctionVehicleOrder,jdbcType=INTEGER},
+      </if>
+      <if test="dealTime != null" >
+        #{dealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealPrice != null" >
+        #{dealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.AuctionDataUploadExample" >
+    select count(*) from auction_data_upload
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update auction_data_upload
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.auctionId != null" >
+        auction_id = #{record.auctionId,jdbcType=INTEGER},
+      </if>
+      <if test="record.auctionVehicleId != null" >
+        auction_vehicle_id = #{record.auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.auctionNumber != null" >
+        auction_number = #{record.auctionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.auctionVehicleOrder != null" >
+        auction_vehicle_order = #{record.auctionVehicleOrder,jdbcType=INTEGER},
+      </if>
+      <if test="record.dealTime != null" >
+        deal_time = #{record.dealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.dealPrice != null" >
+        deal_price = #{record.dealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createdBy != null" >
+        created_by = #{record.createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.delFlag != null" >
+        del_flag = #{record.delFlag,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update auction_data_upload
+    set id = #{record.id,jdbcType=INTEGER},
+      auction_id = #{record.auctionId,jdbcType=INTEGER},
+      auction_vehicle_id = #{record.auctionVehicleId,jdbcType=INTEGER},
+      auction_number = #{record.auctionNumber,jdbcType=INTEGER},
+      auction_vehicle_order = #{record.auctionVehicleOrder,jdbcType=INTEGER},
+      deal_time = #{record.dealTime,jdbcType=TIMESTAMP},
+      deal_price = #{record.dealPrice,jdbcType=DECIMAL},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      created_by = #{record.createdBy,jdbcType=INTEGER},
+      del_flag = #{record.delFlag,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.AuctionDataUpload" >
+    update auction_data_upload
+    <set >
+      <if test="auctionId != null" >
+        auction_id = #{auctionId,jdbcType=INTEGER},
+      </if>
+      <if test="auctionVehicleId != null" >
+        auction_vehicle_id = #{auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="auctionNumber != null" >
+        auction_number = #{auctionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="auctionVehicleOrder != null" >
+        auction_vehicle_order = #{auctionVehicleOrder,jdbcType=INTEGER},
+      </if>
+      <if test="dealTime != null" >
+        deal_time = #{dealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealPrice != null" >
+        deal_price = #{dealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.AuctionDataUpload" >
+    update auction_data_upload
+    set auction_id = #{auctionId,jdbcType=INTEGER},
+      auction_vehicle_id = #{auctionVehicleId,jdbcType=INTEGER},
+      auction_number = #{auctionNumber,jdbcType=INTEGER},
+      auction_vehicle_order = #{auctionVehicleOrder,jdbcType=INTEGER},
+      deal_time = #{dealTime,jdbcType=TIMESTAMP},
+      deal_price = #{dealPrice,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      created_by = #{createdBy,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

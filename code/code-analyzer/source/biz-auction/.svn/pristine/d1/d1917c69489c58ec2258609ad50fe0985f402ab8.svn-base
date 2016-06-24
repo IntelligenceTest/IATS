@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.DealerEmployeeTargetMapper" >
+	<resultMap type="com.autostreets.biz.auction.model.DealerEmployeeTarget"  id="ExtResultMap">
+		<result column="id" property="dealerEmployee.id"/>
+		<result column="org_id" property="dealerEmployee.orgId"/>
+		<result column="name" property="dealerEmployee.name"/>
+		<result column="employee_no" property="dealerEmployee.employeeNo"/>
+		<result column="group_id" property="dealerEmployee.groupId"/>
+		<result column="is_enable" property="dealerEmployee.enable"/>
+		<result column="create_time" property="dealerEmployee.createTime"/>
+		<result column="modify_time" property="dealerEmployee.modifyTime"/>
+		<result column="created_by" property="dealerEmployee.createdBy"/>
+		<result column="group_name" property="groupName"/>
+		<result column="group_type" property="groupType"/>
+	</resultMap>
+	<sql id="WhereSql">
+		<where>
+			and de.del_flag = 0
+			and is_enable=1
+			and de.org_id =#{orgId,jdbcType=INTEGER} 
+			<if test="employeeNoOrName !=null and employeeNoOrName != ''">
+				and (
+					de.name like concat('%',#{employeeNoOrName,jdbcType=VARCHAR},'%')
+					or
+					de.employee_no = #{employeeNoOrName,jdbcType=INTEGER}
+				)
+			</if>
+			<if test="dealerEmployee !=null and dealerEmployee.type !=null ">
+				and dg.type = #{dealerEmployee.type,jdbcType=INTEGER}
+			</if>
+			<if test="groupId !=null ">
+				and de.group_id = #{groupId,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+	<sql id="FromSql">
+		from dealer_employee de
+		left join dealer_group dg
+		on de.group_id  = dg.id
+	</sql>
+	<select id="selectByList" parameterType="com.autostreets.biz.auction.model.DealerEmployeeTarget" resultMap="ExtResultMap">
+		select 
+		de.id, de.org_id, de.`name`, de.employee_no, de.group_id, de.is_enable, de.create_time, de.modify_time, de.created_by,dg.name group_name,dg.type group_type
+		<include refid="FromSql"/>
+		<include refid="WhereSql"/>
+		order by modify_time desc
+		limit #{pagination.begin},#{pagination.length}
+	</select>
+	<select id="countByPage" parameterType="com.autostreets.biz.auction.model.DealerEmployeeTarget" resultType="java.lang.Integer">
+		select count(*)
+		<include refid="FromSql"/>
+		<include refid="WhereSql"/>
+	</select>
+	
+	<select id="selectExistsYears" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select DISTINCT `year` from dealer_employee_target where org_id = #{orgId,jdbcType=INTEGER}
+	</select>
+	
+</mapper>

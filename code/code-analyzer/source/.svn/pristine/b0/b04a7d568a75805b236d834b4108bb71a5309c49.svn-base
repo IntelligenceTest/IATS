@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.HomepageRecommendMapper" >
+	<resultMap id="fpRecommendMap" type="com.autostreets.biz.auction.model.HomepageRecommend" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="fp_id" property="fpId" jdbcType="INTEGER" />
+	    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+	    <result column="seq_no" property="seqNo" jdbcType="INTEGER" />
+	    <result column="is_enabled" property="enabled" jdbcType="BIT" />
+	    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="code" property="fixedPrice.code" jdbcType="VARCHAR" />
+	    <result column="deposit" property="fixedPrice.deposit" jdbcType="DECIMAL" />
+	    <result column="price" property="fixedPrice.price" jdbcType="DECIMAL" />
+	    <result column="province" property="fixedPrice.province" jdbcType="VARCHAR" />
+	    <result column="city" property="fixedPrice.city" jdbcType="VARCHAR" />
+	    <result column="where_store" property="fixedPrice.whereStore" jdbcType="VARCHAR" />
+	    <result column="address_detail_store" property="fixedPrice.addressDetailStore" jdbcType="VARCHAR" />
+	    <result column="service_time" property="fixedPrice.serviceTime" jdbcType="VARCHAR" />
+	    <result column="status" property="fixedPrice.status" jdbcType="BIT" />
+	    <result column="is_hidden" property="fixedPrice.hidden" jdbcType="BIT" />
+	    <result column="is_latest" property="fixedPrice.latest" jdbcType="BIT" />
+	    <result column="apply_shelves_time" property="fixedPrice.applyShelvesTime" jdbcType="TIMESTAMP" />
+	    <result column="sell_time" property="fixedPrice.sellTime" jdbcType="TIMESTAMP" />
+	    <result column="off_shelves_time" property="fixedPrice.offShelvesTime" jdbcType="TIMESTAMP" />
+	    <result column="client" property="fixedPrice.client" jdbcType="VARCHAR" />
+	    <result column="off_shelves_remark" property="fixedPrice.offShelvesRemark" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+  	<resultMap id="selectByMapResultMap" type="com.autostreets.biz.auction.model.Vehicle" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+        <result column="first_photo_url" property="firstPhotoUrl" jdbcType="VARCHAR" />
+        <result column="brand" property="brand" jdbcType="VARCHAR" />
+        <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+        <result column="swept_volume_standard" property="sweptVolumeStandard" jdbcType="VARCHAR" />
+        <result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+        <result column="vehicle_desc" property="vehicleDesc" jdbcType="VARCHAR" />
+        <result column="is_certified" property="certified" jdbcType="BIT" />
+        <result column="is_guaranteed" property="guaranteed" jdbcType="BIT" />
+        <result column="city" property="currentCity" jdbcType="VARCHAR" />
+        <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+        <result column="register_license_years" property="registerLicenseYears" jdbcType="DATE" />
+        <result column="display_mileage" property="displayMileage" jdbcType="VARCHAR" />
+        <result column="is_hidden" property="hidden" jdbcType="BIT" />
+        <result column="price" property="finalTransactionPrice" jdbcType="DECIMAL" />
+        <result column="tax_buy" property="taxBuy" jdbcType="DECIMAL" />
+        <result column="price_newcar" property="priceNewcar" jdbcType="DECIMAL" />
+        <result column="status" property="fpStatus" jdbcType="BIT" />
+        <result column="vehicle_src_type" property="vehicleSrcType" jdbcType="VARCHAR" />
+        <result column="vehicle_src_id" property="vehicleSrcId" jdbcType="INTEGER" />
+        <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+        <result column="auction_vehicle_order" property="auctionVehicleOrder" jdbcType="BIT" />
+    </resultMap>
+    
+    <select id="findHomepageRecommend" resultMap="fpRecommendMap" parameterType="com.autostreets.biz.auction.model.HomepageRecommend">
+	    SELECT 
+		    fr.id, fr.fp_id, fr.vehicle_id, fr.seq_no, fr.is_enabled, fr.create_user, fr.create_time, fr.update_time, 
+		    fr.update_user, fp.`code`, fp.deposit, fp.price, fp.low_price_group, fp.has_tax_buy, fp.tax_buy, 
+		    fp.province, fp.city, fp.where_store, fp.address_detail_store, fp.service_time, fp.`status`, fp.is_hidden, 
+		    fp.is_latest, fp.apply_shelves_time, fp.sell_time, off_shelves_time, fp.off_shelves_remark, fp.update_user, 
+		    fp.create_user, fp.memo, fp.phone 
+		FROM
+		    homepage_recommend fr 
+		    JOIN fixed_price fp 
+		        ON fp.id = fr.fp_id
+		    INNER JOIN vehicle v 
+		        ON fp.vehicle_id=v.id
+	 	<if test='seqNo != null'>
+			and seq_no = #{seqNo}
+		</if>
+        <if test='enabled != null'>
+        	and fr.is_enabled = #{enabled}
+        </if>
+        <if test="vehicle!=null and vehicle.code != null and vehicle.code != ''">
+        	AND v.code=#{vehicle.code}
+        </if>
+        <if test="vehicle!=null and vehicle.vinCode != null and vehicle.vinCode != ''">
+        	AND v.vin_code=#{vehicle.vinCode}
+        </if>
+        order by seq_no
+        <if test='pagination != null'>
+        	limit #{pagination.begin},#{pagination.end}
+        </if>
+    </select>
+  
+    <select id="countHomepageRecommend" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.HomepageRecommend">
+	    SELECT count(*)
+		FROM
+		    homepage_recommend fr 
+		    JOIN fixed_price fp 
+		        ON fp.id = fr.fp_id
+		    INNER JOIN vehicle v 
+		        ON fp.vehicle_id=v.id
+		<if test='seqNo != null'>
+			and seq_no = #{seqNo}
+		</if>
+        <if test='enabled != null'>
+        	and fr.is_enabled = #{enabled}
+        </if>
+        <if test="vehicle!=null and vehicle.code != null and vehicle.code != ''">
+        	AND v.code=#{vehicle.code}
+        </if>
+        <if test="vehicle!=null and vehicle.vinCode != null and vehicle.vinCode != ''">
+        	AND v.vin_code=#{vehicle.vinCode}
+        </if>
+    </select>
+    
+    <select id="countMaxSeqNo" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.HomepageRecommend">
+	    SELECT max(seq_no)
+	   	FROM 
+		homepage_recommend fr
+		<if test='seqNo != null'>
+			and seq_no = #{seqNo}
+		</if>
+        <if test='enabled != null'>
+        	and fr.is_enabled = #{enabled}
+        </if>
+        order by seq_no
+        <if test='pagination != null'>
+        	limit #{pagination.begin},#{pagination.end}
+        </if>
+    </select>
+    
+    <!-- 首页推荐二手车列表 -->
+    <select id="selectRecommendUsedcar" resultMap="selectByMapResultMap" parameterType="java.util.Map">
+        select rec.fp_id id, rec.vehicle_id vehicle_id, v.first_photo_url, v.brand, v.vehicle_model, v.swept_volume_standard, v.selled_name,  
+               fp.city, v.register_license_years, v.display_mileage, fp.price, fp.status status 
+          from autost_auction.homepage_recommend rec
+          inner join autost_auction.fixed_price fp on rec.fp_id = fp.id
+          inner join autost_auction.vehicle v on rec.vehicle_id = v.id
+         where rec.is_enabled = 1  
+         order by rec.seq_no ASC 
+         limit #{offset}, #{limit} 
+    </select>
+</mapper>

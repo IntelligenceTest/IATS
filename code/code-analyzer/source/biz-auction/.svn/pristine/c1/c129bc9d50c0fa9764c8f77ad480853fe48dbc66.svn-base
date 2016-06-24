@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.OrderItemMapper" >
+  <resultMap id="orderMap" type="com.autostreets.biz.auction.model.OrderItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_no" property="order.orderNo" jdbcType="VARCHAR" />
+    <result column="bidder_name" property="order.bidderName" jdbcType="VARCHAR" />
+    <result column="bidder_sid" property="order.bidderSid" jdbcType="VARCHAR" />
+    <result column="pay_timestamp" property="order.payTimestamp" jdbcType="TIMESTAMP" />
+    <result column="deal_timestamp" property="order.dealTimestamp" jdbcType="VARCHAR" />
+    
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="final_price" property="finalPrice" jdbcType="VARCHAR" />
+    <result column="sale_type" property="saleType" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="created_timestamp" property="createdTimestamp" jdbcType="VARCHAR" />
+   
+    <result column="code" property="vehicle.code" jdbcType="VARCHAR"/>
+    <result column="brand" property="vehicle.brand" jdbcType="VARCHAR"/>
+    <result column="vehicle_model" property="vehicle.vehicleModel" jdbcType="VARCHAR"/>
+    <result column="source" property="vehicle.source" jdbcType="VARCHAR"/>
+    <result column="swept_volume_standard" property="vehicle.sweptVolumeStandard" jdbcType="VARCHAR"/>
+    <result column="selled_name" property="vehicle.selledName" jdbcType="VARCHAR"/>
+    <result column="vin_code" property="vehicle.vinCode" jdbcType="VARCHAR" />
+    <result column="license_code" property="vehicle.licenseCode" jdbcType="VARCHAR" />
+    <result column="first_photo_url" property="photoUrl" jdbcType="VARCHAR"/>
+    <result column="vehicle_appraiser" property="vehicle.vehicleAppraiser" jdbcType="VARCHAR"/>
+     
+    <result column="cellphone" property="member.cellphone" jdbcType="VARCHAR" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    
+    <result column="vehicle_src_id" property="vehicle.vehicleSrcId" jdbcType="INTEGER"/>
+    <result column="collection_party" property="collectionParty" jdbcType="VARCHAR"/>
+    <result column="collection_model" property="collectionModel" jdbcType="VARCHAR"/>
+    <result column="buyer_cellphone" property="order.buyerCellphone" jdbcType="VARCHAR"/>
+     
+    <result column="drawee_name" property="order.draweeName" jdbcType="VARCHAR"/>
+    
+    <result column="memo" property="orderStatusLog.memo" jdbcType="VARCHAR"/>
+    <result column="user_id" property="orderStatusLog.userId" jdbcType="INTEGER"/>
+    
+  </resultMap>
+  <select id="queryOrders" resultMap="orderMap" parameterType="com.autostreets.biz.auction.model.OrderItem" >
+   	SELECT 
+	    o.order_no, o.bidder_name, o.deal_timestamp, o.pay_timestamp, oi.id, oi.order_id, oi.final_price, 
+	    oi.sale_type, oi.status, oi.created_timestamp, oi.order_type orderType, v.vin_code, v.CODE, v.brand, 
+	    v.vehicle_model, v.selled_name, v.vehicle_model, v.swept_volume_standard, v.selled_name, v.vin_code, 
+	    v.source, v.first_photo_url,o.bidder_sid,oi.vehicle_id,v.vehicle_src_id,v.license_code,v.vehicle_appraiser,
+	    oi.buyer_commission_fee buyerCommissionFee,oi.license_fee licenseFee,oi.ex_warehouse_fee exWarehouseFee,avl.city auctionCity,oi.settle_price settlePrice,
+	    oi.collection_party,oi.collection_model,oi.discount_price discountPrice,o.drawee_name,
+	    o.buyer_cellphone,oi.parking_fee parkingFee,oi.traffic_violation_fee trafficViolationFee,
+	    oi.collection_party,oi.collection_model,o.buyer_cellphone
+	FROM 
+	    `order` o 
+	    LEFT JOIN order_item oi 
+	        ON o.id = oi.order_id 
+	    LEFT JOIN vehicle v 
+	        ON oi.vehicle_id = v.id 
+	    LEFT JOIN auction_vehicle avl
+            on oi.auction_vehicle_id = avl.id
+	WHERE 1 = 1
+	<if test="order != null" >
+	    <if test="order.startDealTimestamp != null" >
+	      and o.deal_timestamp >= #{order.startDealTimestamp}
+	    </if>
+	    <if test="auctionCity != null and auctionCity!=''">
+           and avl.city like  CONCAT('%', #{auctionCity}, '%')
+        </if>
+	    <if test="order.endDealTimestamp != null" >
+	      <![CDATA[ and o.deal_timestamp <= #{order.endDealTimestamp} ]]>
+	    </if>
+	    <if test="order.startPayTimestamp != null" >
+	      and o.pay_timestamp >= #{order.startPayTimestamp}
+	    </if>
+	    <if test="order.endPayTimestamp != null" >
+	      <![CDATA[ and o.pay_timestamp <= #{order.endPayTimestamp} ]]>
+	    </if>
+	    <if test="order.orderNo and '' != order.orderNo" >
+	      and o.order_no like CONCAT('%', #{order.orderNo}, '%')
+	    </if>
+	   <if test="order.bidderName !=null and '' != order.bidderName" >
+	     and o.bidder_name like CONCAT('%', #{order.bidderName}, '%')
+	   </if>
+	   <if test="collectionParty !=null" >
+	     and oi.collection_party = #{collectionParty}
+	   </if>
+    </if>
+    <if test="saleType != null">
+        and oi.sale_type = #{saleType}
+    </if>
+    <if test="status != null">
+        and oi.status = #{status}
+    </if>
+    <if test="orderStatusList != null">
+         and oi.status in
+		<foreach item="item" index="index" collection="orderStatusList" open="(" separator="," close=")">
+  			#{item}
+   		</foreach> 
+    </if>
+    <if test="startFinalPrice != null">
+        and oi.final_price >= #{startFinalPrice}
+    </if>
+    <if test="endFinalPrice != null" >
+      <![CDATA[ and oi.final_price <= #{endFinalPrice} ]]>
+    </if>
+    <if test="vehicle != null" >
+	    <if test="vehicle.code and '' != vehicle.code" >
+	      and v.code like CONCAT('%', #{vehicle.code}, '%')
+	    </if>
+	    <if test="vehicle.vinCode and '' != vehicle.vinCode" >
+	      and v.vin_code like CONCAT('%', #{vehicle.vinCode}, '%')
+	    </if>
+	    <if test="vehicle.licenseCode and '' != vehicle.licenseCode" >
+	      and v.license_code like CONCAT('%', #{vehicle.licenseCode}, '%')
+	    </if>
+    </if>
+    <if test="userIds != null and userIds.size > 0">
+    	and exists (
+    	select 1 from order_status_log l 
+    		where l.order_id = o.id and l.post_status = 5 
+		and l.user_id in
+		<foreach item="item" index="index" collection="userIds"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		 )
+	</if>
+        <!-- add by zxf 商家后台二手车管理系统数据权限 -->
+        <if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+        </if>
+    and (oi.sale_type = 1 or oi.sale_type = 2 or oi.sale_type = 3)
+	ORDER BY oi.created_timestamp DESC
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  
+  <select id="queryOrderCount" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.OrderItem" >
+   	SELECT count(*)
+	FROM
+	    `order` o 
+	    LEFT JOIN order_item oi 
+	        ON o.id = oi.order_id 
+	    LEFT JOIN vehicle v 
+	        ON oi.vehicle_id = v.id
+	    LEFT JOIN auction_vehicle avl
+            on oi.auction_vehicle_id = avl.id
+	WHERE 1 = 1
+	<if test="order != null" >
+	    <if test="order.startDealTimestamp != null" >
+	      and o.deal_timestamp >= #{order.startDealTimestamp}
+	    </if>
+	    <if test="auctionCity != null and auctionCity!=''">
+           and avl.city like  CONCAT('%', #{auctionCity}, '%')
+        </if>
+	    <if test="order.endDealTimestamp != null" >
+	      <![CDATA[ and o.deal_timestamp <= #{order.endDealTimestamp} ]]>
+	    </if>
+	    <if test="order.startPayTimestamp != null" >
+	      and o.pay_timestamp >= #{order.startPayTimestamp}
+	    </if>
+	    <if test="order.endPayTimestamp != null" >
+	      <![CDATA[ and o.pay_timestamp <= #{order.endPayTimestamp} ]]>
+	    </if>
+	    <if test="order.orderNo and '' != order.orderNo" >
+	      and o.order_no like CONCAT('%', #{order.orderNo}, '%')
+	    </if>
+	   <if test="order.bidderName !=null and '' != order.bidderName" >
+	     and o.bidder_name like CONCAT('%', #{order.bidderName}, '%')
+	   </if>
+	   <if test="collectionParty !=null" >
+	     and oi.collection_party = #{collectionParty}
+	   </if>
+    </if>
+    <if test="saleType != null">
+        and oi.sale_type = #{saleType}
+    </if>
+    <if test="status != null">
+        and oi.status = #{status}
+    </if>
+    <if test="orderStatusList != null">
+         and oi.status in
+		<foreach item="item" index="index" collection="orderStatusList" open="(" separator="," close=")">
+  			#{item}
+   		</foreach> 
+    </if>
+    <if test="startFinalPrice != null">
+        and oi.final_price >= #{startFinalPrice}
+    </if>
+    <if test="endFinalPrice != null" >
+      <![CDATA[ and oi.final_price <= #{endFinalPrice} ]]>
+    </if>
+    <if test="vehicle != null" >
+	    <if test="vehicle.code and '' != vehicle.code" >
+	      and v.code like CONCAT('%', #{vehicle.code}, '%')
+	    </if>
+	    <if test="vehicle.vinCode and '' != vehicle.vinCode" >
+	      and v.vin_code like CONCAT('%', #{vehicle.vinCode}, '%')
+	    </if>
+	    <if test="vehicle.licenseCode and '' != vehicle.licenseCode" >
+	      and v.license_code like CONCAT('%', #{vehicle.licenseCode}, '%')
+	    </if>
+    </if>
+    <if test="userIds != null and userIds.size > 0">
+    	and exists (
+    	select 1 from order_status_log l 
+    		where l.order_id = o.id and l.post_status = 5 
+		and l.user_id in
+		<foreach item="item" index="index" collection="userIds"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		 )
+	</if>
+        <if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+        </if>    
+    and (oi.sale_type = 1 or oi.sale_type = 2 or oi.sale_type = 3)
+  </select>
+  
+  	<update id="cancelOrderItem" parameterType="java.util.Map">
+ 		update order_item ot  set ot.status = #{status,jdbcType=VARCHAR} 
+ 		where ot.order_sid  = #{orderNo,jdbcType=VARCHAR}
+ 	</update> 
+ <select id="getAuctionCityList" resultType="com.autostreets.biz.auction.model.AuctionVehicle">
+  SELECT DISTINCT   av.city 
+    FROM
+       `order` o, order_item oi, auction_vehicle av
+   WHERE o.id = oi.order_id 
+       AND oi.auction_vehicle_id=av.id
+       AND av.city IS NOT NULL AND av.city!=''
+       and (oi.sale_type = 1 or oi.sale_type = 2 or oi.sale_type = 3)
+ </select>
+
+</mapper>

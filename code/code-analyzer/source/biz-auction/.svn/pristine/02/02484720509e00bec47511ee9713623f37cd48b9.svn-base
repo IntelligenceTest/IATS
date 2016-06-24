@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.DealerSalesDataMapper" >
+	<!-- add by zxf for 商家销售需求 at 2015年12月30日13:25:33  -->
+	<select id="selectSalesDataList" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.DealerSalesData">
+		select d.dt saleDate,s.id,s.org_id,s.in_store_amt,s.new_sale_amt,s.replace_amt
+				,s.user_id,s.modify_time
+			from dict_date d
+			left join dealer_sales_data s
+			on d.dt = s.sale_date 
+			and s.del_flag = 0
+			<!-- 只有门店Id有权限查看该页面，不允许集团账号操作 -->
+			<if test = "orgId != null">
+			 	and s.org_id = #{orgId}
+			</if>
+			<where>
+				<if test = "hasData != null">
+					<if test = "!hasData">
+						and s.id is null
+					</if>
+					<if test = "hasData">
+						and s.id is not null 
+					</if>
+				</if>	
+				<if test="startTime != null">
+					<![CDATA[
+						and d.dt >= #{startTime}
+					]]>
+				</if>
+				<if test ="endTime != null">
+					<![CDATA[
+						and d.dt <= #{endTime}
+					]]>				
+				</if>
+			</where>
+				order by d.dt desc
+				<if test="pagination != null and pagination.begin >= 0" >
+				  limit #{pagination.begin}, #{pagination.length}
+				</if>				
+	</select>
+	<select id="selectSalesDataCount" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.DealerSalesData">
+		select count(*)
+			from dict_date d
+			left join dealer_sales_data s
+			on d.dt = s.sale_date 
+			and s.del_flag = 0
+			<!-- 只有门店Id有权限查看该页面，不允许集团账号操作 -->
+			<if test = "orgId != null">
+			 	and s.org_id = #{orgId}
+			</if>
+			<where>
+				<if test = "hasData != null">
+					<if test = "!hasData">
+						and s.id is null
+					</if>
+					<if test = "hasData">
+						and s.id is not null
+					</if>
+				</if>	
+				<if test="startTime != null">
+					<![CDATA[
+						and d.dt >= #{startTime}
+					]]>
+				</if>
+				<if test ="endTime != null">
+					<![CDATA[
+						and d.dt <= #{endTime}
+					]]>				
+				</if>
+			</where>
+	</select>
+	<!-- 批量插入 -->
+	<insert id="addNewSalesDatas" parameterType="java.util.HashMap">
+		insert into dealer_sales_data
+			(org_id,sale_date,in_store_amt,new_sale_amt,replace_amt,user_id,modify_time)
+			values
+		    <foreach collection="dataList" item="item" index="index" separator="," >  
+		       (#{orgId},#{item.saleDate},#{item.inStoreAmt},#{item.newSaleAmt},#{item.replaceAmt},#{userId},CURDATE())  
+		    </foreach>
+	</insert>
+</mapper>

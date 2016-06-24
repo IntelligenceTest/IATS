@@ -1,0 +1,896 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AuctionVehicleMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.AuctionVehicle" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="av_no" property="avNo" jdbcType="VARCHAR" />
+    <result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+    <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+    <result column="plus_range" property="plusRange" jdbcType="SMALLINT" />
+    <result column="is_display_reserve_price" property="displayReservePrice" jdbcType="BIT" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="is_done" property="done" jdbcType="BIT" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="created_timestamp" property="createdTimestamp" jdbcType="TIMESTAMP" />
+    <result column="bid_quantity" property="bidQuantity" jdbcType="INTEGER" />
+    <result column="commission_percent" property="commissionPercent" jdbcType="DECIMAL" />
+    <result column="license_fee" property="licenseFee" jdbcType="DECIMAL" />
+    <result column="ex_warehouse_fee" property="exWarehouseFee" jdbcType="DECIMAL" />
+    <result column="parking_fee" property="parkingFee" jdbcType="DECIMAL" />
+    <result column="traffic_fee" property="trafficFee" jdbcType="DECIMAL" />
+    <result column="traffic_violation_fee" property="trafficViolationFee" jdbcType="DECIMAL" />
+    <result column="client_commission_rate" property="clientCommissionRate" jdbcType="DECIMAL" />
+    <result column="client_fixed_commission" property="clientFixedCommission" jdbcType="DECIMAL" />
+    <result column="buyer_commission_rate" property="buyerCommissionRate" jdbcType="DECIMAL" />
+    <result column="buyer_fixed_commission" property="buyerFixedCommission" jdbcType="DECIMAL" />
+    <result column="see_car_time" property="seeCarTime" jdbcType="VARCHAR" />
+    <result column="see_car_addr" property="seeCarAddr" jdbcType="VARCHAR" />
+    <result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
+    <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+    <result column="client" property="client" jdbcType="VARCHAR" />
+    <result column="auction_type" property="auctionType" jdbcType="BIT" />
+    <result column="auction_vehicle_order" property="auctionVehicleOrder" jdbcType="SMALLINT" />
+    <result column="is_enable" property="enable" jdbcType="BIT" />
+    <result column="model_desc" property="modelDesc" jdbcType="VARCHAR" />
+    <result column="vehicle_desc" property="vehicleDesc" jdbcType="VARCHAR" />
+    <result column="auction_model" property="auctionModel" jdbcType="BIT" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="max_bid_price" property="maxBidPrice" jdbcType="DECIMAL" />
+    <result column="online_end_time" property="onlineEndTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="is_latest" property="latest" jdbcType="BIT" />
+    <result column="agent_price" property="agentPrice" jdbcType="INTEGER" />
+    <result column="av_type" property="avType" jdbcType="BIT" />
+    <result column="is_recommend" property="recommend" jdbcType="BIT" />
+    <result column="is_activity" property="activity" jdbcType="BIT" />
+    <result column="activity_title" property="activityTitle" jdbcType="VARCHAR" />
+    <result column="final_bid_status" property="finalBidStatus" jdbcType="BIT" />
+    <result column="final_bid_price" property="finalBidPrice" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, av_no, auction_id, vehicle_id, reserve_price, start_price, plus_range, is_display_reserve_price, 
+    `status`, is_done, created_by, created_timestamp, bid_quantity, commission_percent, 
+    license_fee, ex_warehouse_fee, parking_fee, traffic_fee, traffic_violation_fee, client_commission_rate, 
+    client_fixed_commission, buyer_commission_rate, buyer_fixed_commission, see_car_time, 
+    see_car_addr, plan_start_time, plan_end_time, client, auction_type, auction_vehicle_order, 
+    is_enable, model_desc, vehicle_desc, auction_model, province, city, max_bid_price, 
+    online_end_time, end_time, start_time, is_latest, agent_price, av_type, is_recommend, 
+    is_activity, activity_title, final_bid_status, final_bid_price
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.AuctionVehicleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from auction_vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null" >
+      limit #{pagination.begin} , #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from auction_vehicle
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from auction_vehicle
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.AuctionVehicleExample" >
+    delete from auction_vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+    insert into auction_vehicle (id, av_no, auction_id, 
+      vehicle_id, reserve_price, start_price, 
+      plus_range, is_display_reserve_price, `status`, 
+      is_done, created_by, created_timestamp, 
+      bid_quantity, commission_percent, license_fee, 
+      ex_warehouse_fee, parking_fee, traffic_fee, 
+      traffic_violation_fee, client_commission_rate, 
+      client_fixed_commission, buyer_commission_rate, 
+      buyer_fixed_commission, see_car_time, see_car_addr, 
+      plan_start_time, plan_end_time, client, 
+      auction_type, auction_vehicle_order, is_enable, 
+      model_desc, vehicle_desc, auction_model, 
+      province, city, max_bid_price, 
+      online_end_time, end_time, start_time, 
+      is_latest, agent_price, av_type, 
+      is_recommend, is_activity, activity_title, 
+      final_bid_status, final_bid_price)
+    values (#{id,jdbcType=INTEGER}, #{avNo,jdbcType=VARCHAR}, #{auctionId,jdbcType=INTEGER}, 
+      #{vehicleId,jdbcType=INTEGER}, #{reservePrice,jdbcType=DECIMAL}, #{startPrice,jdbcType=DECIMAL}, 
+      #{plusRange,jdbcType=SMALLINT}, #{displayReservePrice,jdbcType=BIT}, #{status,jdbcType=BIT}, 
+      #{done,jdbcType=BIT}, #{createdBy,jdbcType=INTEGER}, #{createdTimestamp,jdbcType=TIMESTAMP}, 
+      #{bidQuantity,jdbcType=INTEGER}, #{commissionPercent,jdbcType=DECIMAL}, #{licenseFee,jdbcType=DECIMAL}, 
+      #{exWarehouseFee,jdbcType=DECIMAL}, #{parkingFee,jdbcType=DECIMAL}, #{trafficFee,jdbcType=DECIMAL}, 
+      #{trafficViolationFee,jdbcType=DECIMAL}, #{clientCommissionRate,jdbcType=DECIMAL}, 
+      #{clientFixedCommission,jdbcType=DECIMAL}, #{buyerCommissionRate,jdbcType=DECIMAL}, 
+      #{buyerFixedCommission,jdbcType=DECIMAL}, #{seeCarTime,jdbcType=VARCHAR}, #{seeCarAddr,jdbcType=VARCHAR}, 
+      #{planStartTime,jdbcType=TIMESTAMP}, #{planEndTime,jdbcType=TIMESTAMP}, #{client,jdbcType=VARCHAR}, 
+      #{auctionType,jdbcType=BIT}, #{auctionVehicleOrder,jdbcType=SMALLINT}, #{enable,jdbcType=BIT}, 
+      #{modelDesc,jdbcType=VARCHAR}, #{vehicleDesc,jdbcType=VARCHAR}, #{auctionModel,jdbcType=BIT}, 
+      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{maxBidPrice,jdbcType=DECIMAL}, 
+      #{onlineEndTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{latest,jdbcType=BIT}, #{agentPrice,jdbcType=INTEGER}, #{avType,jdbcType=BIT}, 
+      #{recommend,jdbcType=BIT}, #{activity,jdbcType=BIT}, #{activityTitle,jdbcType=VARCHAR}, 
+      #{finalBidStatus,jdbcType=BIT}, #{finalBidPrice,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+    insert into auction_vehicle
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="avNo != null" >
+        av_no,
+      </if>
+      <if test="auctionId != null" >
+        auction_id,
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id,
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price,
+      </if>
+      <if test="startPrice != null" >
+        start_price,
+      </if>
+      <if test="plusRange != null" >
+        plus_range,
+      </if>
+      <if test="displayReservePrice != null" >
+        is_display_reserve_price,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="done != null" >
+        is_done,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp,
+      </if>
+      <if test="bidQuantity != null" >
+        bid_quantity,
+      </if>
+      <if test="commissionPercent != null" >
+        commission_percent,
+      </if>
+      <if test="licenseFee != null" >
+        license_fee,
+      </if>
+      <if test="exWarehouseFee != null" >
+        ex_warehouse_fee,
+      </if>
+      <if test="parkingFee != null" >
+        parking_fee,
+      </if>
+      <if test="trafficFee != null" >
+        traffic_fee,
+      </if>
+      <if test="trafficViolationFee != null" >
+        traffic_violation_fee,
+      </if>
+      <if test="clientCommissionRate != null" >
+        client_commission_rate,
+      </if>
+      <if test="clientFixedCommission != null" >
+        client_fixed_commission,
+      </if>
+      <if test="buyerCommissionRate != null" >
+        buyer_commission_rate,
+      </if>
+      <if test="buyerFixedCommission != null" >
+        buyer_fixed_commission,
+      </if>
+      <if test="seeCarTime != null" >
+        see_car_time,
+      </if>
+      <if test="seeCarAddr != null" >
+        see_car_addr,
+      </if>
+      <if test="planStartTime != null" >
+        plan_start_time,
+      </if>
+      <if test="planEndTime != null" >
+        plan_end_time,
+      </if>
+      <if test="client != null" >
+        client,
+      </if>
+      <if test="auctionType != null" >
+        auction_type,
+      </if>
+      <if test="auctionVehicleOrder != null" >
+        auction_vehicle_order,
+      </if>
+      <if test="enable != null" >
+        is_enable,
+      </if>
+      <if test="modelDesc != null" >
+        model_desc,
+      </if>
+      <if test="vehicleDesc != null" >
+        vehicle_desc,
+      </if>
+      <if test="auctionModel != null" >
+        auction_model,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="maxBidPrice != null" >
+        max_bid_price,
+      </if>
+      <if test="onlineEndTime != null" >
+        online_end_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="latest != null" >
+        is_latest,
+      </if>
+      <if test="agentPrice != null" >
+        agent_price,
+      </if>
+      <if test="avType != null" >
+        av_type,
+      </if>
+      <if test="recommend != null" >
+        is_recommend,
+      </if>
+      <if test="activity != null" >
+        is_activity,
+      </if>
+      <if test="activityTitle != null" >
+        activity_title,
+      </if>
+      <if test="finalBidStatus != null" >
+        final_bid_status,
+      </if>
+      <if test="finalBidPrice != null" >
+        final_bid_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="avNo != null" >
+        #{avNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionId != null" >
+        #{auctionId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleId != null" >
+        #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="reservePrice != null" >
+        #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="startPrice != null" >
+        #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="plusRange != null" >
+        #{plusRange,jdbcType=SMALLINT},
+      </if>
+      <if test="displayReservePrice != null" >
+        #{displayReservePrice,jdbcType=BIT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="done != null" >
+        #{done,jdbcType=BIT},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="createdTimestamp != null" >
+        #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bidQuantity != null" >
+        #{bidQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="commissionPercent != null" >
+        #{commissionPercent,jdbcType=DECIMAL},
+      </if>
+      <if test="licenseFee != null" >
+        #{licenseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="exWarehouseFee != null" >
+        #{exWarehouseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="parkingFee != null" >
+        #{parkingFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficFee != null" >
+        #{trafficFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficViolationFee != null" >
+        #{trafficViolationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="clientCommissionRate != null" >
+        #{clientCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="clientFixedCommission != null" >
+        #{clientFixedCommission,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerCommissionRate != null" >
+        #{buyerCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerFixedCommission != null" >
+        #{buyerFixedCommission,jdbcType=DECIMAL},
+      </if>
+      <if test="seeCarTime != null" >
+        #{seeCarTime,jdbcType=VARCHAR},
+      </if>
+      <if test="seeCarAddr != null" >
+        #{seeCarAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="planStartTime != null" >
+        #{planStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="planEndTime != null" >
+        #{planEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="client != null" >
+        #{client,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionType != null" >
+        #{auctionType,jdbcType=BIT},
+      </if>
+      <if test="auctionVehicleOrder != null" >
+        #{auctionVehicleOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=BIT},
+      </if>
+      <if test="modelDesc != null" >
+        #{modelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleDesc != null" >
+        #{vehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionModel != null" >
+        #{auctionModel,jdbcType=BIT},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="maxBidPrice != null" >
+        #{maxBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="onlineEndTime != null" >
+        #{onlineEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latest != null" >
+        #{latest,jdbcType=BIT},
+      </if>
+      <if test="agentPrice != null" >
+        #{agentPrice,jdbcType=INTEGER},
+      </if>
+      <if test="avType != null" >
+        #{avType,jdbcType=BIT},
+      </if>
+      <if test="recommend != null" >
+        #{recommend,jdbcType=BIT},
+      </if>
+      <if test="activity != null" >
+        #{activity,jdbcType=BIT},
+      </if>
+      <if test="activityTitle != null" >
+        #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="finalBidStatus != null" >
+        #{finalBidStatus,jdbcType=BIT},
+      </if>
+      <if test="finalBidPrice != null" >
+        #{finalBidPrice,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.AuctionVehicleExample" >
+    select count(*) from auction_vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update auction_vehicle
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.avNo != null" >
+        av_no = #{record.avNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auctionId != null" >
+        auction_id = #{record.auctionId,jdbcType=INTEGER},
+      </if>
+      <if test="record.vehicleId != null" >
+        vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.reservePrice != null" >
+        reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.startPrice != null" >
+        start_price = #{record.startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.plusRange != null" >
+        plus_range = #{record.plusRange,jdbcType=SMALLINT},
+      </if>
+      <if test="record.displayReservePrice != null" >
+        is_display_reserve_price = #{record.displayReservePrice,jdbcType=BIT},
+      </if>
+      <if test="record.status != null" >
+        `status` = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.done != null" >
+        is_done = #{record.done,jdbcType=BIT},
+      </if>
+      <if test="record.createdBy != null" >
+        created_by = #{record.createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.createdTimestamp != null" >
+        created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.bidQuantity != null" >
+        bid_quantity = #{record.bidQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="record.commissionPercent != null" >
+        commission_percent = #{record.commissionPercent,jdbcType=DECIMAL},
+      </if>
+      <if test="record.licenseFee != null" >
+        license_fee = #{record.licenseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.exWarehouseFee != null" >
+        ex_warehouse_fee = #{record.exWarehouseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.parkingFee != null" >
+        parking_fee = #{record.parkingFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.trafficFee != null" >
+        traffic_fee = #{record.trafficFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.trafficViolationFee != null" >
+        traffic_violation_fee = #{record.trafficViolationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.clientCommissionRate != null" >
+        client_commission_rate = #{record.clientCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.clientFixedCommission != null" >
+        client_fixed_commission = #{record.clientFixedCommission,jdbcType=DECIMAL},
+      </if>
+      <if test="record.buyerCommissionRate != null" >
+        buyer_commission_rate = #{record.buyerCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.buyerFixedCommission != null" >
+        buyer_fixed_commission = #{record.buyerFixedCommission,jdbcType=DECIMAL},
+      </if>
+      <if test="record.seeCarTime != null" >
+        see_car_time = #{record.seeCarTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seeCarAddr != null" >
+        see_car_addr = #{record.seeCarAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.planStartTime != null" >
+        plan_start_time = #{record.planStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.planEndTime != null" >
+        plan_end_time = #{record.planEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.client != null" >
+        client = #{record.client,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auctionType != null" >
+        auction_type = #{record.auctionType,jdbcType=BIT},
+      </if>
+      <if test="record.auctionVehicleOrder != null" >
+        auction_vehicle_order = #{record.auctionVehicleOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="record.enable != null" >
+        is_enable = #{record.enable,jdbcType=BIT},
+      </if>
+      <if test="record.modelDesc != null" >
+        model_desc = #{record.modelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehicleDesc != null" >
+        vehicle_desc = #{record.vehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auctionModel != null" >
+        auction_model = #{record.auctionModel,jdbcType=BIT},
+      </if>
+      <if test="record.province != null" >
+        province = #{record.province,jdbcType=VARCHAR},
+      </if>
+      <if test="record.city != null" >
+        city = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.maxBidPrice != null" >
+        max_bid_price = #{record.maxBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.onlineEndTime != null" >
+        online_end_time = #{record.onlineEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endTime != null" >
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.latest != null" >
+        is_latest = #{record.latest,jdbcType=BIT},
+      </if>
+      <if test="record.agentPrice != null" >
+        agent_price = #{record.agentPrice,jdbcType=INTEGER},
+      </if>
+      <if test="record.avType != null" >
+        av_type = #{record.avType,jdbcType=BIT},
+      </if>
+      <if test="record.recommend != null" >
+        is_recommend = #{record.recommend,jdbcType=BIT},
+      </if>
+      <if test="record.activity != null" >
+        is_activity = #{record.activity,jdbcType=BIT},
+      </if>
+      <if test="record.activityTitle != null" >
+        activity_title = #{record.activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.finalBidStatus != null" >
+        final_bid_status = #{record.finalBidStatus,jdbcType=BIT},
+      </if>
+      <if test="record.finalBidPrice != null" >
+        final_bid_price = #{record.finalBidPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update auction_vehicle
+    set id = #{record.id,jdbcType=INTEGER},
+      av_no = #{record.avNo,jdbcType=VARCHAR},
+      auction_id = #{record.auctionId,jdbcType=INTEGER},
+      vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      start_price = #{record.startPrice,jdbcType=DECIMAL},
+      plus_range = #{record.plusRange,jdbcType=SMALLINT},
+      is_display_reserve_price = #{record.displayReservePrice,jdbcType=BIT},
+      `status` = #{record.status,jdbcType=BIT},
+      is_done = #{record.done,jdbcType=BIT},
+      created_by = #{record.createdBy,jdbcType=INTEGER},
+      created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      bid_quantity = #{record.bidQuantity,jdbcType=INTEGER},
+      commission_percent = #{record.commissionPercent,jdbcType=DECIMAL},
+      license_fee = #{record.licenseFee,jdbcType=DECIMAL},
+      ex_warehouse_fee = #{record.exWarehouseFee,jdbcType=DECIMAL},
+      parking_fee = #{record.parkingFee,jdbcType=DECIMAL},
+      traffic_fee = #{record.trafficFee,jdbcType=DECIMAL},
+      traffic_violation_fee = #{record.trafficViolationFee,jdbcType=DECIMAL},
+      client_commission_rate = #{record.clientCommissionRate,jdbcType=DECIMAL},
+      client_fixed_commission = #{record.clientFixedCommission,jdbcType=DECIMAL},
+      buyer_commission_rate = #{record.buyerCommissionRate,jdbcType=DECIMAL},
+      buyer_fixed_commission = #{record.buyerFixedCommission,jdbcType=DECIMAL},
+      see_car_time = #{record.seeCarTime,jdbcType=VARCHAR},
+      see_car_addr = #{record.seeCarAddr,jdbcType=VARCHAR},
+      plan_start_time = #{record.planStartTime,jdbcType=TIMESTAMP},
+      plan_end_time = #{record.planEndTime,jdbcType=TIMESTAMP},
+      client = #{record.client,jdbcType=VARCHAR},
+      auction_type = #{record.auctionType,jdbcType=BIT},
+      auction_vehicle_order = #{record.auctionVehicleOrder,jdbcType=SMALLINT},
+      is_enable = #{record.enable,jdbcType=BIT},
+      model_desc = #{record.modelDesc,jdbcType=VARCHAR},
+      vehicle_desc = #{record.vehicleDesc,jdbcType=VARCHAR},
+      auction_model = #{record.auctionModel,jdbcType=BIT},
+      province = #{record.province,jdbcType=VARCHAR},
+      city = #{record.city,jdbcType=VARCHAR},
+      max_bid_price = #{record.maxBidPrice,jdbcType=DECIMAL},
+      online_end_time = #{record.onlineEndTime,jdbcType=TIMESTAMP},
+      end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      is_latest = #{record.latest,jdbcType=BIT},
+      agent_price = #{record.agentPrice,jdbcType=INTEGER},
+      av_type = #{record.avType,jdbcType=BIT},
+      is_recommend = #{record.recommend,jdbcType=BIT},
+      is_activity = #{record.activity,jdbcType=BIT},
+      activity_title = #{record.activityTitle,jdbcType=VARCHAR},
+      final_bid_status = #{record.finalBidStatus,jdbcType=BIT},
+      final_bid_price = #{record.finalBidPrice,jdbcType=DECIMAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+    update auction_vehicle
+    <set >
+      <if test="avNo != null" >
+        av_no = #{avNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionId != null" >
+        auction_id = #{auctionId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="startPrice != null" >
+        start_price = #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="plusRange != null" >
+        plus_range = #{plusRange,jdbcType=SMALLINT},
+      </if>
+      <if test="displayReservePrice != null" >
+        is_display_reserve_price = #{displayReservePrice,jdbcType=BIT},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=BIT},
+      </if>
+      <if test="done != null" >
+        is_done = #{done,jdbcType=BIT},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bidQuantity != null" >
+        bid_quantity = #{bidQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="commissionPercent != null" >
+        commission_percent = #{commissionPercent,jdbcType=DECIMAL},
+      </if>
+      <if test="licenseFee != null" >
+        license_fee = #{licenseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="exWarehouseFee != null" >
+        ex_warehouse_fee = #{exWarehouseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="parkingFee != null" >
+        parking_fee = #{parkingFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficFee != null" >
+        traffic_fee = #{trafficFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficViolationFee != null" >
+        traffic_violation_fee = #{trafficViolationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="clientCommissionRate != null" >
+        client_commission_rate = #{clientCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="clientFixedCommission != null" >
+        client_fixed_commission = #{clientFixedCommission,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerCommissionRate != null" >
+        buyer_commission_rate = #{buyerCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerFixedCommission != null" >
+        buyer_fixed_commission = #{buyerFixedCommission,jdbcType=DECIMAL},
+      </if>
+      <if test="seeCarTime != null" >
+        see_car_time = #{seeCarTime,jdbcType=VARCHAR},
+      </if>
+      <if test="seeCarAddr != null" >
+        see_car_addr = #{seeCarAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="planStartTime != null" >
+        plan_start_time = #{planStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="planEndTime != null" >
+        plan_end_time = #{planEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="client != null" >
+        client = #{client,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionType != null" >
+        auction_type = #{auctionType,jdbcType=BIT},
+      </if>
+      <if test="auctionVehicleOrder != null" >
+        auction_vehicle_order = #{auctionVehicleOrder,jdbcType=SMALLINT},
+      </if>
+      <if test="enable != null" >
+        is_enable = #{enable,jdbcType=BIT},
+      </if>
+      <if test="modelDesc != null" >
+        model_desc = #{modelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleDesc != null" >
+        vehicle_desc = #{vehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionModel != null" >
+        auction_model = #{auctionModel,jdbcType=BIT},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="maxBidPrice != null" >
+        max_bid_price = #{maxBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="onlineEndTime != null" >
+        online_end_time = #{onlineEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latest != null" >
+        is_latest = #{latest,jdbcType=BIT},
+      </if>
+      <if test="agentPrice != null" >
+        agent_price = #{agentPrice,jdbcType=INTEGER},
+      </if>
+      <if test="avType != null" >
+        av_type = #{avType,jdbcType=BIT},
+      </if>
+      <if test="recommend != null" >
+        is_recommend = #{recommend,jdbcType=BIT},
+      </if>
+      <if test="activity != null" >
+        is_activity = #{activity,jdbcType=BIT},
+      </if>
+      <if test="activityTitle != null" >
+        activity_title = #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="finalBidStatus != null" >
+        final_bid_status = #{finalBidStatus,jdbcType=BIT},
+      </if>
+      <if test="finalBidPrice != null" >
+        final_bid_price = #{finalBidPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+    update auction_vehicle
+    set av_no = #{avNo,jdbcType=VARCHAR},
+      auction_id = #{auctionId,jdbcType=INTEGER},
+      vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      start_price = #{startPrice,jdbcType=DECIMAL},
+      plus_range = #{plusRange,jdbcType=SMALLINT},
+      is_display_reserve_price = #{displayReservePrice,jdbcType=BIT},
+      `status` = #{status,jdbcType=BIT},
+      is_done = #{done,jdbcType=BIT},
+      created_by = #{createdBy,jdbcType=INTEGER},
+      created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      bid_quantity = #{bidQuantity,jdbcType=INTEGER},
+      commission_percent = #{commissionPercent,jdbcType=DECIMAL},
+      license_fee = #{licenseFee,jdbcType=DECIMAL},
+      ex_warehouse_fee = #{exWarehouseFee,jdbcType=DECIMAL},
+      parking_fee = #{parkingFee,jdbcType=DECIMAL},
+      traffic_fee = #{trafficFee,jdbcType=DECIMAL},
+      traffic_violation_fee = #{trafficViolationFee,jdbcType=DECIMAL},
+      client_commission_rate = #{clientCommissionRate,jdbcType=DECIMAL},
+      client_fixed_commission = #{clientFixedCommission,jdbcType=DECIMAL},
+      buyer_commission_rate = #{buyerCommissionRate,jdbcType=DECIMAL},
+      buyer_fixed_commission = #{buyerFixedCommission,jdbcType=DECIMAL},
+      see_car_time = #{seeCarTime,jdbcType=VARCHAR},
+      see_car_addr = #{seeCarAddr,jdbcType=VARCHAR},
+      plan_start_time = #{planStartTime,jdbcType=TIMESTAMP},
+      plan_end_time = #{planEndTime,jdbcType=TIMESTAMP},
+      client = #{client,jdbcType=VARCHAR},
+      auction_type = #{auctionType,jdbcType=BIT},
+      auction_vehicle_order = #{auctionVehicleOrder,jdbcType=SMALLINT},
+      is_enable = #{enable,jdbcType=BIT},
+      model_desc = #{modelDesc,jdbcType=VARCHAR},
+      vehicle_desc = #{vehicleDesc,jdbcType=VARCHAR},
+      auction_model = #{auctionModel,jdbcType=BIT},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      max_bid_price = #{maxBidPrice,jdbcType=DECIMAL},
+      online_end_time = #{onlineEndTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      is_latest = #{latest,jdbcType=BIT},
+      agent_price = #{agentPrice,jdbcType=INTEGER},
+      av_type = #{avType,jdbcType=BIT},
+      is_recommend = #{recommend,jdbcType=BIT},
+      is_activity = #{activity,jdbcType=BIT},
+      activity_title = #{activityTitle,jdbcType=VARCHAR},
+      final_bid_status = #{finalBidStatus,jdbcType=BIT},
+      final_bid_price = #{finalBidPrice,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

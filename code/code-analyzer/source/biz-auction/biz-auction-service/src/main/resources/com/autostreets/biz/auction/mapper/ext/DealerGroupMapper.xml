@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.DealerGroupMapper" >
+	
+	<sql id="PageWhere">
+		<where>
+			and del_flag = 0
+			<if test="orgId != null">
+				and org_id = #{orgId,jdbcType=INTEGER}
+			</if>
+			<if test="name != null and name != ''">
+				and name = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="groupNoOrName != null and groupNoOrName != ''">
+				and (
+					name like concat('%',#{groupNoOrName,jdbcType=VARCHAR},'%')
+					or
+					group_no = #{groupNoOrName,jdbcType=INTEGER}
+				)
+			</if>				
+		</where>
+	</sql>
+	
+	<select id="selectGroupList" parameterType="com.autostreets.biz.auction.model.DealerGroup" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from dealer_group
+		<include refid="PageWhere"/>
+		order by group_no desc
+		limit #{pagination.begin},#{pagination.length}
+	</select>
+	<select id="countGroups" parameterType="com.autostreets.biz.auction.model.DealerGroup" resultType="java.lang.Integer">
+		select count(*) from dealer_group
+		<include refid="PageWhere"/>
+	</select>
+	<select id="selectNextGroupNo" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select IFNULL(max(group_no),0)+1 from dealer_group where org_id = #{orgId,jdbcType=INTEGER}
+	</select>
+</mapper>

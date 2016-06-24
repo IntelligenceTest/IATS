@@ -1,0 +1,858 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.DealerPurchaseVehicleMapper">
+	<select id="selectByPage" resultMap="BaseResultMap"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select
+		id,cust_name,cust_intention,vin_code,brand,series,model,license_code,display_mileage,vehicle_ppe,user_ppe,
+		produced_years,register_license_years,recommender,vehicle_appraiser,remark,org_id,vehicle_id,final_price
+		from dealer_purchase_vehicle pv
+		<include refid="whereClause" />
+		order by modify_time desc
+		<if test="pagination != null and pagination.begin >= 0">
+			limit #{pagination.begin},#{pagination.length}
+		</if>
+	</select>
+	<select id="countByPage" resultType="java.lang.Integer"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select count(*)
+		from dealer_purchase_vehicle pv
+		<include refid="whereClause" />
+	</select>
+	<sql id="whereClause">
+		<where>
+		    and pv.cust_intention != 4
+			<if test="brand != null and brand != ''">
+				and pv.brand = #{brand}
+			</if>
+			<if test="custIntention != null and custIntention != ''">
+				and pv.cust_intention = #{custIntention}
+			</if>
+			<if test="custName != null and custName != ''">
+				and pv.cust_name like concat('%',#{custName},'%')
+			</if>
+			<if test="vinCode !=null and vinCode !='' ">
+				and pv.vin_code like concat('%',#{vinCode},'%')
+			</if>
+			<if test="licenseCode !=null and licenseCode !='' ">
+				and pv.license_code like concat('%',#{licenseCode},'%')
+			</if>
+			<if test="recommender != null and recommender != ''">
+				and pv.recommender like concat('%',#{recommender},'%')
+			</if>
+			<if test="vehicleAppraiser != null and vehicleAppraiser != ''">
+				and pv.vehicle_appraiser like
+				concat('%',#{vehicleAppraiser},'%')
+			</if>
+			<if test="startCreateTime != null">
+				<![CDATA[
+					and pv.create_time >= #{startCreateTime}
+				]]>
+			</if>
+			<if test="endCreateTime != null">
+				<![CDATA[
+					and pv.create_time <= #{endCreateTime}
+				]]>
+			</if>
+			<if test="startContractTime != null">
+				<![CDATA[
+					and pv.contract_time >= #{startContractTime}
+				]]>
+			</if>
+			<if test="endContractTime != null">
+				<![CDATA[
+					and pv.contract_time <= #{endContractTime}
+				]]>
+			</if>
+
+			<!-- 商家后台权限控制 edit by zjz at 2015-11-24 15:38:10 -->
+			<if test="orgIds != null  and orgIds.size() > 0">
+				and pv.org_id in
+				<foreach item="item" index="index" collection="orgIds" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</sql>
+	<select id="selectContractPurchaseVCount" resultType="java.lang.Integer"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		SELECT
+		count(*)
+		FROM
+		(
+		select recommender,
+		sum(vv.seecar_person)seecar_person from(
+		SELECT
+		recommender,
+		count(*)
+		seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.create_time IS
+		NOT NULL
+		and dpv.recommender !=''
+		<!-- 商家后台权限控制 edit by zjz at 2015-11-24 15:38:10 -->
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				 <![CDATA[
+					and dpv.create_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+			 	<![CDATA[
+					and dpv.create_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.recommender
+		union
+		SELECT
+		dpv.recommender,
+		0 seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.recommender )vv group by vv.recommender
+		) aa
+		LEFT JOIN (
+		SELECT
+		dpv.recommender,
+		count(*) contract_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.recommender
+		) bb ON aa.recommender = bb.recommender
+	</select>
+
+	<select id="selectContractPurchaseV"
+		resultType="com.autostreets.biz.auction.model.DealerPurchaseVehicle"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		SELECT
+		aa.recommender purchaseRecommender,
+		IFNULL(bb.contract_person, 0)
+		contractCount,
+		aa.seecar_person recommendVehicleCount
+		FROM
+		(
+		select
+		recommender, sum(vv.seecar_person)seecar_person from(
+		SELECT
+		recommender,
+		count(*) seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.create_time IS NOT NULL
+		and dpv.recommender !=''
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				 <![CDATA[
+					and dpv.create_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+			 	<![CDATA[
+					and dpv.create_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.recommender
+		union
+		SELECT
+		dpv.recommender,
+		0 seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		group by dpv.recommender )vv group by vv.recommender
+		) aa
+		LEFT JOIN (
+		SELECT
+		dpv.recommender,
+		count(*) contract_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.recommender
+		) bb ON aa.recommender = bb.recommender
+		<if test="orderByClause != null and orderByClause != '' ">
+			ORDER BY ${orderByClause}
+		</if>
+		<if test="pagination != null and pagination.begin >= 0">
+			limit #{pagination.begin}, #{pagination.length}
+		</if>
+	</select>
+
+	<select id="selectContractPurchaseByAppraiser"
+		resultType="com.autostreets.biz.auction.model.DealerPurchaseVehicle"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		SELECT
+		aa.vehicleAppraiser vehicleAppraiser,
+		IFNULL(bb.contract_person,
+		0) contractCount,
+		aa.seecar_person recommendVehicleCount
+		FROM
+		(
+		select
+		vehicleAppraiser, sum(vv.seecar_person)seecar_person from(
+		SELECT
+		dpv.vehicle_appraiser vehicleAppraiser,
+		count(*) seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.create_time IS NOT NULL
+		and
+		dpv.vehicle_appraiser !=''
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				 <![CDATA[
+					and dpv.create_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+			 	<![CDATA[
+					and dpv.create_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.vehicle_appraiser
+		union
+		SELECT
+		dpv.vehicle_appraiser
+		vehicleAppraiser,
+		0 seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY dpv.vehicle_appraiser)vv group by vv.vehicleAppraiser
+		) aa
+		LEFT JOIN (
+		SELECT
+		dpv.vehicle_appraiser vehicleAppraiser,
+		count(*)
+		contract_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time
+		IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY dpv.vehicle_appraiser
+		) bb ON aa.vehicleAppraiser =
+		bb.vehicleAppraiser
+		<if test="orderByClause != null and orderByClause != '' ">
+			ORDER BY ${orderByClause}
+		</if>
+		<if test="pagination != null and pagination.begin >= 0">
+			limit #{pagination.begin}, #{pagination.length}
+		</if>
+	</select>
+	<select id="selectContractPurchaseByAppraiserCount" resultType="java.lang.Integer"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		SELECT
+		count(*)
+		FROM
+		(
+		select vehicleAppraiser,
+		sum(vv.seecar_person)seecar_person from(
+		SELECT
+		dpv.vehicle_appraiser
+		vehicleAppraiser,
+		count(*) seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.create_time IS NOT NULL
+		and dpv.vehicle_appraiser !=''
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				 <![CDATA[
+					and dpv.create_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+			 	<![CDATA[
+					and dpv.create_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.vehicle_appraiser
+		union
+		SELECT
+		dpv.vehicle_appraiser
+		vehicleAppraiser,
+		0 seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY dpv.vehicle_appraiser) vv group by vv.vehicleAppraiser
+		) aa
+		LEFT JOIN (
+		SELECT
+		dpv.vehicle_appraiser vehicleAppraiser,
+		count(*)
+		contract_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time
+		IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY dpv.vehicle_appraiser
+		) bb ON aa.vehicleAppraiser =
+		bb.vehicleAppraiser
+	</select>
+
+	<select id="selectByVehicleAppraiser"
+		resultType="com.autostreets.biz.auction.model.DealerPurchaseVehicle"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select sum(contractCount) contractSum, sum(recommendVehicleCount)
+		recommendVehicleSum from(
+		SELECT
+		aa.vehicleAppraiser vehicleAppraiser,
+		IFNULL(bb.contract_person, 0) contractCount,
+		aa.seecar_person
+		recommendVehicleCount
+		FROM
+		(
+		select vehicleAppraiser,
+		sum(vv.seecar_person)seecar_person from(
+		SELECT
+		dpv.vehicle_appraiser
+		vehicleAppraiser,
+		count(*) seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.create_time IS NOT NULL
+		and dpv.vehicle_appraiser !=''
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				 <![CDATA[
+					and dpv.create_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+			 	<![CDATA[
+					and dpv.create_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.vehicle_appraiser
+		union
+		SELECT
+		dpv.vehicle_appraiser
+		vehicleAppraiser,
+		0 seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY dpv.vehicle_appraiser)vv group by vv.vehicleAppraiser
+		) aa
+		LEFT JOIN (
+		SELECT
+		dpv.vehicle_appraiser vehicleAppraiser,
+		count(*)
+		contract_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time
+		IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY dpv.vehicle_appraiser
+		) bb ON aa.vehicleAppraiser =
+		bb.vehicleAppraiser)a
+
+	</select>
+
+	<select id="selectByRecommender"
+		resultType="com.autostreets.biz.auction.model.DealerPurchaseVehicle"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select sum(contractCount)
+		contractRecommenderCount,sum(recommendVehicleCount) recommendRecCount
+		from(
+		SELECT
+		aa.recommender purchaseRecommender,
+		IFNULL(bb.contract_person, 0) contractCount,
+		aa.seecar_person
+		recommendVehicleCount
+		FROM
+		(
+		select recommender,
+		sum(vv.seecar_person)seecar_person from(
+		SELECT
+		recommender,
+		count(*)
+		seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.create_time IS
+		NOT NULL
+		and dpv.recommender !=''
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				 <![CDATA[
+					and dpv.create_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+			 	<![CDATA[
+					and dpv.create_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.recommender
+		union
+		SELECT
+		dpv.recommender,
+		0 seecar_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		group by dpv.recommender )vv group by vv.recommender
+		) aa
+		LEFT JOIN (
+		SELECT
+		dpv.recommender,
+		count(*) contract_person
+		FROM
+		dealer_purchase_vehicle dpv
+		WHERE
+		dpv.contract_time IS NOT NULL
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and dpv.org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime != null">
+				<![CDATA[
+					and dpv.contract_time >= #{startTime}
+				]]>
+		</if>
+		<if test="endTime != null">
+				<![CDATA[
+					and dpv.contract_time <= #{endTime}
+				]]>
+		</if>
+		GROUP BY
+		dpv.recommender
+		) bb ON aa.recommender = bb.recommender)a
+	</select>
+	<select id="selectByOnSaleVehicle"
+		resultType="com.autostreets.biz.auction.model.DealerPurchaseVehicle"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select pv.id,pv.license_code licenseCode,pv.vin_code
+		vinCode,pv.brand,pv.series,pv.model,pv.display_mileage
+		displayMileage,pv.produced_years
+		producedYears,pv.register_license_years
+		registerLicenseYears,pv.final_price finalPrice,
+		pv.start_price startPrice,pv.reserve_price reservePrice,pv.fixed_price fixedPrice,
+		pv.recommender recommender, pv.vehicle_appraiser vehicleAppraiser,
+		pv.contract_time contractTime,pv.vehicle_id vehicleId,
+		pv.create_time createTime,
+		pv.cust_intention custIntention,
+		(SELECT
+		pal.process_instance_id from process_apply_log pal where
+		pal.key_value
+		= pv.id AND pal.is_enable= 1  ORDER BY pal.create_time desc limit 1)
+		'processInstanceId',
+		pv.is_need_approve needApprove,
+		(select sum(price) from
+		dealer_purchase_cost ct where ct.purchase_id = pv.id
+		and del_flag = 0)
+		'totalPrice',pv.sale_channel
+		saleChannel,pv.channel_remark channelRemark,
+		pv.final_sale_price finalSalePrice,
+		pv.deal_time dealTime,
+		pv.sale_type saleType,
+		dm.name dealerName,
+		dm.cellphone dealerPhone
+		from dealer_purchase_vehicle pv left join dealer_member dm on
+		pv.dealer_member_id=dm.id
+		<include refid="whereClause2" />
+		order by pv.modify_time desc
+		<if test="pagination != null and pagination.begin >= 0">
+			limit #{pagination.begin},#{pagination.length}
+		</if>
+	</select>
+
+	<select id="countByOnSaleVehicle" resultType="java.lang.Integer"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select count(*)
+		from dealer_purchase_vehicle pv
+		<include refid="whereClause2" />
+	</select>
+	<sql id="whereClause2">
+		<where>
+			<if test="brand != null and brand != ''">
+				and pv.brand = #{brand}
+			</if>
+			<if test="saleStatus != null">
+				and pv.sale_status = #{saleStatus}
+			</if>
+			<if test="custIntention != null">
+				and pv.cust_intention = #{custIntention}
+			</if>
+			<if test="custName != null and custName != ''">
+				and pv.cust_name like concat('%',#{custName},'%')
+			</if>
+			<if test="vinCode !=null and vinCode !='' ">
+				and pv.vin_code like concat('%',#{vinCode},'%')
+			</if>
+			<if test="licenseCode !=null and licenseCode !='' ">
+				and pv.license_code like concat('%',#{licenseCode},'%')
+			</if>
+			<if test="recommender != null and recommender != ''">
+				and pv.recommender like concat('%',#{recommender},'%')
+			</if>
+			<if test="vehicleAppraiser != null and vehicleAppraiser != ''">
+				and pv.vehicle_appraiser like
+				concat('%',#{vehicleAppraiser},'%')
+			</if>
+			<if test="startCreateTime != null">
+				<![CDATA[
+					and pv.create_time >= #{startCreateTime}
+				]]>
+			</if>
+			<if test="endCreateTime != null">
+				<![CDATA[
+					and pv.create_time <= #{endCreateTime}
+				]]>
+			</if>
+			<if test="startContractTime != null">
+				<![CDATA[
+					and pv.contract_time >= #{startContractTime}
+				]]>
+			</if>
+			<if test="endContractTime != null">
+				<![CDATA[
+					and pv.contract_time <= #{endContractTime}
+				]]>
+			</if>
+			<!-- 商家后台权限控制 edit by zjz at 2015-11-24 15:38:10 -->
+			<if test="orgIds != null  and orgIds.size() > 0">
+				and pv.org_id in
+				<foreach item="item" index="index" collection="orgIds" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="startDealTime != null">
+				<![CDATA[
+					and pv.deal_time >= #{startDealTime}
+				]]>
+			</if>
+			<if test="endDealTime != null">
+				<![CDATA[
+					and pv.deal_time <= #{endDealTime}
+				]]>
+			</if>
+		</where>
+	</sql>
+	
+	<update id="updateVehicleSaleStatus" parameterType="java.util.Map">
+		update  dealer_purchase_vehicle set sale_status = 1
+		where id = (
+		select key_value from  process_apply_log pa
+		where   pa.process_type = #{processType} and pa.process_instance_id = #{processInstanceId} order by pa.create_time desc limit 1)
+	</update>
+	
+	<select id="selectAllVehicle" resultMap="BaseResultMap"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select id,cust_name,cust_intention,vin_code,brand,series,model,license_code,display_mileage,vehicle_ppe,user_ppe,
+		recommender,vehicle_appraiser,org_id,vehicle_id,final_price,sale_status,sale_type,sale_channel,final_sale_price
+		from dealer_purchase_vehicle pv
+		<include refid="whereClause3" />
+		order by modify_time desc
+		<if test="pagination != null and pagination.begin >= 0">
+			limit #{pagination.begin},#{pagination.length}
+		</if>
+	</select>
+	<select id="selectAllVehicleCount" resultType="java.lang.Integer"
+		parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle">
+		select count(*)
+		from dealer_purchase_vehicle pv
+		<include refid="whereClause3" />
+		order by modify_time desc
+		<if test="pagination != null and pagination.begin >= 0">
+			limit #{pagination.begin},#{pagination.length}
+		</if>
+	</select>
+	
+	<sql id="whereClause3">
+		<where>
+			<if test="brand != null and brand != ''">
+				and pv.brand = #{brand}
+			</if>
+		    <if test="custName != null and custName != ''">
+				and pv.cust_name like concat('%',#{custName},'%')
+			</if>
+			<if test="saleStatus != null">
+				and pv.sale_status = #{saleStatus}
+			</if>
+			<if test="saleType != null">
+				and pv.sale_type = #{saleType}
+			</if>
+			<if test="recommender != null and recommender != ''">
+				and pv.recommender like concat('%',#{recommender},'%')
+			</if>
+			<if test="vehicleAppraiser != null and vehicleAppraiser != ''">
+				and pv.vehicle_appraiser like
+				concat('%',#{vehicleAppraiser},'%')
+			</if>
+			<if test="vinCode !=null ">
+				and pv.vin_code like concat('%',#{vinCode},'%')
+			</if>
+				<if test="saleChannel != null">
+				and pv.sale_channel = #{saleChannel}
+			</if>
+			<!-- 商家后台权限控制 edit by zjz at 2015-11-24 15:38:10 -->
+			<if test="orgIds != null  and orgIds.size() > 0">
+				and pv.org_id in
+				<foreach item="item" index="index" collection="orgIds" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</sql>
+</mapper>

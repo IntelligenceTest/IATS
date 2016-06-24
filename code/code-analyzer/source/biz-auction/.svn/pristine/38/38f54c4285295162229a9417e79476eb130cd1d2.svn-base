@@ -1,0 +1,4 @@
+static.resources.url=${static.resources.url}
+website.resources.url=${website.resources.url}
+dfs.http.server=${dfs.http.server}
+cache.servers=${cache.servers}

@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.DealerPurchaseVehicleMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.DealerPurchaseVehicle" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+    <result column="cust_name" property="custName" jdbcType="VARCHAR" />
+    <result column="cust_phone" property="custPhone" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="series" property="series" jdbcType="VARCHAR" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+    <result column="display_mileage" property="displayMileage" jdbcType="DECIMAL" />
+    <result column="produced_years" property="producedYears" jdbcType="CHAR" />
+    <result column="register_license_years" property="registerLicenseYears" jdbcType="CHAR" />
+    <result column="vehicle_appraiser" property="vehicleAppraiser" jdbcType="VARCHAR" />
+    <result column="recommender" property="recommender" jdbcType="VARCHAR" />
+    <result column="vehicle_ppe" property="vehiclePpe" jdbcType="BIT" />
+    <result column="user_ppe" property="userPpe" jdbcType="BIT" />
+    <result column="cust_intention" property="custIntention" jdbcType="BIT" />
+    <result column="first_price" property="firstPrice" jdbcType="DECIMAL" />
+    <result column="final_price" property="finalPrice" jdbcType="DECIMAL" />
+    <result column="visit_time" property="visitTime" jdbcType="TIMESTAMP" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="contract_time" property="contractTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="del_flag" property="delFlag" jdbcType="BIT" />
+    <result column="sale_type" property="saleType" jdbcType="BIT" />
+    <result column="sale_channel" property="saleChannel" jdbcType="BIT" />
+    <result column="channel_remark" property="channelRemark" jdbcType="VARCHAR" />
+    <result column="av_type" property="avType" jdbcType="BIT" />
+    <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+    <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+    <result column="fixed_price" property="fixedPrice" jdbcType="DECIMAL" />
+    <result column="is_need_approve" property="needApprove" jdbcType="BIT" />
+    <result column="sale_status" property="saleStatus" jdbcType="BIT" />
+    <result column="final_sale_price" property="finalSalePrice" jdbcType="DECIMAL" />
+    <result column="dealer_member_id" property="dealerMemberId" jdbcType="INTEGER" />
+    <result column="deal_time" property="dealTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, vin_code, cust_name, cust_phone, brand, series, model, license_code, display_mileage, 
+    produced_years, register_license_years, vehicle_appraiser, recommender, vehicle_ppe, 
+    user_ppe, cust_intention, first_price, final_price, visit_time, vehicle_id, org_id, 
+    pic_url, remark, contract_time, create_time, modify_time, del_flag, sale_type, sale_channel, 
+    channel_remark, av_type, start_price, reserve_price, fixed_price, is_need_approve, 
+    sale_status, final_sale_price, dealer_member_id, deal_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dealer_purchase_vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null" >
+      limit #{pagination.begin} , #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dealer_purchase_vehicle
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealer_purchase_vehicle
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicleExample" >
+    delete from dealer_purchase_vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle" >
+    insert into dealer_purchase_vehicle (id, vin_code, cust_name, 
+      cust_phone, brand, series, 
+      model, license_code, display_mileage, 
+      produced_years, register_license_years, vehicle_appraiser, 
+      recommender, vehicle_ppe, user_ppe, 
+      cust_intention, first_price, final_price, 
+      visit_time, vehicle_id, org_id, 
+      pic_url, remark, contract_time, 
+      create_time, modify_time, del_flag, 
+      sale_type, sale_channel, channel_remark, 
+      av_type, start_price, reserve_price, 
+      fixed_price, is_need_approve, sale_status, 
+      final_sale_price, dealer_member_id, deal_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{vinCode,jdbcType=VARCHAR}, #{custName,jdbcType=VARCHAR}, 
+      #{custPhone,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, #{series,jdbcType=VARCHAR}, 
+      #{model,jdbcType=VARCHAR}, #{licenseCode,jdbcType=VARCHAR}, #{displayMileage,jdbcType=DECIMAL}, 
+      #{producedYears,jdbcType=CHAR}, #{registerLicenseYears,jdbcType=CHAR}, #{vehicleAppraiser,jdbcType=VARCHAR}, 
+      #{recommender,jdbcType=VARCHAR}, #{vehiclePpe,jdbcType=BIT}, #{userPpe,jdbcType=BIT}, 
+      #{custIntention,jdbcType=BIT}, #{firstPrice,jdbcType=DECIMAL}, #{finalPrice,jdbcType=DECIMAL}, 
+      #{visitTime,jdbcType=TIMESTAMP}, #{vehicleId,jdbcType=INTEGER}, #{orgId,jdbcType=INTEGER}, 
+      #{picUrl,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{contractTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=BIT}, 
+      #{saleType,jdbcType=BIT}, #{saleChannel,jdbcType=BIT}, #{channelRemark,jdbcType=VARCHAR}, 
+      #{avType,jdbcType=BIT}, #{startPrice,jdbcType=DECIMAL}, #{reservePrice,jdbcType=DECIMAL}, 
+      #{fixedPrice,jdbcType=DECIMAL}, #{needApprove,jdbcType=BIT}, #{saleStatus,jdbcType=BIT}, 
+      #{finalSalePrice,jdbcType=DECIMAL}, #{dealerMemberId,jdbcType=INTEGER}, #{dealTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle" >
+    insert into dealer_purchase_vehicle
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="vinCode != null" >
+        vin_code,
+      </if>
+      <if test="custName != null" >
+        cust_name,
+      </if>
+      <if test="custPhone != null" >
+        cust_phone,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="series != null" >
+        series,
+      </if>
+      <if test="model != null" >
+        model,
+      </if>
+      <if test="licenseCode != null" >
+        license_code,
+      </if>
+      <if test="displayMileage != null" >
+        display_mileage,
+      </if>
+      <if test="producedYears != null" >
+        produced_years,
+      </if>
+      <if test="registerLicenseYears != null" >
+        register_license_years,
+      </if>
+      <if test="vehicleAppraiser != null" >
+        vehicle_appraiser,
+      </if>
+      <if test="recommender != null" >
+        recommender,
+      </if>
+      <if test="vehiclePpe != null" >
+        vehicle_ppe,
+      </if>
+      <if test="userPpe != null" >
+        user_ppe,
+      </if>
+      <if test="custIntention != null" >
+        cust_intention,
+      </if>
+      <if test="firstPrice != null" >
+        first_price,
+      </if>
+      <if test="finalPrice != null" >
+        final_price,
+      </if>
+      <if test="visitTime != null" >
+        visit_time,
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="picUrl != null" >
+        pic_url,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="contractTime != null" >
+        contract_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="saleType != null" >
+        sale_type,
+      </if>
+      <if test="saleChannel != null" >
+        sale_channel,
+      </if>
+      <if test="channelRemark != null" >
+        channel_remark,
+      </if>
+      <if test="avType != null" >
+        av_type,
+      </if>
+      <if test="startPrice != null" >
+        start_price,
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price,
+      </if>
+      <if test="fixedPrice != null" >
+        fixed_price,
+      </if>
+      <if test="needApprove != null" >
+        is_need_approve,
+      </if>
+      <if test="saleStatus != null" >
+        sale_status,
+      </if>
+      <if test="finalSalePrice != null" >
+        final_sale_price,
+      </if>
+      <if test="dealerMemberId != null" >
+        dealer_member_id,
+      </if>
+      <if test="dealTime != null" >
+        deal_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="vinCode != null" >
+        #{vinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="custName != null" >
+        #{custName,jdbcType=VARCHAR},
+      </if>
+      <if test="custPhone != null" >
+        #{custPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="series != null" >
+        #{series,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseCode != null" >
+        #{licenseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="displayMileage != null" >
+        #{displayMileage,jdbcType=DECIMAL},
+      </if>
+      <if test="producedYears != null" >
+        #{producedYears,jdbcType=CHAR},
+      </if>
+      <if test="registerLicenseYears != null" >
+        #{registerLicenseYears,jdbcType=CHAR},
+      </if>
+      <if test="vehicleAppraiser != null" >
+        #{vehicleAppraiser,jdbcType=VARCHAR},
+      </if>
+      <if test="recommender != null" >
+        #{recommender,jdbcType=VARCHAR},
+      </if>
+      <if test="vehiclePpe != null" >
+        #{vehiclePpe,jdbcType=BIT},
+      </if>
+      <if test="userPpe != null" >
+        #{userPpe,jdbcType=BIT},
+      </if>
+      <if test="custIntention != null" >
+        #{custIntention,jdbcType=BIT},
+      </if>
+      <if test="firstPrice != null" >
+        #{firstPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="finalPrice != null" >
+        #{finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="visitTime != null" >
+        #{visitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="vehicleId != null" >
+        #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="picUrl != null" >
+        #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="contractTime != null" >
+        #{contractTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=BIT},
+      </if>
+      <if test="saleType != null" >
+        #{saleType,jdbcType=BIT},
+      </if>
+      <if test="saleChannel != null" >
+        #{saleChannel,jdbcType=BIT},
+      </if>
+      <if test="channelRemark != null" >
+        #{channelRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="avType != null" >
+        #{avType,jdbcType=BIT},
+      </if>
+      <if test="startPrice != null" >
+        #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="fixedPrice != null" >
+        #{fixedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="needApprove != null" >
+        #{needApprove,jdbcType=BIT},
+      </if>
+      <if test="saleStatus != null" >
+        #{saleStatus,jdbcType=BIT},
+      </if>
+      <if test="finalSalePrice != null" >
+        #{finalSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealerMemberId != null" >
+        #{dealerMemberId,jdbcType=INTEGER},
+      </if>
+      <if test="dealTime != null" >
+        #{dealTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicleExample" >
+    select count(*) from dealer_purchase_vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealer_purchase_vehicle
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.vinCode != null" >
+        vin_code = #{record.vinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.custName != null" >
+        cust_name = #{record.custName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.custPhone != null" >
+        cust_phone = #{record.custPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.brand != null" >
+        brand = #{record.brand,jdbcType=VARCHAR},
+      </if>
+      <if test="record.series != null" >
+        series = #{record.series,jdbcType=VARCHAR},
+      </if>
+      <if test="record.model != null" >
+        model = #{record.model,jdbcType=VARCHAR},
+      </if>
+      <if test="record.licenseCode != null" >
+        license_code = #{record.licenseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayMileage != null" >
+        display_mileage = #{record.displayMileage,jdbcType=DECIMAL},
+      </if>
+      <if test="record.producedYears != null" >
+        produced_years = #{record.producedYears,jdbcType=CHAR},
+      </if>
+      <if test="record.registerLicenseYears != null" >
+        register_license_years = #{record.registerLicenseYears,jdbcType=CHAR},
+      </if>
+      <if test="record.vehicleAppraiser != null" >
+        vehicle_appraiser = #{record.vehicleAppraiser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.recommender != null" >
+        recommender = #{record.recommender,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehiclePpe != null" >
+        vehicle_ppe = #{record.vehiclePpe,jdbcType=BIT},
+      </if>
+      <if test="record.userPpe != null" >
+        user_ppe = #{record.userPpe,jdbcType=BIT},
+      </if>
+      <if test="record.custIntention != null" >
+        cust_intention = #{record.custIntention,jdbcType=BIT},
+      </if>
+      <if test="record.firstPrice != null" >
+        first_price = #{record.firstPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.finalPrice != null" >
+        final_price = #{record.finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.visitTime != null" >
+        visit_time = #{record.visitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.vehicleId != null" >
+        vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgId != null" >
+        org_id = #{record.orgId,jdbcType=INTEGER},
+      </if>
+      <if test="record.picUrl != null" >
+        pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contractTime != null" >
+        contract_time = #{record.contractTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modifyTime != null" >
+        modify_time = #{record.modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.delFlag != null" >
+        del_flag = #{record.delFlag,jdbcType=BIT},
+      </if>
+      <if test="record.saleType != null" >
+        sale_type = #{record.saleType,jdbcType=BIT},
+      </if>
+      <if test="record.saleChannel != null" >
+        sale_channel = #{record.saleChannel,jdbcType=BIT},
+      </if>
+      <if test="record.channelRemark != null" >
+        channel_remark = #{record.channelRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.avType != null" >
+        av_type = #{record.avType,jdbcType=BIT},
+      </if>
+      <if test="record.startPrice != null" >
+        start_price = #{record.startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.reservePrice != null" >
+        reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.fixedPrice != null" >
+        fixed_price = #{record.fixedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.needApprove != null" >
+        is_need_approve = #{record.needApprove,jdbcType=BIT},
+      </if>
+      <if test="record.saleStatus != null" >
+        sale_status = #{record.saleStatus,jdbcType=BIT},
+      </if>
+      <if test="record.finalSalePrice != null" >
+        final_sale_price = #{record.finalSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.dealerMemberId != null" >
+        dealer_member_id = #{record.dealerMemberId,jdbcType=INTEGER},
+      </if>
+      <if test="record.dealTime != null" >
+        deal_time = #{record.dealTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealer_purchase_vehicle
+    set id = #{record.id,jdbcType=INTEGER},
+      vin_code = #{record.vinCode,jdbcType=VARCHAR},
+      cust_name = #{record.custName,jdbcType=VARCHAR},
+      cust_phone = #{record.custPhone,jdbcType=VARCHAR},
+      brand = #{record.brand,jdbcType=VARCHAR},
+      series = #{record.series,jdbcType=VARCHAR},
+      model = #{record.model,jdbcType=VARCHAR},
+      license_code = #{record.licenseCode,jdbcType=VARCHAR},
+      display_mileage = #{record.displayMileage,jdbcType=DECIMAL},
+      produced_years = #{record.producedYears,jdbcType=CHAR},
+      register_license_years = #{record.registerLicenseYears,jdbcType=CHAR},
+      vehicle_appraiser = #{record.vehicleAppraiser,jdbcType=VARCHAR},
+      recommender = #{record.recommender,jdbcType=VARCHAR},
+      vehicle_ppe = #{record.vehiclePpe,jdbcType=BIT},
+      user_ppe = #{record.userPpe,jdbcType=BIT},
+      cust_intention = #{record.custIntention,jdbcType=BIT},
+      first_price = #{record.firstPrice,jdbcType=DECIMAL},
+      final_price = #{record.finalPrice,jdbcType=DECIMAL},
+      visit_time = #{record.visitTime,jdbcType=TIMESTAMP},
+      vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      org_id = #{record.orgId,jdbcType=INTEGER},
+      pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      contract_time = #{record.contractTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      modify_time = #{record.modifyTime,jdbcType=TIMESTAMP},
+      del_flag = #{record.delFlag,jdbcType=BIT},
+      sale_type = #{record.saleType,jdbcType=BIT},
+      sale_channel = #{record.saleChannel,jdbcType=BIT},
+      channel_remark = #{record.channelRemark,jdbcType=VARCHAR},
+      av_type = #{record.avType,jdbcType=BIT},
+      start_price = #{record.startPrice,jdbcType=DECIMAL},
+      reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      fixed_price = #{record.fixedPrice,jdbcType=DECIMAL},
+      is_need_approve = #{record.needApprove,jdbcType=BIT},
+      sale_status = #{record.saleStatus,jdbcType=BIT},
+      final_sale_price = #{record.finalSalePrice,jdbcType=DECIMAL},
+      dealer_member_id = #{record.dealerMemberId,jdbcType=INTEGER},
+      deal_time = #{record.dealTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle" >
+    update dealer_purchase_vehicle
+    <set >
+      <if test="vinCode != null" >
+        vin_code = #{vinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="custName != null" >
+        cust_name = #{custName,jdbcType=VARCHAR},
+      </if>
+      <if test="custPhone != null" >
+        cust_phone = #{custPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="series != null" >
+        series = #{series,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        model = #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseCode != null" >
+        license_code = #{licenseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="displayMileage != null" >
+        display_mileage = #{displayMileage,jdbcType=DECIMAL},
+      </if>
+      <if test="producedYears != null" >
+        produced_years = #{producedYears,jdbcType=CHAR},
+      </if>
+      <if test="registerLicenseYears != null" >
+        register_license_years = #{registerLicenseYears,jdbcType=CHAR},
+      </if>
+      <if test="vehicleAppraiser != null" >
+        vehicle_appraiser = #{vehicleAppraiser,jdbcType=VARCHAR},
+      </if>
+      <if test="recommender != null" >
+        recommender = #{recommender,jdbcType=VARCHAR},
+      </if>
+      <if test="vehiclePpe != null" >
+        vehicle_ppe = #{vehiclePpe,jdbcType=BIT},
+      </if>
+      <if test="userPpe != null" >
+        user_ppe = #{userPpe,jdbcType=BIT},
+      </if>
+      <if test="custIntention != null" >
+        cust_intention = #{custIntention,jdbcType=BIT},
+      </if>
+      <if test="firstPrice != null" >
+        first_price = #{firstPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="finalPrice != null" >
+        final_price = #{finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="visitTime != null" >
+        visit_time = #{visitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="picUrl != null" >
+        pic_url = #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="contractTime != null" >
+        contract_time = #{contractTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=BIT},
+      </if>
+      <if test="saleType != null" >
+        sale_type = #{saleType,jdbcType=BIT},
+      </if>
+      <if test="saleChannel != null" >
+        sale_channel = #{saleChannel,jdbcType=BIT},
+      </if>
+      <if test="channelRemark != null" >
+        channel_remark = #{channelRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="avType != null" >
+        av_type = #{avType,jdbcType=BIT},
+      </if>
+      <if test="startPrice != null" >
+        start_price = #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="fixedPrice != null" >
+        fixed_price = #{fixedPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="needApprove != null" >
+        is_need_approve = #{needApprove,jdbcType=BIT},
+      </if>
+      <if test="saleStatus != null" >
+        sale_status = #{saleStatus,jdbcType=BIT},
+      </if>
+      <if test="finalSalePrice != null" >
+        final_sale_price = #{finalSalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealerMemberId != null" >
+        dealer_member_id = #{dealerMemberId,jdbcType=INTEGER},
+      </if>
+      <if test="dealTime != null" >
+        deal_time = #{dealTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.DealerPurchaseVehicle" >
+    update dealer_purchase_vehicle
+    set vin_code = #{vinCode,jdbcType=VARCHAR},
+      cust_name = #{custName,jdbcType=VARCHAR},
+      cust_phone = #{custPhone,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      series = #{series,jdbcType=VARCHAR},
+      model = #{model,jdbcType=VARCHAR},
+      license_code = #{licenseCode,jdbcType=VARCHAR},
+      display_mileage = #{displayMileage,jdbcType=DECIMAL},
+      produced_years = #{producedYears,jdbcType=CHAR},
+      register_license_years = #{registerLicenseYears,jdbcType=CHAR},
+      vehicle_appraiser = #{vehicleAppraiser,jdbcType=VARCHAR},
+      recommender = #{recommender,jdbcType=VARCHAR},
+      vehicle_ppe = #{vehiclePpe,jdbcType=BIT},
+      user_ppe = #{userPpe,jdbcType=BIT},
+      cust_intention = #{custIntention,jdbcType=BIT},
+      first_price = #{firstPrice,jdbcType=DECIMAL},
+      final_price = #{finalPrice,jdbcType=DECIMAL},
+      visit_time = #{visitTime,jdbcType=TIMESTAMP},
+      vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      pic_url = #{picUrl,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      contract_time = #{contractTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=BIT},
+      sale_type = #{saleType,jdbcType=BIT},
+      sale_channel = #{saleChannel,jdbcType=BIT},
+      channel_remark = #{channelRemark,jdbcType=VARCHAR},
+      av_type = #{avType,jdbcType=BIT},
+      start_price = #{startPrice,jdbcType=DECIMAL},
+      reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      fixed_price = #{fixedPrice,jdbcType=DECIMAL},
+      is_need_approve = #{needApprove,jdbcType=BIT},
+      sale_status = #{saleStatus,jdbcType=BIT},
+      final_sale_price = #{finalSalePrice,jdbcType=DECIMAL},
+      dealer_member_id = #{dealerMemberId,jdbcType=INTEGER},
+      deal_time = #{dealTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

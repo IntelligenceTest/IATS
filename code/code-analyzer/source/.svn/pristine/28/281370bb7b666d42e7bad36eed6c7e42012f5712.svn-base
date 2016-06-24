@@ -1,0 +1,15 @@
+#system constant
+app.systemId=100050
+#shiro
+app.loginUrl=https://passport.autostreets.com/login?service=http://admin-auction.autostreets.com/login
+app.casServerUrlPrefix=https://passport.autostreets.com
+app.casService=http://admin-auction.autostreets.com/login
+app.redirectUrl=https://passport.autostreets.com/logout?service=http://admin-auction.autostreets.com
+app.successUrl=/index
+#dubbo
+dubbo.application.logger=slf4j
+dubbo.registry.servers=${dubbo.registry.servers}
+#static 
+static.resources.url=${static.resources.url}
+website.resources.url = ${website.resources.url}
+dfs.http.server=${dfs.http.server}

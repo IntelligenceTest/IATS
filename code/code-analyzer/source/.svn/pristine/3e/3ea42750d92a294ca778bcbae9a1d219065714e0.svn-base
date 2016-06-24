@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AuctionDataUploadMapper" >
+    <select id="countByAuctionMember" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.domain.AuctionDataUploadVO" >
+        select count(*) from (
+        select 0
+          FROM auction_member_upload amu
+		    LEFT JOIN auction_data_upload adu 
+		    ON adu.auction_id=amu.auction_id
+		    AND adu.created_by=amu.created_by
+		    AND adu.auction_number=amu.auction_number
+          join autost_auction.auction act on amu.auction_id = act.id
+          left join autost_auction.auction_vehicle av on adu.auction_vehicle_id = av.id and adu.auction_id = av.auction_id and adu.auction_vehicle_order = av.auction_vehicle_order
+          left join autost_auction.vehicle vhc on av.vehicle_id = vhc.id
+         where 1=1
+         and amu.del_flag=0 and (adu.del_flag = 0 OR adu.del_flag IS NULL)
+         <if test="userId != null">
+         	and amu.created_by=#{userId}
+         </if>
+          <choose>
+                <when test="isShowUndeal and isShowDeal">
+                    and (adu.deal_time is null or adu.deal_time is not null)
+                </when>
+                <when test="isShowUndeal">
+                    and adu.deal_time is null
+                </when>
+                <when test="isShowDeal">
+                    and adu.deal_time is not null
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         	
+            <if test="auctionMemberName != null and auctionMemberName != ''">
+                and amu.name like concat('%','${auctionMemberName}','%')
+            </if>
+            <if test="auctionMemberIDCar != null and auctionMemberIDCar != ''">
+                and amu.id_card_num like concat('%','${auctionMemberIDCar}','%')
+            </if>
+            <if test="auctionMemberCellphone != null and auctionMemberCellphone != ''">
+                and amu.cellphone like concat('%','${auctionMemberCellphone}','%')
+            </if>
+            <choose>
+                <when test="startDealPrice != null and startDealPrice != '' and endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price between #{startDealPrice, jdbcType=TIMESTAMP} and #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealPrice != null and startDealPrice != ''">
+                    and adu.deal_price <![CDATA[>=]]> #{startDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price <![CDATA[<=]]> #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <if test="auctionId != null and auctionId != ''">
+                and amu.auction_id = #{auctionId}
+            </if>
+            <if test="vinCode != null and vinCode != ''">
+                and vhc.vin_code like concat('%','${vinCode}','%')
+            </if>
+            <if test="licenseCode != null and licenseCode != ''">
+                and vhc.license_code like concat('%','${licenseCode}','%')
+            </if>
+            <choose>
+                <when test="startRegisterTime != null and startRegisterTime != '' and endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time between #{startRegisterTime, jdbcType=TIMESTAMP} and #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startRegisterTime != null and startRegisterTime != ''">
+                    and amu.register_time <![CDATA[>=]]> #{startRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time <![CDATA[<=]]> #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <choose>
+                <when test="startDealTime != null and startDealTime != '' and endDealTime != null and endDealTime != ''">
+                    and adu.deal_time between #{startDealTime, jdbcType=TIMESTAMP} and #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealTime != null and startDealTime != ''">
+                    and adu.deal_time <![CDATA[>=]]> #{startDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealTime != null and endDealTime != ''">
+                    and adu.deal_time <![CDATA[<=]]> #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            group by amu.member_sid,amu.auction_id,act.title,amu.name,amu.id_card_num,
+            amu.cellphone,amu.register_time,amu.wechat,amu.province, amu.city,amu.auction_number
+        ) aa
+    </select>
+    <select id="selectByAuctionMember" resultType="com.autostreets.biz.auction.domain.AuctionDataUploadVO" parameterType="com.autostreets.biz.auction.domain.AuctionDataUploadVO">
+        select amu.member_sid memberSid,
+               amu.auction_id auctionId,
+               act.title auctionTitle,
+               amu.name auctionMemberName,
+               amu.id_card_num auctionMemberIDCar,
+               amu.cellphone auctionMemberCellphone,
+               amu.register_time registerTime,
+               amu.wechat auctionMemberWechat,
+               amu.province auctionMemberProvince,
+               amu.city auctionMemberCity,
+               amu.auction_number auctionNumber,
+               count(adu.id) dealVehicleSum,
+               sum(adu.deal_price) dealPriceSum
+          from auction_member_upload amu
+		    LEFT JOIN auction_data_upload adu 
+		    ON adu.auction_id=amu.auction_id
+		    AND adu.created_by=amu.created_by
+		    AND adu.auction_number=amu.auction_number
+          join autost_auction.auction act on amu.auction_id = act.id
+          left join autost_auction.auction_vehicle av on adu.auction_vehicle_id = av.id and adu.auction_id = av.auction_id and adu.auction_vehicle_order = av.auction_vehicle_order
+          left join autost_auction.vehicle vhc on av.vehicle_id = vhc.id
+         where 1=1
+         and amu.del_flag=0 and (adu.del_flag = 0 OR adu.del_flag IS NULL)
+         <if test="userId != null">
+         	and amu.created_by=#{userId}
+         </if>
+            <choose>
+                <when test="isShowUndeal and isShowDeal">
+                    and (adu.deal_time is null or adu.deal_time is not null)
+                </when>
+                <when test="isShowUndeal">
+                    and adu.deal_time is null
+                </when>
+                <when test="isShowDeal">
+                    and adu.deal_time is not null
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         	
+            <if test="auctionMemberName != null and auctionMemberName != ''">
+                and amu.name like concat('%','${auctionMemberName}','%')
+            </if>
+            <if test="auctionMemberIDCar != null and auctionMemberIDCar != ''">
+                and amu.id_card_num like concat('%','${auctionMemberIDCar}','%')
+            </if>
+            <if test="auctionMemberCellphone != null and auctionMemberCellphone != ''">
+                and amu.cellphone like concat('%','${auctionMemberCellphone}','%')
+            </if>
+            <choose>
+                <when test="startDealPrice != null and startDealPrice != '' and endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price between #{startDealPrice, jdbcType=TIMESTAMP} and #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealPrice != null and startDealPrice != ''">
+                    and adu.deal_price <![CDATA[>=]]> #{startDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price <![CDATA[<=]]> #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <if test="auctionId != null and auctionId != ''">
+                and amu.auction_id = #{auctionId}
+            </if>
+            <if test="vinCode != null and vinCode != ''">
+                and vhc.vin_code like concat('%','${vinCode}','%')
+            </if>
+            <if test="licenseCode != null and licenseCode != ''">
+                and vhc.license_code like concat('%','${licenseCode}','%')
+            </if>
+            <choose>
+                <when test="startRegisterTime != null and startRegisterTime != '' and endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time between #{startRegisterTime, jdbcType=TIMESTAMP} and #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startRegisterTime != null and startRegisterTime != ''">
+                    and amu.register_time <![CDATA[>=]]> #{startRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time <![CDATA[<=]]> #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <choose>
+                <when test="startDealTime != null and startDealTime != '' and endDealTime != null and endDealTime != ''">
+                    and adu.deal_time between #{startDealTime, jdbcType=TIMESTAMP} and #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealTime != null and startDealTime != ''">
+                    and adu.deal_time <![CDATA[>=]]> #{startDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealTime != null and endDealTime != ''">
+                    and adu.deal_time <![CDATA[<=]]> #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            group by amu.member_sid,amu.auction_id,act.title,amu.name,amu.id_card_num,
+            amu.cellphone,amu.register_time,amu.wechat,amu.province, amu.city,amu.auction_number
+         order by amu.register_time desc
+        <if test="begin != null and begin >= 0 and length != null and length >= 0" >
+            limit #{begin}, #{length}
+        </if>
+    </select>
+     <select id="countByAuctionVehicle" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.domain.AuctionDataUploadVO" >
+        select count(*) from (
+         select 0
+          from auction_data_upload adu 
+		    LEFT JOIN auction_member_upload amu
+		    ON adu.auction_id=amu.auction_id
+		    AND adu.created_by=amu.created_by
+		    AND (adu.auction_number=amu.auction_number or adu.member_sid = amu.member_sid)
+          JOIN autost_auction.auction act 
+		        ON adu.auction_id = act.id 
+		    JOIN autost_auction.auction_vehicle av 
+		        ON adu.auction_vehicle_id = av.id 
+		        AND adu.auction_id = av.auction_id 
+		        AND adu.auction_vehicle_order = av.auction_vehicle_order 
+		    JOIN autost_auction.vehicle vhc 
+		        ON av.vehicle_id = vhc.id
+         where 1=1
+         and (amu.del_flag=0 OR amu.del_flag IS NULL) and adu.del_flag=0
+         <if test="userId != null">
+         	and adu.created_by=#{userId}
+         </if>
+          <choose>
+                <when test="isShowUndeal and isShowDeal">
+                    and (adu.deal_time is null or adu.deal_time is not null)
+                </when>
+                <when test="isShowUndeal">
+                    and adu.deal_time is null
+                </when>
+                <when test="isShowDeal">
+                    and adu.deal_time is not null
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         	
+            <if test="auctionMemberName != null and auctionMemberName != ''">
+                and amu.name like concat('%','${auctionMemberName}','%')
+            </if>
+            <if test="auctionMemberIDCar != null and auctionMemberIDCar != ''">
+                and amu.id_card_num like concat('%','${auctionMemberIDCar}','%')
+            </if>
+            <if test="auctionMemberCellphone != null and auctionMemberCellphone != ''">
+                and amu.cellphone like concat('%','${auctionMemberCellphone}','%')
+            </if>
+            <choose>
+                <when test="startDealPrice != null and startDealPrice != '' and endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price between #{startDealPrice, jdbcType=TIMESTAMP} and #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealPrice != null and startDealPrice != ''">
+                    and adu.deal_price <![CDATA[>=]]> #{startDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price <![CDATA[<=]]> #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <if test="auctionId != null and auctionId != ''">
+                and adu.auction_id = #{auctionId}
+            </if>
+            <if test="vinCode != null and vinCode != ''">
+                and vhc.vin_code like concat('%','${vinCode}','%')
+            </if>
+            <if test="licenseCode != null and licenseCode != ''">
+                and vhc.license_code like concat('%','${licenseCode}','%')
+            </if>
+            <choose>
+                <when test="startRegisterTime != null and startRegisterTime != '' and endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time between #{startRegisterTime, jdbcType=TIMESTAMP} and #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startRegisterTime != null and startRegisterTime != ''">
+                    and amu.register_time <![CDATA[>=]]> #{startRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time <![CDATA[<=]]> #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <choose>
+                <when test="startDealTime != null and startDealTime != '' and endDealTime != null and endDealTime != ''">
+                    and adu.deal_time between #{startDealTime, jdbcType=TIMESTAMP} and #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealTime != null and startDealTime != ''">
+                    and adu.deal_time <![CDATA[>=]]> #{startDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealTime != null and endDealTime != ''">
+                    and adu.deal_time <![CDATA[<=]]> #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         order by amu.register_time desc) aa
+    </select>
+    <select id="selectByAuctionVehicle" resultType="com.autostreets.biz.auction.domain.AuctionDataUploadVO" parameterType="com.autostreets.biz.auction.domain.AuctionDataUploadVO">
+        select amu.member_sid memberSid,
+              act.title auctionTitle,
+               vhc.vin_code 'vinCode',
+               vhc.license_code 'licenseCode',
+               vhc.code 'code',
+               CONCAT(vhc.brand,vhc.brand_series,vhc.vehicle_model) 'brandModel',
+    		   adu.deal_time 'dealTime',
+    		   adu.deal_price 'dealPrice',
+    		   adu.auction_number 'auctionNumber',
+    		   adu.auction_vehicle_order 'auctionVehicleOrder',
+               amu.`name` auctionMemberName,
+               amu.id_card_num auctionMemberIDCar,
+               amu.cellphone auctionMemberCellphone,
+               amu.register_time registerTime,amu.wechat auctionMemberWechat,
+               amu.province auctionMemberProvince,amu.city auctionMemberCity
+          from auction_data_upload adu 
+		    LEFT JOIN auction_member_upload amu
+		    ON adu.auction_id=amu.auction_id
+		    AND adu.created_by=amu.created_by
+		    AND (adu.auction_number=amu.auction_number or adu.member_sid = amu.member_sid)
+          JOIN autost_auction.auction act 
+		        ON adu.auction_id = act.id 
+		    JOIN autost_auction.auction_vehicle av 
+		        ON adu.auction_vehicle_id = av.id 
+		        AND adu.auction_id = av.auction_id 
+		        AND adu.auction_vehicle_order = av.auction_vehicle_order 
+		    JOIN autost_auction.vehicle vhc 
+		        ON av.vehicle_id = vhc.id
+         where 1=1
+         and (amu.del_flag=0 OR amu.del_flag IS NULL) and adu.del_flag=0
+         <if test="userId != null">
+         	and adu.created_by=#{userId}
+         </if>
+          <choose>
+                <when test="isShowUndeal and isShowDeal">
+                    and (adu.deal_time is null or adu.deal_time is not null)
+                </when>
+                <when test="isShowUndeal">
+                    and adu.deal_time is null
+                </when>
+                <when test="isShowDeal">
+                    and adu.deal_time is not null
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         	
+            <if test="auctionMemberName != null and auctionMemberName != ''">
+                and amu.name like concat('%','${auctionMemberName}','%')
+            </if>
+            <if test="auctionMemberIDCar != null and auctionMemberIDCar != ''">
+                and amu.id_card_num like concat('%','${auctionMemberIDCar}','%')
+            </if>
+            <if test="auctionMemberCellphone != null and auctionMemberCellphone != ''">
+                and amu.cellphone like concat('%','${auctionMemberCellphone}','%')
+            </if>
+            <choose>
+                <when test="startDealPrice != null and startDealPrice != '' and endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price between #{startDealPrice, jdbcType=TIMESTAMP} and #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealPrice != null and startDealPrice != ''">
+                    and adu.deal_price <![CDATA[>=]]> #{startDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price <![CDATA[<=]]> #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <if test="auctionId != null and auctionId != ''">
+                and adu.auction_id = #{auctionId}
+            </if>
+            <if test="vinCode != null and vinCode != ''">
+                and vhc.vin_code like concat('%','${vinCode}','%')
+            </if>
+            <if test="licenseCode != null and licenseCode != ''">
+                and vhc.license_code like concat('%','${licenseCode}','%')
+            </if>
+            <choose>
+                <when test="startRegisterTime != null and startRegisterTime != '' and endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time between #{startRegisterTime, jdbcType=TIMESTAMP} and #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startRegisterTime != null and startRegisterTime != ''">
+                    and amu.register_time <![CDATA[>=]]> #{startRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time <![CDATA[<=]]> #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <choose>
+                <when test="startDealTime != null and startDealTime != '' and endDealTime != null and endDealTime != ''">
+                    and adu.deal_time between #{startDealTime, jdbcType=TIMESTAMP} and #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealTime != null and startDealTime != ''">
+                    and adu.deal_time <![CDATA[>=]]> #{startDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealTime != null and endDealTime != ''">
+                    and adu.deal_time <![CDATA[<=]]> #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         order by amu.register_time desc
+        <if test="begin != null and begin >= 0 and length != null and length >= 0" >
+            limit #{begin}, #{length}
+        </if>
+    </select>
+    
+    
+    <!-- 查询汇总数据 -->
+	<select id="auctionMemberUploadInsert" parameterType="com.autostreets.biz.auction.domain.AuctionDataUploadVO">
+		{call sp_auction_member_upload_insert(
+		#{auctionId,jdbcType=INTEGER,mode=IN},
+		#{userId,jdbcType=INTEGER, mode=IN}
+		)}
+	</select>
+	
+	<update id="deleteUploadData" parameterType="java.util.Map">
+		update auction_data_upload set del_flag=1 where auction_id = #{auctionId,jdbcType=INTEGER}
+         <if test="userId != null">
+         	and created_by=#{userId}
+         </if>
+	</update>
+	
+	<select id="getUploadMemberCalcInfo" parameterType="com.autostreets.biz.auction.domain.AuctionDataUploadVO" resultType="java.util.Map">
+		select 
+		      COUNT(DISTINCT amu.auction_id,amu.id) 'auctionPersonNum',
+	          COUNT(DISTINCT amu.id_card_num) 'auctionDistinctPersonNum',
+		    COUNT(IF(adu.deal_time IS NOT NULL,TRUE,NULL)) 'auctionDealNum',SUM(adu.deal_price) 'dealVehicleVolume',
+			COUNT(adu.id) 'vehicleNum',COUNT(DISTINCT vhc.id) 'vehicleDistinctNum',
+			(SELECT COUNT(DISTINCT adu.member_sid) FROM auction_data_upload adu WHERE adu.deal_time IS NOT NULL and adu.del_flag=0
+			<if test="userId != null">
+	         	and adu.created_by=#{userId}
+	         </if>
+	            <if test="auctionId != null and auctionId != ''">
+	                and adu.auction_id = #{auctionId}
+	            </if>
+	            <choose>
+	                <when test="isShowUndeal and isShowDeal">
+	                    and (adu.deal_time is null or adu.deal_time is not null)
+	                </when>
+	                <when test="isShowUndeal">
+	                    and adu.deal_time is null
+	                </when>
+	                <when test="isShowDeal">
+	                    and adu.deal_time is not null
+	                </when>
+	                <otherwise></otherwise>
+	            </choose>
+	            <choose>
+	                <when test="startDealPrice != null and startDealPrice != '' and endDealPrice != null and endDealPrice != ''">
+	                    and adu.deal_price between #{startDealPrice, jdbcType=TIMESTAMP} and #{endDealPrice, jdbcType=TIMESTAMP}
+	                </when>
+	                <when test="startDealPrice != null and startDealPrice != ''">
+	                    and adu.deal_price <![CDATA[>=]]> #{startDealPrice, jdbcType=TIMESTAMP}
+	                </when>
+	                <when test="endDealPrice != null and endDealPrice != ''">
+	                    and adu.deal_price <![CDATA[<=]]> #{endDealPrice, jdbcType=TIMESTAMP}
+	                </when>
+	                <otherwise></otherwise>
+	            </choose>
+	            <choose>
+	                <when test="startDealTime != null and startDealTime != '' and endDealTime != null and endDealTime != ''">
+	                    and adu.deal_time between #{startDealTime, jdbcType=TIMESTAMP} and #{endDealTime, jdbcType=TIMESTAMP}
+	                </when>
+	                <when test="startDealTime != null and startDealTime != ''">
+	                    and adu.deal_time <![CDATA[>=]]> #{startDealTime, jdbcType=TIMESTAMP}
+	                </when>
+	                <when test="endDealTime != null and endDealTime != ''">
+	                    and adu.deal_time <![CDATA[<=]]> #{endDealTime, jdbcType=TIMESTAMP}
+	                </when>
+	                <otherwise></otherwise>
+	            </choose>
+		            )
+			+(SELECT COUNT(DISTINCT amu.id_card_num) FROM auction_data_upload adu
+				LEFT JOIN auction_member_upload amu ON adu.auction_id = amu.auction_id
+				AND adu.created_by = amu.created_by
+				AND adu.auction_number = amu.auction_number WHERE 1=1 
+				and (amu.del_flag=0 or amu.del_flag is null) and adu.del_flag=0
+			<if test="dataFlag ==1">
+		         <if test="userId != null">
+		         	and adu.created_by=#{userId}
+		         </if>
+		            <if test="auctionId != null and auctionId != ''">
+		                and adu.auction_id = #{auctionId}
+		            </if>
+			</if>
+			<if test="dataFlag == 2">
+		         <if test="userId != null">
+		         	and adu.created_by=#{userId}
+		         </if>
+		            <if test="auctionId != null and auctionId != ''">
+		                and adu.auction_id = #{auctionId}
+		            </if>
+			</if>
+			<choose>
+                <when test="isShowUndeal and isShowDeal">
+                    and (adu.deal_time is null or adu.deal_time is not null)
+                </when>
+                <when test="isShowUndeal">
+                    and adu.deal_time is null
+                </when>
+                <when test="isShowDeal">
+                    and adu.deal_time is not null
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         	
+            <if test="auctionMemberName != null and auctionMemberName != ''">
+                and amu.name like concat('%','${auctionMemberName}','%')
+            </if>
+            <if test="auctionMemberIDCar != null and auctionMemberIDCar != ''">
+                and amu.id_card_num like concat('%','${auctionMemberIDCar}','%')
+            </if>
+            <if test="auctionMemberCellphone != null and auctionMemberCellphone != ''">
+                and amu.cellphone like concat('%','${auctionMemberCellphone}','%')
+            </if>
+            <choose>
+                <when test="startDealPrice != null and startDealPrice != '' and endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price between #{startDealPrice, jdbcType=TIMESTAMP} and #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealPrice != null and startDealPrice != ''">
+                    and adu.deal_price <![CDATA[>=]]> #{startDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price <![CDATA[<=]]> #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <if test="vinCode != null and vinCode != ''">
+                and vhc.vin_code like concat('%','${vinCode}','%')
+            </if>
+            <if test="licenseCode != null and licenseCode != ''">
+                and vhc.license_code like concat('%','${licenseCode}','%')
+            </if>
+            <choose>
+                <when test="startRegisterTime != null and startRegisterTime != '' and endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time between #{startRegisterTime, jdbcType=TIMESTAMP} and #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startRegisterTime != null and startRegisterTime != ''">
+                    and amu.register_time <![CDATA[>=]]> #{startRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time <![CDATA[<=]]> #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <choose>
+                <when test="startDealTime != null and startDealTime != '' and endDealTime != null and endDealTime != ''">
+                    and adu.deal_time between #{startDealTime, jdbcType=TIMESTAMP} and #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealTime != null and startDealTime != ''">
+                    and adu.deal_time <![CDATA[>=]]> #{startDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealTime != null and endDealTime != ''">
+                    and adu.deal_time <![CDATA[<=]]> #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+				) 'dealPersonNum',
+			COUNT(IF(adu.deal_time IS NOT NULL,TRUE,NULL)) 'dealVehicleNum',
+			COUNT(adu.id)-COUNT(IF(adu.deal_time IS NOT NULL,TRUE,NULL)) 'unDealVehicleNum'
+			<if test="dataFlag ==1">
+		          from auction_member_upload amu
+				    LEFT JOIN auction_data_upload adu 
+				    ON adu.auction_id=amu.auction_id
+				    AND adu.created_by=amu.created_by
+				    AND adu.auction_number=amu.auction_number
+		          join autost_auction.auction act on amu.auction_id = act.id
+		          left join autost_auction.auction_vehicle av on adu.auction_vehicle_id = av.id and adu.auction_id = av.auction_id and adu.auction_vehicle_order = av.auction_vehicle_order
+		          left join autost_auction.vehicle vhc on av.vehicle_id = vhc.id
+		         where 1=1
+		    	and amu.del_flag=0 and (adu.del_flag=0 or adu.del_flag is null)
+		         <if test="userId != null">
+		         	and amu.created_by=#{userId}
+		         </if>
+		            <if test="auctionId != null and auctionId != ''">
+		                and amu.auction_id = #{auctionId}
+		            </if>
+			</if>
+			<if test="dataFlag == 2">
+				from auction_data_upload adu 
+				    LEFT JOIN auction_member_upload amu
+				    ON adu.auction_id=amu.auction_id
+				    AND adu.created_by=amu.created_by
+				    AND adu.auction_number=amu.auction_number
+		          JOIN autost_auction.auction act 
+				        ON adu.auction_id = act.id 
+				    JOIN autost_auction.auction_vehicle av 
+				        ON adu.auction_vehicle_id = av.id 
+				        AND adu.auction_id = av.auction_id 
+				        AND adu.auction_vehicle_order = av.auction_vehicle_order 
+				    JOIN autost_auction.vehicle vhc 
+				        ON av.vehicle_id = vhc.id
+		         where 1=1
+		    	and (amu.del_flag=0 or amu.del_flag is null) and adu.del_flag=0
+		         <if test="userId != null">
+		         	and adu.created_by=#{userId}
+		         </if>
+		            <if test="auctionId != null and auctionId != ''">
+		                and adu.auction_id = #{auctionId}
+		            </if>
+			</if>
+			<choose>
+                <when test="isShowUndeal and isShowDeal">
+                    and (adu.deal_time is null or adu.deal_time is not null)
+                </when>
+                <when test="isShowUndeal">
+                    and adu.deal_time is null
+                </when>
+                <when test="isShowDeal">
+                    and adu.deal_time is not null
+                </when>
+                <otherwise></otherwise>
+            </choose>
+         	
+            <if test="auctionMemberName != null and auctionMemberName != ''">
+                and amu.name like concat('%','${auctionMemberName}','%')
+            </if>
+            <if test="auctionMemberIDCar != null and auctionMemberIDCar != ''">
+                and amu.id_card_num like concat('%','${auctionMemberIDCar}','%')
+            </if>
+            <if test="auctionMemberCellphone != null and auctionMemberCellphone != ''">
+                and amu.cellphone like concat('%','${auctionMemberCellphone}','%')
+            </if>
+            <choose>
+                <when test="startDealPrice != null and startDealPrice != '' and endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price between #{startDealPrice, jdbcType=TIMESTAMP} and #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealPrice != null and startDealPrice != ''">
+                    and adu.deal_price <![CDATA[>=]]> #{startDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealPrice != null and endDealPrice != ''">
+                    and adu.deal_price <![CDATA[<=]]> #{endDealPrice, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <if test="vinCode != null and vinCode != ''">
+                and vhc.vin_code like concat('%','${vinCode}','%')
+            </if>
+            <if test="licenseCode != null and licenseCode != ''">
+                and vhc.license_code like concat('%','${licenseCode}','%')
+            </if>
+            <choose>
+                <when test="startRegisterTime != null and startRegisterTime != '' and endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time between #{startRegisterTime, jdbcType=TIMESTAMP} and #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startRegisterTime != null and startRegisterTime != ''">
+                    and amu.register_time <![CDATA[>=]]> #{startRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endRegisterTime != null and endRegisterTime != ''">
+                    and amu.register_time <![CDATA[<=]]> #{endRegisterTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+            <choose>
+                <when test="startDealTime != null and startDealTime != '' and endDealTime != null and endDealTime != ''">
+                    and adu.deal_time between #{startDealTime, jdbcType=TIMESTAMP} and #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="startDealTime != null and startDealTime != ''">
+                    and adu.deal_time <![CDATA[>=]]> #{startDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <when test="endDealTime != null and endDealTime != ''">
+                    and adu.deal_time <![CDATA[<=]]> #{endDealTime, jdbcType=TIMESTAMP}
+                </when>
+                <otherwise></otherwise>
+            </choose>
+	</select>
+	
+	<select id="getVehicleInfoByAuctionPerson" parameterType="com.autostreets.biz.auction.domain.AuctionDataUploadVO" resultType="com.autostreets.biz.auction.domain.AuctionDataUploadVO">
+		SELECT 
+		    vhc.vin_code 'vinCode',vhc.license_code 'licenseCode',vhc.code,CONCAT(vhc.brand,vhc.brand_series,vhc.vehicle_model) 'brandModel',
+    		adu.deal_time 'dealTime',adu.deal_price 'dealPrice',adu.auction_number 'auctionNumber',adu.auction_vehicle_order 'auctionVehicleOrder'
+		FROM auction_data_upload adu 
+		INNER JOIN auction_member_upload amu 
+		    ON adu.auction_id = amu.auction_id and amu.created_by=adu.created_by
+		    AND (
+		        amu.auction_number = adu.auction_number 
+		        OR amu.member_sid = adu.member_sid
+		    ) 
+		JOIN autost_auction.auction_vehicle av 
+		    ON adu.auction_vehicle_id = av.id 
+		    AND adu.auction_id = av.auction_id 
+		    AND adu.auction_vehicle_order = av.auction_vehicle_order 
+		JOIN autost_auction.vehicle vhc 
+		    ON av.vehicle_id = vhc.id
+		    <where>
+		    	amu.del_flag=0 and adu.del_flag=0
+		        <if test="userId != null">
+         	       and amu.created_by=#{userId}
+                </if>
+		    	<if test="auctionId !=null ">
+		    		AND adu.auction_id = #{auctionId}
+		    	</if>
+		    	<if test="memberSid !=null and memberSid != '' ">
+		    		AND adu.member_sid = #{memberSid}
+		    	</if>
+		    	<if test="auctionMemberIDCar !=null and auctionMemberIDCar != '' ">
+		    		AND amu.id_card_num= #{auctionMemberIDCar}
+		    	</if>
+		    </where> 
+	</select>
+	
+<insert id="insertBatch" parameterType="java.util.List" >
+	insert into auction_data_upload (auction_id, auction_vehicle_id, auction_number, 
+      auction_vehicle_order, deal_time, deal_price, 
+      create_time, created_by, del_flag
+      )
+     values
+     <foreach collection="list" item="item" index="index" separator="," >
+	  (#{item.auctionId,jdbcType=INTEGER}, #{item.auctionVehicleId,jdbcType=INTEGER}, #{item.auctionNumber,jdbcType=INTEGER}, 
+      #{item.auctionVehicleOrder,jdbcType=INTEGER}, #{item.dealTime,jdbcType=TIMESTAMP}, #{item.dealPrice,jdbcType=DECIMAL}, 
+      #{item.createTime,jdbcType=TIMESTAMP}, #{item.createdBy,jdbcType=INTEGER}, #{item.delFlag,jdbcType=BIT}
+      )
+	 </foreach>
+</insert>
+</mapper>

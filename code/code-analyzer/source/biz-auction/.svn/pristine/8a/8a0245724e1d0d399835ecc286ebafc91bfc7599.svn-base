@@ -1,0 +1,12 @@
+dubbo.container=spring
+dubbo.application.name=biz-auction-service
+dubbo.application.owner=youpeng.zhang
+#dubbo.registry.address=multicast://224.5.6.7:1234
+dubbo.registry.address=zookeeper://zk1.autostreets.prod:2181
+#dubbo.registry.address=redis://127.0.0.1:6379
+#dubbo.registry.address=dubbo://127.0.0.1:9090
+dubbo.monitor.protocol=registry
+dubbo.protocol.name=dubbo
+dubbo.protocol.port=20880
+dubbo.service.loadbalance=roundrobin
+dubbo.application.logger=slf4j

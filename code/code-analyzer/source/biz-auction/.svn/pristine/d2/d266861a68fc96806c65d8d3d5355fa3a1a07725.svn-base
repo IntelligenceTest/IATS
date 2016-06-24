@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.MemberVehicleMapper" >
+  <resultMap id="MemberFavoriteVehicleMap" type="com.autostreets.biz.auction.model.MemberVehicle" >
+       <result column="brand" property="brand" jdbcType="VARCHAR" />
+       <result column="brand_series" property="brandSeries" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+       <result column="swept_volume_standard" property="sweptVolumeStandard" jdbcType="VARCHAR" />
+       <result column="register_city" property="registerCity" jdbcType="VARCHAR" />
+       <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+       <result column="code" property="code" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="registerLicenseyears" jdbcType="TIMESTAMP" />
+       <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
+       <result column="display_mileage" property="displayMileage" jdbcType="DECIMAL" />
+       <result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
+       <result column="status" property="status" jdbcType="SMALLINT" />
+       <result column="photo_url" property="photoUrl" jdbcType="VARCHAR" />
+       <result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+       <result column="id" property="id" jdbcType="INTEGER" />
+       <result column="av_no" property="avNo" jdbcType="VARCHAR" />
+       <result column="av_id" property="avId" jdbcType="INTEGER" />
+       <result column="favorite_sid" property="favoriteSid" jdbcType="VARCHAR" />
+       <result column="auction_type" property="auctionType" jdbcType="VARCHAR" />
+       <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+       <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+       <result column="current_city" property="currentCity" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="MemberVehicleMap" type="com.autostreets.biz.auction.model.MemberVehicle" >
+       <result column="brand" property="brand" jdbcType="VARCHAR" />
+       <result column="brand_series" property="brandSeries" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+       <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
+       <result column="register_city" property="registerCity" jdbcType="VARCHAR" />
+       <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="registerLicenseYears" jdbcType="TIMESTAMP" />
+       <result column="display_mileage" property="displayMileage" jdbcType="DECIMAL" />
+       <result column="price" property="price" jdbcType="DECIMAL" />
+       <result column="photo_url" property="photoUrl" jdbcType="VARCHAR" />
+       <result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+       <result column="av_no" property="avNo" jdbcType="VARCHAR" />
+       <result column="av_id" property="avId" jdbcType="INTEGER" />
+       <result column="status" property="status" jdbcType="INTEGER" />
+       <result column="id" property="id" jdbcType="INTEGER" />
+       <result column="bidDate" property="bidDate" jdbcType="TIMESTAMP" />
+       <result column="auction_type" property="auctionType" jdbcType="VARCHAR" />
+       <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+       <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+       <result column="current_city" property="currentCity" jdbcType="VARCHAR" />
+       <result column="final_bid_status" property="finalBidStatus" jdbcType="INTEGER" />
+       <result column="final_bid_price" property="finalBidPrice" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <resultMap id="TransferVehicleMapAPP" type="com.autostreets.biz.auction.model.MemberVehicle" >
+       <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+       <result column="brand" property="brand" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+       <result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+       <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
+       <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="registerLicenseYears" jdbcType="TIMESTAMP" />
+       <result column="display_mileage" property="displayMileage" jdbcType="DECIMAL" />
+       <result column="price" property="price" jdbcType="DECIMAL" />
+       <result column="photo_url" property="photoUrl" jdbcType="VARCHAR" />
+       <result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+       <result column="av_no" property="avNo" jdbcType="VARCHAR" />
+       <result column="av_id" property="avId" jdbcType="INTEGER" />
+       <result column="status" property="status" jdbcType="INTEGER" />
+       <result column="id" property="id" jdbcType="INTEGER" />
+       <result column="bidDate" property="bidDate" jdbcType="TIMESTAMP" />
+       <result column="auction_type" property="auctionType" jdbcType="VARCHAR" />
+       <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+       <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+       <result column="current_city" property="currentCity" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <!--查询会员竞得车辆总数  -->
+  <select id="getMemberAuctionedVehicleCount" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    SELECT count(t1.id)
+		from `order` t1, order_item t2
+	   where t1.id = t2.order_id
+	     and (t2.sale_type = 1 or t2.sale_type = 2)
+	     and t1.bidder_sid = #{sid}
+  </select>
+  
+  <resultMap id="userOrderResultMap" type="com.autostreets.biz.auction.model.Order">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="bidder_sid" property="bidderSid" jdbcType="VARCHAR" />
+		<result column="bidder_name" property="bidderName" jdbcType="VARCHAR" />
+		<result column="buyer_cellphone" property="buyerCellphone" jdbcType="VARCHAR" />
+		<result column="deal_timestamp" property="dealTimestamp" jdbcType="TIMESTAMP" />
+		<result column="pay_timestamp" property="payTimestamp" jdbcType="TIMESTAMP" />
+		<result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="source" property="source" jdbcType="SMALLINT" />
+		<result column="vehicle_id" property="item.vehicleId" jdbcType="VARCHAR" />
+		<result column="pre_price" property="item.prePrice" jdbcType="DECIMAL" />
+		<result column="status" property="item.status" jdbcType="INTEGER" />
+		<result column="final_price" property="item.finalPrice" jdbcType="DECIMAL" />
+		<result column="buyer_commission_fee" property="item.buyerCommissionFee" jdbcType="DECIMAL" />
+		<result column="license_fee" property="item.licenseFee" jdbcType="DECIMAL" />
+		<result column="ex_warehouse_fee" property="item.exWarehouseFee" jdbcType="DECIMAL" />
+		
+		<result column="brand" property="vehicle.brand" jdbcType="VARCHAR" />
+       <result column="brand_series" property="vehicle.brandSeries" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicle.vehicleModel" jdbcType="VARCHAR" />
+       <result column="body_color" property="vehicle.bodyColor" jdbcType="VARCHAR" />
+       <result column="register_city" property="vehicle.registerCity" jdbcType="VARCHAR" />
+       <result column="license_code" property="vehicle.licenseCode" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="vehicle.registerLicenseYears" jdbcType="TIMESTAMP" />
+       <result column="display_mileage" property="vehicle.displayMileage" jdbcType="DECIMAL" />
+       <result column="photo_url" property="vehicle.firstPhotoUrl" jdbcType="VARCHAR" />
+       <result column="id" property="vehicle.id" jdbcType="INTEGER" />
+	</resultMap>
+	
+  <!--查询会员竞得的车辆信息  -->
+  <select id="listMemberAuctionedVehicle" resultMap="userOrderResultMap" parameterType="java.util.HashMap" >
+  SELECT t3.brand, 
+    	   (CASE WHEN SUBSTR(t3.swept_volume_standard,1,1) = '国' THEN t3.vehicle_model 
+			ELSE CONCAT(t3.vehicle_model,'(进口)')  END) brand_series, 
+    	   t3.selled_name vehicle_model, 
+    	   t3.body_color, 
+    	   t3.register_city,
+    	   t3.license_code,
+	       t3.register_license_years, 
+	       t3.display_mileage, 
+	       t2.final_price,
+	       t2.buyer_commission_fee,
+	       t2.license_fee,
+	       t2.ex_warehouse_fee,
+	       t5.av_no,
+	       t5.id av_id,
+	       t5.auction_id,
+	       t2.`status`,
+	       t3.first_photo_url photo_url,
+	       t3.source,
+	       <!-- t3.id, -->
+	       t1.deal_timestamp 'bidDate',
+	       t5.auction_type, 
+           t5.start_price, 
+           t5.plan_end_time, 
+           t5.city current_city,
+           t1.id,
+           t1.order_no, 
+           t1.bidder_sid, 
+           t1.bidder_name,
+           t1.buyer_cellphone, t1.deal_timestamp, t1.pay_timestamp,
+			t1.created_time, t1.update_time, t1.source, t2.vehicle_id,
+			t2.pre_price
+		FROM `order` t1, order_item t2, vehicle t3, auction_vehicle t5
+       WHERE t1.id = t2.order_id 
+         AND t2.vehicle_id = t3.id
+         AND t2.auction_vehicle_id=t5.id
+         AND (t2.sale_type = 1 OR t2.sale_type = 2 OR t2.sale_type = 3)
+         AND t1.bidder_sid = #{sid}
+    ORDER BY t1.deal_timestamp DESC
+    limit #{offset}, #{limit}
+  </select>
+
+  <!--查询会员出价车辆总数  -->
+   <select id="getMemberBiddedVehicleCount" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    SELECT count(DISTINCT bidder_sid, auction_vehicle_id) 
+   	 from bid where bidder_sid=#{sid} 
+  </select> 
+  <!--查询会出价的车辆信息  -->
+   <select id="listMemberBiddedVehicle" resultMap="MemberVehicleMap" parameterType="java.util.HashMap" >
+    SELECT  t1.brand, 
+			(case when SUBSTR(t1.swept_volume_standard,1,1) = '国' then t1.vehicle_model 
+			else CONCAT(t1.vehicle_model,'(进口)')  end) brand_series, 
+    	    t1.selled_name vehicle_model,  
+			t1.register_city, 
+			t1.body_color,
+			t1.license_code, 
+			t1.register_license_years, 
+			t1.display_mileage, 
+			t1.source,
+			t2.price, 
+      		t1.first_photo_url photo_url,
+      		t0.av_no,
+      		t0.id av_id,
+      		t0.auction_id,
+      		t0.status,
+      		t0.vehicle_id id,
+      		t2.bidDate,
+	        t0.auction_type, 
+            t0.start_price, 
+            t0.plan_end_time, 
+            t0.city current_city,
+            t0.final_bid_status,
+            t0.final_bid_price
+	  from  auction_vehicle t0 INNER JOIN vehicle t1 on t0.vehicle_id = t1.id
+ INNER JOIN  (SELECT auction_vehicle_id, max(price) price, max(bid_timestamp) bidDate 
+               from bid 
+     		  where bidder_sid = #{sid} group by auction_vehicle_id) t2
+        ON  t0.id = t2.auction_vehicle_id 
+  order by  t2.bidDate desc
+   limit  #{offset}, #{limit}
+  </select>
+  <!--查询会员关注车辆总数  -->
+   <select id="getMemberFavoriteVehicleCount" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    SELECT count(*) 
+    from member_vehicle_favorite where member_sid=#{sid}
+  </select> 
+  <!--查询查询会员关注过的车辆信息  -->
+  <select id="listMemberFavoriteVehicle" resultMap="MemberFavoriteVehicleMap" parameterType="java.util.HashMap" >
+    SELECT  t3.brand, 
+			(case when SUBSTR(t3.swept_volume_standard,1,1) = '欧' then CONCAT(t3.vehicle_model,'(进口)') 
+			else t3.vehicle_model  end) brand_series, 
+    	 	t3.selled_name vehicle_model, 
+    	 	t3.swept_volume_standard,
+			t3.register_city,
+			t3.body_color, 
+			t3.license_code, 
+			t3.register_license_years, 
+			t3.display_mileage, 
+			t2.plan_start_time,
+			t2.status,
+     		t3.first_photo_url photo_url,
+      		t2.auction_id,
+      		t3.id,
+      		t3.code,
+      		t2.av_no,
+      		t2.id av_sid,
+      		t1.id favorite_sid,
+	        t2.auction_type, 
+            t2.start_price, 
+            t2.plan_end_time, 
+            t2.city current_city 
+			from member_vehicle_favorite t1
+			LEFT JOIN auction_vehicle t2 on t1.av_id = t2.id
+			LEFT JOIN vehicle t3 ON t2.vehicle_id = t3.id 
+			where t1.member_sid=#{sid} 
+			order by t2.plan_start_time desc
+			limit #{offset}, #{limit}
+  </select> 
+  <resultMap id="MemberFavoriteVehicleMapApp" type="com.autostreets.biz.auction.model.MemberVehicle" >
+       <result column="brand" property="brand" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+       <result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+       <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="registerLicenseYears" jdbcType="TIMESTAMP" />
+       <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
+       <result column="display_mileage" property="displayMileage" jdbcType="VARCHAR" />
+       <result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
+       <result column="status" property="status" jdbcType="SMALLINT" />
+       <result column="photo_url" property="photoUrl" jdbcType="VARCHAR" />
+       <result column="auction_sid" property="auctionId" jdbcType="INTEGER" />
+       <result column="sid" property="sid" jdbcType="INTEGER" />
+       <result column="av_no" property="avNo" jdbcType="VARCHAR" />
+       <result column="av_sid" property="avId" jdbcType="INTEGER" />
+       <result column="favorite_sid" property="favoriteSid" jdbcType="VARCHAR" />
+       <result column="auction_type" property="auctionType" jdbcType="VARCHAR" />
+       <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+       <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+       <result column="current_city" property="currentCity" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="MemberVehicleMapAPP" type="com.autostreets.biz.auction.model.MemberVehicle" >
+       <result column="brand" property="brand" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+       <result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+       <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
+       <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="registerLicenseYears" jdbcType="TIMESTAMP" />
+       <result column="display_mileage" property="displayMileage" jdbcType="VARCHAR" />
+       <result column="price" property="price" jdbcType="DECIMAL" />
+       <result column="photo_url" property="photoUrl" jdbcType="VARCHAR" />
+       <result column="auction_id" property="auctionId" jdbcType="VARCHAR" />
+       <result column="av_no" property="avNo" jdbcType="VARCHAR" />
+       <result column="av_id" property="avId" jdbcType="VARCHAR" />
+       <result column="status" property="status" jdbcType="INTEGER" />
+       <result column="id" property="id" jdbcType="INTEGER" />
+       <result column="bidDate" property="bidDate" jdbcType="TIMESTAMP" />
+       <result column="auction_type" property="auctionType" jdbcType="VARCHAR" />
+       <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+       <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+       <result column="current_city" property="currentCity" jdbcType="VARCHAR" />
+  </resultMap>
+
+   <!--iPhone app查询会出价的车辆信息  -->
+  <select id="loadMemberBiddedVehicleList" resultMap="MemberVehicleMapAPP" parameterType="java.util.HashMap" >
+            SELECT
+				t1.brand, 
+				t1.vehicle_model, 
+				(CASE WHEN SUBSTR(t1.swept_volume_standard,1,1) = '国' THEN t1.selled_name 
+				ELSE CONCAT(t1.selled_name,'(进口)')  END) selled_name, 
+				t1.body_color,
+				t1.license_code, 
+				t1.register_license_years, 
+				t1.display_mileage, 
+				t2.price, 
+				t1.first_photo_url photo_url,
+				t0.av_no,
+				t0.id av_id,
+				t0.auction_id,
+				t0.status,
+				t1.id,
+				t2.bidDate,
+				t0.auction_type,
+				t0.start_price,
+				t0.plan_end_time,
+				t0.city current_city 
+			from auction_vehicle t0
+			inner JOIN vehicle t1 on t0.vehicle_id = t1.id
+			INNER JOIN (SELECT auction_vehicle_id, max(price) price, max(bid_timestamp) bidDate FROM bid where bidder_sid= #{sid}  group by auction_vehicle_id) t2 ON t0.id = t2.auction_vehicle_id 
+		    order by t2.bidDate desc
+		    limit #{offset}, #{limit}
+  </select>
+  
+   <!--iPhone app查询会员竞得的车辆信息  -->
+  <select id="loadMemberAuctionedVehicleList" resultMap="MemberVehicleMapAPP" parameterType="java.util.HashMap" >
+    SELECT t3.brand, 
+           t3.vehicle_model, 
+           (case when SUBSTR(t3.swept_volume_standard,1,1) = '国' then t3.selled_name 
+            else CONCAT(t3.selled_name,'(进口)')  end) selled_name, 
+           t3.body_color, 
+           t3.license_code,
+           t3.register_license_years, 
+           t3.display_mileage, 
+           t2.final_price price,
+           t5.av_no,
+           t5.id av_id,
+           t5.auction_id,
+           t5.`status`,
+           t3.first_photo_url photo_url,
+           t3.id,
+           t5.auction_type, 
+           t5.start_price, 
+           t5.plan_end_time, 
+           t5.city current_city 
+        from `order` t1
+        inner join order_item t2 on t1.id=t2.order_id  
+        left join vehicle t3 on t2.vehicle_id=t3.id 
+        inner join auction_vehicle t5 on t2.auction_vehicle_id=t5.id 
+        where t1.bidder_sid = #{sid}
+		and (t2.sale_type =1 or t2.sale_type = 2 or t2.sale_type = 3)
+        order by t2.created_timestamp desc
+        limit #{offset}, #{limit}
+  </select>
+  
+   <!--iPhone app查询查询会员关注过的车辆信息  -->
+  <select id="loadMemberFavoriteVehicleList" resultMap="MemberFavoriteVehicleMapApp" parameterType="java.util.HashMap" >
+    SELECT  t3.brand, 
+            t3.vehicle_model, 
+            (case when SUBSTR(t3.swept_volume_standard,1,1) = '国' then t3.selled_name 
+            else CONCAT(t3.selled_name,'(进口)')  end) selled_name, 
+            t3.body_color, 
+            t3.license_code, 
+            t3.register_license_years, 
+            t3.display_mileage, 
+            t2.plan_start_time,
+            t2.status,
+            t3.first_photo_url photo_url,
+            t2.auction_id,
+            t3.id,
+            t2.av_no,
+            t2.id av_id,
+            t1.id favorite_sid,
+            t2.auction_type, 
+            t2.start_price, 
+            t2.plan_end_time, 
+            t2.city current_city 
+            from member_vehicle_favorite t1
+            LEFT JOIN auction_vehicle t2 on t1.av_id = t2.id
+            LEFT JOIN vehicle t3 ON t2.vehicle_id = t3.id 
+            where t1.member_sid=#{sid} 
+            order by t2.plan_start_time desc
+            limit #{offset}, #{limit}
+  </select>
+  
+  <!-- add by zyp 去掉是否调拨 --> 
+ <select id="loadTransferVehicleByMember" resultMap="TransferVehicleMapAPP" parameterType="java.util.HashMap" >
+ 	SELECT
+    		t3.vin_code, 
+           t3.brand, 
+           t3.vehicle_model, 
+           (CASE WHEN SUBSTR(t3.swept_volume_standard,1,1) = '国' THEN t3.selled_name 
+            ELSE CONCAT(t3.selled_name,'(进口)')  END) selled_name, 
+           t3.body_color, 
+           t3.license_code,
+           t3.register_license_years, 
+           t3.display_mileage, 
+           t2.final_price price,
+           t5.av_no,
+           t5.id av_id,
+           t5.auction_id,
+           t5.`status`,
+           t3.first_photo_url photo_url,
+           t3.id,
+           t5.auction_type, 
+           t5.start_price, 
+           t5.plan_end_time, 
+           t5.city current_city 
+        FROM `order` t1
+        INNER JOIN order_item t2 ON t1.id=t2.order_id  
+        LEFT JOIN vehicle t3 ON t2.vehicle_id=t3.id 
+        INNER JOIN auction_vehicle t5 ON t2.auction_vehicle_id=t5.id
+        where t1.bidder_sid = #{sid}
+        and t2.`status` != 1
+        and (t2.sale_type =1 or t2.sale_type = 2 or t2.sale_type = 3)
+        order by t2.created_timestamp desc
+        limit #{offset}, #{limit}
+  </select>
+  
+  <resultMap id="MemberVehicleFavoriteMap" type="com.autostreets.biz.auction.model.MemberVehicleFavorite" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="member_sid" property="memberSid" jdbcType="VARCHAR" />
+    <result column="av_id" property="avId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="BIT" />
+    <result column="created_timestamp" property="createdTimestamp" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="listMemberFavorite" resultMap="MemberVehicleFavoriteMap" parameterType="java.util.HashMap" >
+	   select  av_id, created_timestamp, member_sid, type from member_vehicle_favorite 
+	       where member_sid = #{sid}
+	       order by created_timestamp desc 
+	       <if test="offset != null and limit != null">
+	       	limit #{offset}, #{limit}
+	       </if>
+   </select>
+</mapper>

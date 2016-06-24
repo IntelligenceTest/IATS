@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.OrderMapper" >
+	<!-- 精品二手车订单查询 -->
+	<resultMap id="orderMap" type="com.autostreets.biz.auction.domain.OrderVo">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="bidder_name" property="bidderName" jdbcType="VARCHAR" />
+		<result column="buyer_cellphone" property="buyerCellphone" jdbcType="VARCHAR" />
+		<result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="fin_audit" property="finAudit" jdbcType="INTEGER" />
+		<result column="pre_price" property="deposit" jdbcType="VARCHAR" />
+		<result column="pay_timestamp" property="payTimestamp" jdbcType="TIMESTAMP" />
+
+		<result column="order_price" property="orderPrice" jdbcType="VARCHAR" />
+		<result column="sale_type" property="saleType" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="craete_mothod" property="craeteMothod" jdbcType="INTEGER" />
+
+		<result column="vehicle_id" property="vehicle.id" jdbcType="INTEGER" />
+		<result column="code" property="vehicle.code" jdbcType="VARCHAR" />
+		<result column="brand" property="vehicle.brand" jdbcType="VARCHAR" />
+		<result column="vehicle_model" property="vehicle.vehicleModel" jdbcType="VARCHAR" />
+		<result column="swept_volume_standard" property="vehicle.sweptVolumeStandard" jdbcType="VARCHAR" />
+		<result column="selled_name" property="vehicle.selledName" jdbcType="VARCHAR" />
+		<result column="vin_code" property="vehicle.vinCode" jdbcType="VARCHAR" />
+		<result column="first_photo_url" property="vehicle.firstPhotoUrl" jdbcType="VARCHAR" />
+		<result column="current_city" property="vehicle.currentCity" jdbcType="VARCHAR" />
+		<result column="current_province" property="vehicle.currentProvince" jdbcType="VARCHAR" />
+        <result column="new_vehicle_suggestion_price" property="fixedPrice.newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+        <result column="license_code" property="vehicle.licenseCode" jdbcType="VARCHAR" />
+		<result column="vehicle_src_id" property="vehicle.vehicleSrcId" jdbcType="INTEGER" />
+
+		<result column="fixed_price_id" property="fixedPrice.id" jdbcType="INTEGER" />
+		<result column="tax_buy" property="fixedPrice.taxBuy" jdbcType="VARCHAR" />
+		<result column="low_price_group" property="fixedPrice.lowPriceGroup" jdbcType="VARCHAR" />
+		<result column="price" property="fixedPrice.price" jdbcType="VARCHAR" />
+		<result column="deposit" property="fixedPrice.deposit" jdbcType="VARCHAR" />
+		<result column="sell_time" property="fixedPrice.sellTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<select id="queryFixedPriceOrders" resultMap="orderMap" parameterType="com.autostreets.biz.auction.domain.OrderVo">
+		SELECT 
+		    o.id, o.order_no, o.bidder_name, o.buyer_cellphone, o.created_time, o.pay_timestamp,o.update_time, oi.fin_audit, 
+		    oi.final_price order_price, oi.pre_price, oi.sale_type, oi.status, oi.order_type craete_mothod, 
+		    v.id vehicle_id, v.vin_code, v.CODE, v.brand, v.vehicle_model, v.selled_name, v.vehicle_model, 
+		    v.swept_volume_standard, v.selled_name, v.first_photo_url, v.current_city, v.current_province, v.vehicle_src_id,
+		    fp.new_vehicle_suggestion_price, v.license_code,fp.id fixed_price_id, fp.tax_buy, fp.low_price_group, fp.price, fp.deposit, fp.sell_time 
+		FROM
+		    `order` o 
+		    INNER JOIN order_item oi 
+		        ON o.id = oi.order_id 
+		    INNER JOIN fixed_price fp 
+		        ON oi.auction_vehicle_id = fp.id 
+		    INNER JOIN vehicle v 
+		        ON oi.vehicle_id = v.id 
+		WHERE oi.sale_type=0
+		<if test="startDealTimestamp != null">
+			and o.deal_timestamp >= #{startDealTimestamp}
+		</if>
+		<if test="endDealTimestamp != null">
+         <![CDATA[ and o.deal_timestamp <= #{endDealTimestamp} ]]>
+         </if>
+		<if test="orderNo and '' != orderNo">
+			and o.order_no like CONCAT('%', #{orderNo}, '%')
+		</if>
+		<if test="bidderName and '' != bidderName">
+			and o.`bidder_name` like CONCAT('%', #{bidderName}, '%')
+		</if>
+		<if test="orgSids and '' != orgSids">
+			and v.vehicle_src_type = 1
+			and v.vehicle_src_id in
+			<foreach collection="orgSids" item="orgSid" open="(" close=")" separator=",">
+				#{orgSid}
+			</foreach>
+		</if>
+		<if test="item != null">
+			<if test="item.orderType != null">
+				and oi.orderType = #{item.orderType}
+			</if>
+			<if test="item.finAudit != null">
+				and oi.fin_audit = #{item.finAudit}
+			</if>
+			<if test="item.status != null">
+				and oi.`status` = #{item.status}
+			</if>
+		</if>
+		<if test="vehicle != null">
+			<if test="vehicle.code and '' != vehicle.code">
+				and v.code like CONCAT('%', #{vehicle.code}, '%')
+			</if>
+			<if test="vehicle.vinCode and '' != vehicle.vinCode">
+				and v.vin_code like CONCAT('%', #{vehicle.vinCode}, '%')
+			</if>
+			<if test="vehicle.licenseCode and '' != vehicle.licenseCode">
+				and v.license_code like CONCAT('%', #{vehicle.licenseCode}, '%')
+			</if>
+		</if>
+		<if test="isReviewOrder != null and isReviewOrder == 1">
+			and oi.`status` > 3
+		</if>
+		and oi.sale_type = 0 
+		ORDER BY o.created_time DESC
+		<if test="pagination != null and pagination.begin >= 0">
+			limit #{pagination.begin}, #{pagination.length}
+		</if>
+	</select>
+	
+	<select id="queryFixedPriceOrderCount" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.domain.OrderVo">
+		SELECT 
+		   count(*)
+		FROM
+		    `order` o 
+		    INNER JOIN order_item oi 
+		        ON o.id = oi.order_id 
+		    INNER JOIN fixed_price fp 
+		        ON oi.auction_vehicle_id = fp.id 
+		    INNER JOIN vehicle v 
+		        ON oi.vehicle_id = v.id 
+		WHERE oi.sale_type=0
+		<if test="startDealTimestamp != null">
+			and o.deal_timestamp >= #{startDealTimestamp}
+		</if>
+		<if test="endDealTimestamp != null">
+          <![CDATA[ and o.deal_timestamp <= #{endDealTimestamp} ]]>
+		</if>
+		<if test="orderNo and '' != orderNo">
+			and o.order_no like CONCAT('%', #{orderNo}, '%')
+		</if>
+		<if test="bidderName and '' != bidderName">
+			and o.`bidder_name` like CONCAT('%', #{bidderName}, '%')
+		</if>
+		<if test="orgSids and '' != orgSids">
+			and v.vehicle_src_type = 1
+			and v.vehicle_src_id in
+			<foreach collection="orgSids" item="orgSid" open="(" close=")" separator=",">
+				#{orgSid}
+			</foreach>
+		</if>
+		<if test="item != null">
+			<if test="item.orderType != null">
+				and oi.orderType = #{item.orderType}
+			</if>
+			<if test="item.finAudit != null">
+				and oi.fin_audit = #{item.finAudit}
+			</if>
+			<if test="item.status != null">
+				and oi.`status` = #{item.status}
+			</if>
+		</if>
+		<if test="vehicle != null">
+			<if test="vehicle.code and '' != vehicle.code">
+				and v.code like CONCAT('%', #{vehicle.code}, '%')
+			</if>
+			<if test="vehicle.vinCode and '' != vehicle.vinCode">
+				and v.vin_code like CONCAT('%', #{vehicle.vinCode}, '%')
+			</if>
+			<if test="vehicle.licenseCode and '' != vehicle.licenseCode">
+				and v.license_code like CONCAT('%', #{vehicle.licenseCode}, '%')
+			</if>
+		</if>
+		<if test="isReviewOrder != null and isReviewOrder == 1">
+			and oi.`status` > 3
+		</if>
+		and oi.sale_type = 0 
+	</select>
+
+	<resultMap id="userOrderResultMap" type="com.autostreets.biz.auction.model.Order">
+		<id column="sid" property="sid" jdbcType="VARCHAR" />
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="bidder_sid" property="bidderSid" jdbcType="VARCHAR" />
+		<result column="bidder_name" property="bidderName" jdbcType="VARCHAR" />
+		<result column="buyer_cellphone" property="buyerCellphone"
+			jdbcType="VARCHAR" />
+		<result column="deal_timestamp" property="dealTimestamp"
+			jdbcType="TIMESTAMP" />
+		<result column="pay_timestamp" property="payTimestamp"
+			jdbcType="TIMESTAMP" />
+		<result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="source" property="source" jdbcType="SMALLINT" />
+		<result column="vehicle_id" property="item.vehicleId" jdbcType="VARCHAR" />
+		<result column="pre_price" property="item.prePrice" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<!-- 会员中心-二手车订单 -->
+	<select id="countOrderByUserID" resultType="java.lang.Integer"
+		parameterType="java.util.HashMap">
+		SELECT count(1)
+		FROM `order` oi, order_item oii
+		WHERE oi.id = oii.order_id
+		AND oii.sale_type = #{saleType}
+		AND oi.bidder_sid = #{userID}
+		<!-- AND oii.is_enabled = 1 -->
+	</select>
+	
+	<!-- status from order_item, not from order. 将来可能会修改 -->
+	<select id="findOrderByUserID" resultMap="userOrderResultMap"
+		parameterType="java.util.HashMap">
+		SELECT oi.id, oi.order_no, oi.bidder_sid, oi.bidder_name,
+		oi.buyer_cellphone, oi.deal_timestamp, oi.pay_timestamp,
+		oi.created_time, oi.update_time, oi.source, oii.vehicle_id,
+		oii.pre_price
+		FROM `order` oi, order_item oii
+		WHERE oi.id = oii.order_id
+		AND oii.sale_type = #{saleType}
+		AND oi.bidder_sid = #{userID}
+		<!-- AND is_enabled = 1 -->
+		ORDER BY oi.created_time DESC
+		limit #{offset}, #{limit}
+	</select>	
+	
+	<resultMap id="orderAppMap" type="com.autostreets.model.order.OrderAppVo">
+		<result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+		<result column="created_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="pre_price" property="depositAmt" jdbcType="VARCHAR" />
+		<result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+		<result column="series_url" property="seriesUrl" jdbcType="VARCHAR" />
+		<result column="order_type" property="orderType" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="listOrderForApp" resultMap="orderAppMap" parameterType="java.lang.String">
+		SELECT
+		o.order_no,
+		(CASE WHEN o.created_time IS NULL THEN o.deal_timestamp ELSE o.created_time END) created_time,
+		ot.status,
+		ot.pre_price,
+		CONCAT(v.brand,' ',v.vehicle_model,' ',
+		(CASE WHEN SUBSTR(v.swept_volume_standard,1,1)
+		= '欧' THEN CONCAT(v.swept_volume_standard,'(进口)')
+		ELSE '' END),
+		' ',v.selled_name) selled_name,
+		v.first_photo_url series_url,
+		2 AS order_type
+		FROM `order` o ,order_item ot , vehicle v
+		WHERE o.id = ot.order_id AND ot.vehicle_id = v.id
+		and ot.sale_type = 0
+		<if test="value != null">
+			and o.bidder_sid = #{value, jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper>

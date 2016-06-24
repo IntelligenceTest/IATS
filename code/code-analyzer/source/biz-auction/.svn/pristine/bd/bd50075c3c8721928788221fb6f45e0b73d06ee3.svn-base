@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.BidMapper" >
+	<select id="selectBidDisplayByVehicleMode" resultType="com.autostreets.biz.auction.domain.BidDisplay" parameterType="com.autostreets.biz.auction.model.Bid">
+		SELECT av.id, av.auction_id,av.vehicle_id,av.status,av.auction_type, v.source,
+		av.city,v.brand, v.swept_volume,v.brand,v.evaluation_dept,v.swept_volume_type,v.brand_series,
+		v.vehicle_model,v.swept_volume_standard,v.selled_name,v.license_code,v.code,
+		av.start_price,av.reserve_price,av.plus_range,av.av_type AS 'avType',av.created_by avCreatedBy,
+		v.vehicle_src_id vehicleSrcId,final_bid_status 'finalBidStatus'
+		FROM auction_vehicle av 
+		LEFT OUTER JOIN vehicle v ON av.vehicle_id = v.id
+		where 1=1
+		<if test="brand != null"> 
+		AND v.brand = #{brand, jdbcType=VARCHAR} 
+		</if>
+		AND v.id is not null
+		<if test="type != null"> 
+		AND av.auction_type = #{type, jdbcType=VARCHAR} 
+		</if> 
+		<if test="status != null"> 
+		AND av.status = #{status} 
+		</if>
+		<if test="avType != null and avType !=''"> 
+        AND av.av_type = #{avType, jdbcType=VARCHAR} 
+        </if>
+		<if test="city != null"> 
+		AND av.city  like CONCAT('%','${city}','%')
+		</if>
+		<if test="license_code != null"> 
+		AND v.license_code like CONCAT('%','${license_code}','%')
+		</if> 
+		<if test="code != null"> 
+		AND v.code like CONCAT('%','${code}','%')
+		</if> 
+		<if test="evaluation_dept != null"> 
+		AND v.evaluation_dept like CONCAT('%','${evaluation_dept}','%')
+        </if>
+        <if test="creatorId != null"> 
+		AND av.created_by = #{creatorId}
+		</if>
+        <if test="startTimestamp != null" > 
+		<![CDATA[ AND av.plan_start_time >= #{startTimestamp, jdbcType=DATE} ]]>
+        </if>
+        <if test="endTimestamp != null"> 
+		<![CDATA[ AND av.plan_end_time <= #{endTimestamp, jdbcType=DATE} ]]> 
+        </if>
+        <!-- add by zxf 商家后台二手车管理系统数据权限 -->
+        <if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+        </if>
+        <if test="orgIds != null and orgIds.size()>0 ">
+	    	and v.vehicle_src_id in
+			<foreach item="item" index="index" collection="orgIds" open="(" separator="," close=")">
+				#{item}
+      		</foreach>
+         </if>
+        And av.is_latest=1
+        AND (av.status = 2 or av.status = 3 or av.status = 4 or av.status = 5 or av.status = 7)
+        <if test="isSingle == null">
+	        order by av.plan_start_time DESC
+        </if>
+        <if test="isSingle != null and isSingle">
+	        ORDER BY av.created_timestamp DESC
+        </if>
+        <if test="pagination != null and pagination.begin >= 0" >
+          limit #{pagination.begin}, #{pagination.length}
+        </if>
+	</select>
+	
+	<select id="countBidDisplayByVehicleMode" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.Bid">
+        select count(av.vehicle_id)
+        from auction_vehicle av 
+        left outer join vehicle v on av.vehicle_id = v.id
+        where 1=1
+        <if test="brand != null and brand !=''"> 
+        AND v.brand = #{brand, jdbcType=VARCHAR} 
+        </if>
+        AND v.id is not null
+        <if test="type != null and type !=''"> 
+        AND av.auction_type = #{type, jdbcType=VARCHAR} 
+        </if> 
+        <if test="avType != null and avType !=''"> 
+        AND av.av_type = #{avType, jdbcType=VARCHAR} 
+        </if> 
+        <if test="status != null"> 
+        AND av.status = #{status} 
+        </if>
+        <if test="city != null and city !=''"> 
+        AND av.city  like CONCAT('%','${city}','%')
+        </if>
+        <if test="license_code != null and license_code !=''"> 
+        AND v.license_code like CONCAT('%','${license_code}','%')
+        </if> 
+        <if test="code != null and code !=''"> 
+        AND v.code like CONCAT('%','${code}','%')
+        </if> 
+        <if test="evaluation_dept != null and evaluation_dept !=''"> 
+        AND v.evaluation_dept like CONCAT('%','${evaluation_dept}','%')
+        </if>
+        <if test="creatorId != null"> 
+		AND av.created_by = #{creatorId}
+		</if>        
+        <if test="startTimestamp != null and startTimestamp !=''" > 
+        <![CDATA[ AND av.plan_start_time >= #{startTimestamp, jdbcType=DATE} ]]>
+        </if>
+        <if test="endTimestamp != null and endTimestamp !=''"> 
+        <![CDATA[ AND av.plan_end_time <= #{endTimestamp, jdbcType=DATE} ]]> 
+        </if>
+        <!-- add by zxf 商家后台二手车管理系统数据权限 -->
+        <if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+        </if>
+        <if test="orgIds != null and orgIds.size()>0 ">
+	    	and v.vehicle_src_id in
+			<foreach item="item" index="index" collection="orgIds" open="(" separator="," close=")">
+				#{item}
+      		</foreach>
+         </if>
+        AND (av.status = 2 or av.status = 3 or av.status = 4 or av.status = 5 or av.status = 7)
+        And av.is_latest=1
+    </select>
+	
+	<select id="selectBidByAvId" resultType="com.autostreets.biz.auction.domain.BidDisplay" parameterType="java.lang.Integer">
+		select b.auction_vehicle_id,b.bid_timestamp,b.bidder_name,b.bidder_sid,b.price,b.ip
+		from bid b
+		where 1=1
+		and b.is_msg = 0
+		AND b.auction_vehicle_id = #{avId} 
+		order by b.price DESC
+	</select>
+	
+	<!-- 
+	根据拍品标识查询其最高出价
+	************************************
+	C:2014年7月29日 18:56:59
+	V:1.0
+	Roceys
+	 -->
+	<select id="queryBidMaxPrice" resultType="java.math.BigDecimal">
+		select max(price)
+		from bid
+		where  auction_vehicle_id = #{avId} 
+	</select>
+    
+    <select id="queryMaxPriceByEntity" resultType="java.math.BigDecimal" parameterType="com.autostreets.biz.auction.model.Bid">
+		select max(price)   
+		from bid 
+		where  1= 1  
+		<if test="auctionVehicleId != null"> 
+			AND auction_vehicle_id = #{auctionVehicleId} 
+		</if>
+		<if test="bidderSid != null"> 
+			AND bidder_sid = #{bidderSid, jdbcType=VARCHAR} 
+		</if>
+	</select>
+     <!-- 通过出价模式查询数据 -->
+    <select id="selectBidDisplayByBidMode" resultType="com.autostreets.biz.auction.domain.BidDisplay" parameterType="com.autostreets.biz.auction.model.Bid">
+		select 
+		av.id, b.bidder_sid,av.auction_id,av.vehicle_id,av.status,av.auction_type, v.source,
+		av.city,v.brand, v.swept_volume,v.brand,v.evaluation_dept,v.swept_volume_type,v.brand_series,
+		v.vehicle_model,v.swept_volume_standard,v.selled_name,v.license_code,v.code,
+		av.start_price,av.reserve_price,av.plus_range,
+		b.bid_timestamp,b.price,b.bidder_name,b.ip,av.av_type as 'avType'
+		from bid b
+		left outer join auction_vehicle av on b.auction_vehicle_id = av.id 
+		left outer join vehicle v on av.vehicle_id = v.id 
+		where 1=1
+		<if test="brand"> 
+		AND v.brand = #{brand, jdbcType=VARCHAR} 
+		</if>
+		AND v.id is not null
+		<if test="type"> 
+		AND av.auction_type = #{type} 
+		</if> 
+		<if test="avType != null"> 
+        AND av.av_type = #{avType} 
+        </if>
+		<if test="status"> 
+		AND av.status = #{status} 
+		</if>
+		<if test="city"> 
+		AND av.city  like CONCAT('%','${city}','%')
+		</if>
+		<if test="license_code"> 
+		AND v.license_code like CONCAT('%','${license_code}','%')
+		</if> 
+		<if test="code"> 
+		AND v.code like CONCAT('%','${code}','%')
+		</if> 
+		<if test="evaluation_dept"> 
+		AND v.evaluation_dept like CONCAT('%','${evaluation_dept}','%')
+        </if>
+        <if test="creatorId != null"> 
+		AND av.created_by = #{creatorId}
+		</if>          
+        <if test="startTimestamp" > 
+		<![CDATA[ AND av.plan_start_time >= #{startTimestamp, jdbcType=DATE} ]]>
+        </if>
+        <if test="endTimestamp"> 
+		<![CDATA[ AND av.plan_end_time <= #{endTimestamp, jdbcType=DATE} ]]> 
+        </if>
+        <!-- add by zxf 商家后台二手车管理系统数据权限 -->
+        <if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+        </if>
+        <if test="orgIds != null and orgIds.size()>0 ">
+	    	and v.vehicle_src_id in
+			<foreach item="item" index="index" collection="orgIds" open="(" separator="," close=")">
+				#{item}
+      		</foreach>
+         </if>
+        and b.is_msg = 0
+        AND (av.status = 2 or av.status = 3 or av.status = 4 or av.status = 5 or av.status = 7)
+        order by b.bid_timestamp DESC
+        <if test="pagination != null and pagination.begin >= 0" >
+	      limit #{pagination.begin}, #{pagination.length}
+	    </if>
+	</select>
+	
+	<select id="countBidDisplayByBidMode" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.Bid">
+        select count(av.id)
+        from bid b
+        left outer join auction_vehicle av on b.auction_vehicle_id = av.id 
+        left outer join vehicle v on av.vehicle_id = v.id 
+        where 1=1
+        <if test="brand and brand != ''"> 
+        AND v.brand = #{brand, jdbcType=VARCHAR} 
+        </if>
+        AND v.id is not null
+        <if test="type and type != ''"> 
+        AND av.auction_type = #{type, jdbcType=VARCHAR} 
+        </if> 
+        <if test="avType != null and avType !=''"> 
+        AND av.av_type = #{avType, jdbcType=VARCHAR} 
+        </if>
+        <if test="status"> 
+        AND av.status = #{status} 
+        </if>
+        <if test="city and city != ''"> 
+        AND av.city  like CONCAT('%','${city}','%')
+        </if>
+        <if test="license_code and license_code != ''"> 
+        AND v.license_code like CONCAT('%','${license_code}','%')
+        </if> 
+        <if test="code and code != ''"> 
+        AND v.code like CONCAT('%','${code}','%')
+        </if> 
+        <if test="evaluation_dept and evaluation_dept != ''"> 
+        AND v.evaluation_dept like CONCAT('%','${evaluation_dept}','%')
+        </if>
+        <if test="creatorId != null"> 
+		AND av.created_by = #{creatorId}
+		</if>          
+        <if test="startTimestamp and startTimestamp != ''" > 
+        <![CDATA[ AND av.plan_start_time >= #{startTimestamp, jdbcType=DATE} ]]>
+        </if>
+        <if test="endTimestamp and endTimestamp != ''"> 
+        <![CDATA[ AND av.plan_end_time <= #{endTimestamp, jdbcType=DATE} ]]> 
+        </if>
+        <!-- add by zxf 商家后台二手车管理系统数据权限 -->
+        <if test="vehicleSrcIds != null">
+             and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+        </if>
+        <if test="orgIds != null and orgIds.size()>0 ">
+	    	and v.vehicle_src_id in
+			<foreach item="item" index="index" collection="orgIds" open="(" separator="," close=")">
+				#{item}
+      		</foreach>
+         </if>
+        and b.is_msg = 0
+        AND (av.status = 2 or av.status = 3 or av.status = 4 or av.status = 5 or av.status = 7)
+    </select>
+	
+	<select id="getMaxPrice" resultType="com.autostreets.biz.auction.domain.BidDisplay" parameterType="java.lang.Integer">
+		select price,bidder_name,bidder_sid from bid c where auction_vehicle_id=#{avId} order by id desc limit 1
+	</select>
+  	
+  <select id="getMaxPriceBidder" parameterType="com.autostreets.biz.auction.model.Bid" resultMap="BaseResultMap">
+  	 	select id, auction_vehicle_id, bidder_sid, bidder_name, bidder_username, bid_timestamp, origin_price, price, ip, id, is_msg, content  from bid b 
+	  	where b.auction_vehicle_id=#{auctionVehicleId}
+	  	order by price desc,bid_timestamp 
+	  	limit 1
+  </select>
+  
+    <select id="getSecondPrice" parameterType="com.autostreets.biz.auction.model.Bid" resultMap="BaseResultMap">
+  	 	select distinct price from bid b 
+	  	where b.auction_vehicle_id=#{auctionVehicleId}
+	  	order by price desc
+	  	limit 0,2
+   </select>
+   
+   
+   <!-- add by zjz 2015-9-29 15:42:38 获取拍品当前出价 和 指定用户出价 -->
+    <select id="getCurrentHighestPrice" parameterType="com.autostreets.biz.auction.model.Bid" resultMap="BaseResultMap">
+    	SELECT (
+			SELECT price FROM bid b 
+			WHERE b.auction_vehicle_id = #{auctionVehicleId,jdbcType=VARCHAR}
+			  AND b.is_msg = 0
+			  AND bidder_sid = #{bidderSid,jdbcType=VARCHAR}
+			 ORDER BY id DESC LIMIT 1
+			 ) 'price',
+			(SELECT 
+			    bidder_sid 
+			FROM
+			    bid b 
+			WHERE b.auction_vehicle_id = #{auctionVehicleId,jdbcType=VARCHAR}
+			    AND b.is_msg = 0 
+			ORDER BY id DESC 
+			LIMIT 1 ) 'bidder_sid' from dual
+  </select>
+</mapper>

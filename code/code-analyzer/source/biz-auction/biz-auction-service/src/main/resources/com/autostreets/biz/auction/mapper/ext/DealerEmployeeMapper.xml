@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.DealerEmployeeMapper" >
+  <sql id="EmployeeWhere" >
+    <where>
+          and de.del_flag = 0
+           <if test="orgId != null">
+				and de.org_id = #{orgId,jdbcType=INTEGER}
+			</if>
+			<if test="name != null and name != ''">
+				and de.name = #{name,jdbcType=VARCHAR}
+			</if>
+			 <if test="type != null">
+				and dg.type = #{type,jdbcType=INTEGER}
+			</if>
+			<if test="nameOrNo != null and nameOrNo!=''">
+				and (de.employee_no = #{nameOrNo,jdbcType=INTEGER}
+				or de.name like concat('%',#{nameOrNo,jdbcType=VARCHAR},'%'))
+			</if>
+			<if test="groupId != null">
+				and de.group_id = #{groupId,jdbcType=INTEGER}
+			</if>
+    </where>
+  </sql>
+ 
+  <select id="selectEmployeeList" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.DealerEmployee" >
+    select 
+		de.id, de.org_id, de.`name`, de.employee_no, de.group_id, de.is_enable, de.create_time, de.modify_time, de.created_by,dg.name group_name,dg.type group_type
+    from dealer_employee de
+    left join dealer_group dg
+    on de.group_id=dg.id 
+    and de.del_flag=dg.del_flag
+    <include refid="EmployeeWhere"/>
+    order by employee_no desc 
+      limit #{pagination.begin},#{pagination.length}
+  </select>
+ 
+  <select id="selectEmployeeCount" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.DealerEmployee" >
+    select count(*) from dealer_employee de
+    left join dealer_group dg
+		on de.group_id  = dg.id
+		and de.del_flag=dg.del_flag
+    <include refid="EmployeeWhere"/>
+  </select>
+ 
+ <update id="updateEmployeeToOpen" parameterType="java.lang.Integer">
+    update dealer_employee
+    set is_enable=1
+    where id=#{id,jdbcType=INTEGER}
+  </update>
+ 
+   <update id="updateEmployeeToStop" parameterType="java.lang.Integer" >
+    update dealer_employee
+    set is_enable=0
+    where id=#{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectEmployeeNo" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select IFNULL(max(employee_no),0)+1 from dealer_employee where org_id = #{orgId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getEmployeeByOrgIdAndType" parameterType="java.util.Map" resultType="com.autostreets.biz.auction.model.DealerEmployee">
+		SELECT id, org_id, NAME, employee_no, group_id, TYPE FROM dealer_employee 
+		WHERE 
+		del_flag=0 AND is_enable=1
+		<if test="orgIds != null  and orgIds.size() > 0">
+			and org_id in
+			<foreach item="item" index="index" collection="orgIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="type != null">
+			and type=#{type}
+		</if>
+	</select>
+</mapper>

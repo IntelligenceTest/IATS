@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.VehicleMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.Vehicle" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="brand_series" property="brandSeries" jdbcType="VARCHAR" />
+    <result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+    <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+    <result column="model_year" property="modelYear" jdbcType="VARCHAR" />
+    <result column="register_license_years" property="registerLicenseYears" jdbcType="VARCHAR" />
+    <result column="swept_volume" property="sweptVolume" jdbcType="DECIMAL" />
+    <result column="swept_volume_type" property="sweptVolumeType" jdbcType="VARCHAR" />
+    <result column="swept_volume_standard" property="sweptVolumeStandard" jdbcType="VARCHAR" />
+    <result column="register_province" property="registerProvince" jdbcType="VARCHAR" />
+    <result column="register_city" property="registerCity" jdbcType="VARCHAR" />
+    <result column="current_province" property="currentProvince" jdbcType="VARCHAR" />
+    <result column="current_city" property="currentCity" jdbcType="VARCHAR" />
+    <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+    <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
+    <result column="display_mileage" property="displayMileage" jdbcType="DECIMAL" />
+    <result column="vehicle_type" property="vehicleType" jdbcType="VARCHAR" />
+    <result column="start_bid_price" property="startBidPrice" jdbcType="DECIMAL" />
+    <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+    <result column="new_vehicle_suggestion_price" property="newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+    <result column="requirement_type" property="requirementType" jdbcType="BIT" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="sale_status" property="saleStatus" jdbcType="SMALLINT" />
+    <result column="vehicle_ppe" property="vehiclePpe" jdbcType="VARCHAR" />
+    <result column="appraiser_id" property="appraiserId" jdbcType="INTEGER" />
+    <result column="vehicle_appraiser" property="vehicleAppraiser" jdbcType="VARCHAR" />
+    <result column="eval_org_id" property="evalOrgId" jdbcType="INTEGER" />
+    <result column="evaluation_dept" property="evaluationDept" jdbcType="VARCHAR" />
+    <result column="first_photo_url" property="firstPhotoUrl" jdbcType="VARCHAR" />
+    <result column="vehicle_desc" property="vehicleDesc" jdbcType="VARCHAR" />
+    <result column="vehicle_src_type" property="vehicleSrcType" jdbcType="SMALLINT" />
+    <result column="vehicle_src_id" property="vehicleSrcId" jdbcType="INTEGER" />
+    <result column="is_certified" property="certified" jdbcType="BIT" />
+    <result column="is_guaranteed" property="guaranteed" jdbcType="BIT" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="audit_flag" property="auditFlag" jdbcType="BIT" />
+    <result column="is_pricing" property="pricing" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, vin_code, brand, code, brand_series, selled_name, vehicle_model, model_year, 
+    register_license_years, swept_volume, swept_volume_type, swept_volume_standard, register_province, 
+    register_city, current_province, current_city, license_code, body_color, display_mileage, 
+    vehicle_type, start_bid_price, reserve_price, new_vehicle_suggestion_price, requirement_type, 
+    source, sale_status, vehicle_ppe, appraiser_id, vehicle_appraiser, eval_org_id, evaluation_dept, 
+    first_photo_url, vehicle_desc, vehicle_src_type, vehicle_src_id, is_certified, is_guaranteed, 
+    modify_time, created_time, audit_flag, is_pricing
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.VehicleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from vehicle
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from vehicle
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.VehicleExample" >
+    delete from vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.autostreets.biz.auction.model.Vehicle" >
+    insert into vehicle (id, vin_code, brand, 
+      code, brand_series, selled_name, 
+      vehicle_model, model_year, register_license_years, 
+      swept_volume, swept_volume_type, swept_volume_standard, 
+      register_province, register_city, current_province, 
+      current_city, license_code, body_color, 
+      display_mileage, vehicle_type, start_bid_price, 
+      reserve_price, new_vehicle_suggestion_price, 
+      requirement_type, source, sale_status, 
+      vehicle_ppe, appraiser_id, vehicle_appraiser, 
+      eval_org_id, evaluation_dept, first_photo_url, 
+      vehicle_desc, vehicle_src_type, vehicle_src_id, 
+      is_certified, is_guaranteed, modify_time, 
+      created_time, audit_flag, is_pricing
+      )
+    values (#{id,jdbcType=INTEGER}, #{vinCode,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{brandSeries,jdbcType=VARCHAR}, #{selledName,jdbcType=VARCHAR}, 
+      #{vehicleModel,jdbcType=VARCHAR}, #{modelYear,jdbcType=VARCHAR}, #{registerLicenseYears,jdbcType=VARCHAR}, 
+      #{sweptVolume,jdbcType=DECIMAL}, #{sweptVolumeType,jdbcType=VARCHAR}, #{sweptVolumeStandard,jdbcType=VARCHAR}, 
+      #{registerProvince,jdbcType=VARCHAR}, #{registerCity,jdbcType=VARCHAR}, #{currentProvince,jdbcType=VARCHAR}, 
+      #{currentCity,jdbcType=VARCHAR}, #{licenseCode,jdbcType=VARCHAR}, #{bodyColor,jdbcType=VARCHAR}, 
+      #{displayMileage,jdbcType=DECIMAL}, #{vehicleType,jdbcType=VARCHAR}, #{startBidPrice,jdbcType=DECIMAL}, 
+      #{reservePrice,jdbcType=DECIMAL}, #{newVehicleSuggestionPrice,jdbcType=DECIMAL}, 
+      #{requirementType,jdbcType=BIT}, #{source,jdbcType=VARCHAR}, #{saleStatus,jdbcType=SMALLINT}, 
+      #{vehiclePpe,jdbcType=VARCHAR}, #{appraiserId,jdbcType=INTEGER}, #{vehicleAppraiser,jdbcType=VARCHAR}, 
+      #{evalOrgId,jdbcType=INTEGER}, #{evaluationDept,jdbcType=VARCHAR}, #{firstPhotoUrl,jdbcType=VARCHAR}, 
+      #{vehicleDesc,jdbcType=VARCHAR}, #{vehicleSrcType,jdbcType=SMALLINT}, #{vehicleSrcId,jdbcType=INTEGER}, 
+      #{certified,jdbcType=BIT}, #{guaranteed,jdbcType=BIT}, #{modifyTime,jdbcType=TIMESTAMP}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{auditFlag,jdbcType=BIT}, #{pricing,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.autostreets.biz.auction.model.Vehicle" >
+    insert into vehicle
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="vinCode != null" >
+        vin_code,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="brandSeries != null" >
+        brand_series,
+      </if>
+      <if test="selledName != null" >
+        selled_name,
+      </if>
+      <if test="vehicleModel != null" >
+        vehicle_model,
+      </if>
+      <if test="modelYear != null" >
+        model_year,
+      </if>
+      <if test="registerLicenseYears != null" >
+        register_license_years,
+      </if>
+      <if test="sweptVolume != null" >
+        swept_volume,
+      </if>
+      <if test="sweptVolumeType != null" >
+        swept_volume_type,
+      </if>
+      <if test="sweptVolumeStandard != null" >
+        swept_volume_standard,
+      </if>
+      <if test="registerProvince != null" >
+        register_province,
+      </if>
+      <if test="registerCity != null" >
+        register_city,
+      </if>
+      <if test="currentProvince != null" >
+        current_province,
+      </if>
+      <if test="currentCity != null" >
+        current_city,
+      </if>
+      <if test="licenseCode != null" >
+        license_code,
+      </if>
+      <if test="bodyColor != null" >
+        body_color,
+      </if>
+      <if test="displayMileage != null" >
+        display_mileage,
+      </if>
+      <if test="vehicleType != null" >
+        vehicle_type,
+      </if>
+      <if test="startBidPrice != null" >
+        start_bid_price,
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price,
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price,
+      </if>
+      <if test="requirementType != null" >
+        requirement_type,
+      </if>
+      <if test="source != null" >
+        source,
+      </if>
+      <if test="saleStatus != null" >
+        sale_status,
+      </if>
+      <if test="vehiclePpe != null" >
+        vehicle_ppe,
+      </if>
+      <if test="appraiserId != null" >
+        appraiser_id,
+      </if>
+      <if test="vehicleAppraiser != null" >
+        vehicle_appraiser,
+      </if>
+      <if test="evalOrgId != null" >
+        eval_org_id,
+      </if>
+      <if test="evaluationDept != null" >
+        evaluation_dept,
+      </if>
+      <if test="firstPhotoUrl != null" >
+        first_photo_url,
+      </if>
+      <if test="vehicleDesc != null" >
+        vehicle_desc,
+      </if>
+      <if test="vehicleSrcType != null" >
+        vehicle_src_type,
+      </if>
+      <if test="vehicleSrcId != null" >
+        vehicle_src_id,
+      </if>
+      <if test="certified != null" >
+        is_certified,
+      </if>
+      <if test="guaranteed != null" >
+        is_guaranteed,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+      <if test="createdTime != null" >
+        created_time,
+      </if>
+      <if test="auditFlag != null" >
+        audit_flag,
+      </if>
+      <if test="pricing != null" >
+        is_pricing,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="vinCode != null" >
+        #{vinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="brandSeries != null" >
+        #{brandSeries,jdbcType=VARCHAR},
+      </if>
+      <if test="selledName != null" >
+        #{selledName,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleModel != null" >
+        #{vehicleModel,jdbcType=VARCHAR},
+      </if>
+      <if test="modelYear != null" >
+        #{modelYear,jdbcType=VARCHAR},
+      </if>
+      <if test="registerLicenseYears != null" >
+        #{registerLicenseYears,jdbcType=VARCHAR},
+      </if>
+      <if test="sweptVolume != null" >
+        #{sweptVolume,jdbcType=DECIMAL},
+      </if>
+      <if test="sweptVolumeType != null" >
+        #{sweptVolumeType,jdbcType=VARCHAR},
+      </if>
+      <if test="sweptVolumeStandard != null" >
+        #{sweptVolumeStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="registerProvince != null" >
+        #{registerProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="registerCity != null" >
+        #{registerCity,jdbcType=VARCHAR},
+      </if>
+      <if test="currentProvince != null" >
+        #{currentProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="currentCity != null" >
+        #{currentCity,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseCode != null" >
+        #{licenseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyColor != null" >
+        #{bodyColor,jdbcType=VARCHAR},
+      </if>
+      <if test="displayMileage != null" >
+        #{displayMileage,jdbcType=DECIMAL},
+      </if>
+      <if test="vehicleType != null" >
+        #{vehicleType,jdbcType=VARCHAR},
+      </if>
+      <if test="startBidPrice != null" >
+        #{startBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="requirementType != null" >
+        #{requirementType,jdbcType=BIT},
+      </if>
+      <if test="source != null" >
+        #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="saleStatus != null" >
+        #{saleStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="vehiclePpe != null" >
+        #{vehiclePpe,jdbcType=VARCHAR},
+      </if>
+      <if test="appraiserId != null" >
+        #{appraiserId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleAppraiser != null" >
+        #{vehicleAppraiser,jdbcType=VARCHAR},
+      </if>
+      <if test="evalOrgId != null" >
+        #{evalOrgId,jdbcType=INTEGER},
+      </if>
+      <if test="evaluationDept != null" >
+        #{evaluationDept,jdbcType=VARCHAR},
+      </if>
+      <if test="firstPhotoUrl != null" >
+        #{firstPhotoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleDesc != null" >
+        #{vehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleSrcType != null" >
+        #{vehicleSrcType,jdbcType=SMALLINT},
+      </if>
+      <if test="vehicleSrcId != null" >
+        #{vehicleSrcId,jdbcType=INTEGER},
+      </if>
+      <if test="certified != null" >
+        #{certified,jdbcType=BIT},
+      </if>
+      <if test="guaranteed != null" >
+        #{guaranteed,jdbcType=BIT},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditFlag != null" >
+        #{auditFlag,jdbcType=BIT},
+      </if>
+      <if test="pricing != null" >
+        #{pricing,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.VehicleExample" >
+    select count(*) from vehicle
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update vehicle
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.vinCode != null" >
+        vin_code = #{record.vinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.brand != null" >
+        brand = #{record.brand,jdbcType=VARCHAR},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.brandSeries != null" >
+        brand_series = #{record.brandSeries,jdbcType=VARCHAR},
+      </if>
+      <if test="record.selledName != null" >
+        selled_name = #{record.selledName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehicleModel != null" >
+        vehicle_model = #{record.vehicleModel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modelYear != null" >
+        model_year = #{record.modelYear,jdbcType=VARCHAR},
+      </if>
+      <if test="record.registerLicenseYears != null" >
+        register_license_years = #{record.registerLicenseYears,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sweptVolume != null" >
+        swept_volume = #{record.sweptVolume,jdbcType=DECIMAL},
+      </if>
+      <if test="record.sweptVolumeType != null" >
+        swept_volume_type = #{record.sweptVolumeType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sweptVolumeStandard != null" >
+        swept_volume_standard = #{record.sweptVolumeStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.registerProvince != null" >
+        register_province = #{record.registerProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="record.registerCity != null" >
+        register_city = #{record.registerCity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.currentProvince != null" >
+        current_province = #{record.currentProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="record.currentCity != null" >
+        current_city = #{record.currentCity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.licenseCode != null" >
+        license_code = #{record.licenseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bodyColor != null" >
+        body_color = #{record.bodyColor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayMileage != null" >
+        display_mileage = #{record.displayMileage,jdbcType=DECIMAL},
+      </if>
+      <if test="record.vehicleType != null" >
+        vehicle_type = #{record.vehicleType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startBidPrice != null" >
+        start_bid_price = #{record.startBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.reservePrice != null" >
+        reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.requirementType != null" >
+        requirement_type = #{record.requirementType,jdbcType=BIT},
+      </if>
+      <if test="record.source != null" >
+        source = #{record.source,jdbcType=VARCHAR},
+      </if>
+      <if test="record.saleStatus != null" >
+        sale_status = #{record.saleStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="record.vehiclePpe != null" >
+        vehicle_ppe = #{record.vehiclePpe,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appraiserId != null" >
+        appraiser_id = #{record.appraiserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.vehicleAppraiser != null" >
+        vehicle_appraiser = #{record.vehicleAppraiser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.evalOrgId != null" >
+        eval_org_id = #{record.evalOrgId,jdbcType=INTEGER},
+      </if>
+      <if test="record.evaluationDept != null" >
+        evaluation_dept = #{record.evaluationDept,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstPhotoUrl != null" >
+        first_photo_url = #{record.firstPhotoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehicleDesc != null" >
+        vehicle_desc = #{record.vehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehicleSrcType != null" >
+        vehicle_src_type = #{record.vehicleSrcType,jdbcType=SMALLINT},
+      </if>
+      <if test="record.vehicleSrcId != null" >
+        vehicle_src_id = #{record.vehicleSrcId,jdbcType=INTEGER},
+      </if>
+      <if test="record.certified != null" >
+        is_certified = #{record.certified,jdbcType=BIT},
+      </if>
+      <if test="record.guaranteed != null" >
+        is_guaranteed = #{record.guaranteed,jdbcType=BIT},
+      </if>
+      <if test="record.modifyTime != null" >
+        modify_time = #{record.modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createdTime != null" >
+        created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.auditFlag != null" >
+        audit_flag = #{record.auditFlag,jdbcType=BIT},
+      </if>
+      <if test="record.pricing != null" >
+        is_pricing = #{record.pricing,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update vehicle
+    set id = #{record.id,jdbcType=INTEGER},
+      vin_code = #{record.vinCode,jdbcType=VARCHAR},
+      brand = #{record.brand,jdbcType=VARCHAR},
+      code = #{record.code,jdbcType=VARCHAR},
+      brand_series = #{record.brandSeries,jdbcType=VARCHAR},
+      selled_name = #{record.selledName,jdbcType=VARCHAR},
+      vehicle_model = #{record.vehicleModel,jdbcType=VARCHAR},
+      model_year = #{record.modelYear,jdbcType=VARCHAR},
+      register_license_years = #{record.registerLicenseYears,jdbcType=VARCHAR},
+      swept_volume = #{record.sweptVolume,jdbcType=DECIMAL},
+      swept_volume_type = #{record.sweptVolumeType,jdbcType=VARCHAR},
+      swept_volume_standard = #{record.sweptVolumeStandard,jdbcType=VARCHAR},
+      register_province = #{record.registerProvince,jdbcType=VARCHAR},
+      register_city = #{record.registerCity,jdbcType=VARCHAR},
+      current_province = #{record.currentProvince,jdbcType=VARCHAR},
+      current_city = #{record.currentCity,jdbcType=VARCHAR},
+      license_code = #{record.licenseCode,jdbcType=VARCHAR},
+      body_color = #{record.bodyColor,jdbcType=VARCHAR},
+      display_mileage = #{record.displayMileage,jdbcType=DECIMAL},
+      vehicle_type = #{record.vehicleType,jdbcType=VARCHAR},
+      start_bid_price = #{record.startBidPrice,jdbcType=DECIMAL},
+      reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      requirement_type = #{record.requirementType,jdbcType=BIT},
+      source = #{record.source,jdbcType=VARCHAR},
+      sale_status = #{record.saleStatus,jdbcType=SMALLINT},
+      vehicle_ppe = #{record.vehiclePpe,jdbcType=VARCHAR},
+      appraiser_id = #{record.appraiserId,jdbcType=INTEGER},
+      vehicle_appraiser = #{record.vehicleAppraiser,jdbcType=VARCHAR},
+      eval_org_id = #{record.evalOrgId,jdbcType=INTEGER},
+      evaluation_dept = #{record.evaluationDept,jdbcType=VARCHAR},
+      first_photo_url = #{record.firstPhotoUrl,jdbcType=VARCHAR},
+      vehicle_desc = #{record.vehicleDesc,jdbcType=VARCHAR},
+      vehicle_src_type = #{record.vehicleSrcType,jdbcType=SMALLINT},
+      vehicle_src_id = #{record.vehicleSrcId,jdbcType=INTEGER},
+      is_certified = #{record.certified,jdbcType=BIT},
+      is_guaranteed = #{record.guaranteed,jdbcType=BIT},
+      modify_time = #{record.modifyTime,jdbcType=TIMESTAMP},
+      created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+      audit_flag = #{record.auditFlag,jdbcType=BIT},
+      is_pricing = #{record.pricing,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.Vehicle" >
+    update vehicle
+    <set >
+      <if test="vinCode != null" >
+        vin_code = #{vinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="brandSeries != null" >
+        brand_series = #{brandSeries,jdbcType=VARCHAR},
+      </if>
+      <if test="selledName != null" >
+        selled_name = #{selledName,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleModel != null" >
+        vehicle_model = #{vehicleModel,jdbcType=VARCHAR},
+      </if>
+      <if test="modelYear != null" >
+        model_year = #{modelYear,jdbcType=VARCHAR},
+      </if>
+      <if test="registerLicenseYears != null" >
+        register_license_years = #{registerLicenseYears,jdbcType=VARCHAR},
+      </if>
+      <if test="sweptVolume != null" >
+        swept_volume = #{sweptVolume,jdbcType=DECIMAL},
+      </if>
+      <if test="sweptVolumeType != null" >
+        swept_volume_type = #{sweptVolumeType,jdbcType=VARCHAR},
+      </if>
+      <if test="sweptVolumeStandard != null" >
+        swept_volume_standard = #{sweptVolumeStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="registerProvince != null" >
+        register_province = #{registerProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="registerCity != null" >
+        register_city = #{registerCity,jdbcType=VARCHAR},
+      </if>
+      <if test="currentProvince != null" >
+        current_province = #{currentProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="currentCity != null" >
+        current_city = #{currentCity,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseCode != null" >
+        license_code = #{licenseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyColor != null" >
+        body_color = #{bodyColor,jdbcType=VARCHAR},
+      </if>
+      <if test="displayMileage != null" >
+        display_mileage = #{displayMileage,jdbcType=DECIMAL},
+      </if>
+      <if test="vehicleType != null" >
+        vehicle_type = #{vehicleType,jdbcType=VARCHAR},
+      </if>
+      <if test="startBidPrice != null" >
+        start_bid_price = #{startBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="requirementType != null" >
+        requirement_type = #{requirementType,jdbcType=BIT},
+      </if>
+      <if test="source != null" >
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="saleStatus != null" >
+        sale_status = #{saleStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="vehiclePpe != null" >
+        vehicle_ppe = #{vehiclePpe,jdbcType=VARCHAR},
+      </if>
+      <if test="appraiserId != null" >
+        appraiser_id = #{appraiserId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleAppraiser != null" >
+        vehicle_appraiser = #{vehicleAppraiser,jdbcType=VARCHAR},
+      </if>
+      <if test="evalOrgId != null" >
+        eval_org_id = #{evalOrgId,jdbcType=INTEGER},
+      </if>
+      <if test="evaluationDept != null" >
+        evaluation_dept = #{evaluationDept,jdbcType=VARCHAR},
+      </if>
+      <if test="firstPhotoUrl != null" >
+        first_photo_url = #{firstPhotoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleDesc != null" >
+        vehicle_desc = #{vehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleSrcType != null" >
+        vehicle_src_type = #{vehicleSrcType,jdbcType=SMALLINT},
+      </if>
+      <if test="vehicleSrcId != null" >
+        vehicle_src_id = #{vehicleSrcId,jdbcType=INTEGER},
+      </if>
+      <if test="certified != null" >
+        is_certified = #{certified,jdbcType=BIT},
+      </if>
+      <if test="guaranteed != null" >
+        is_guaranteed = #{guaranteed,jdbcType=BIT},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdTime != null" >
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditFlag != null" >
+        audit_flag = #{auditFlag,jdbcType=BIT},
+      </if>
+      <if test="pricing != null" >
+        is_pricing = #{pricing,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.Vehicle" >
+    update vehicle
+    set vin_code = #{vinCode,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      brand_series = #{brandSeries,jdbcType=VARCHAR},
+      selled_name = #{selledName,jdbcType=VARCHAR},
+      vehicle_model = #{vehicleModel,jdbcType=VARCHAR},
+      model_year = #{modelYear,jdbcType=VARCHAR},
+      register_license_years = #{registerLicenseYears,jdbcType=VARCHAR},
+      swept_volume = #{sweptVolume,jdbcType=DECIMAL},
+      swept_volume_type = #{sweptVolumeType,jdbcType=VARCHAR},
+      swept_volume_standard = #{sweptVolumeStandard,jdbcType=VARCHAR},
+      register_province = #{registerProvince,jdbcType=VARCHAR},
+      register_city = #{registerCity,jdbcType=VARCHAR},
+      current_province = #{currentProvince,jdbcType=VARCHAR},
+      current_city = #{currentCity,jdbcType=VARCHAR},
+      license_code = #{licenseCode,jdbcType=VARCHAR},
+      body_color = #{bodyColor,jdbcType=VARCHAR},
+      display_mileage = #{displayMileage,jdbcType=DECIMAL},
+      vehicle_type = #{vehicleType,jdbcType=VARCHAR},
+      start_bid_price = #{startBidPrice,jdbcType=DECIMAL},
+      reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      requirement_type = #{requirementType,jdbcType=BIT},
+      source = #{source,jdbcType=VARCHAR},
+      sale_status = #{saleStatus,jdbcType=SMALLINT},
+      vehicle_ppe = #{vehiclePpe,jdbcType=VARCHAR},
+      appraiser_id = #{appraiserId,jdbcType=INTEGER},
+      vehicle_appraiser = #{vehicleAppraiser,jdbcType=VARCHAR},
+      eval_org_id = #{evalOrgId,jdbcType=INTEGER},
+      evaluation_dept = #{evaluationDept,jdbcType=VARCHAR},
+      first_photo_url = #{firstPhotoUrl,jdbcType=VARCHAR},
+      vehicle_desc = #{vehicleDesc,jdbcType=VARCHAR},
+      vehicle_src_type = #{vehicleSrcType,jdbcType=SMALLINT},
+      vehicle_src_id = #{vehicleSrcId,jdbcType=INTEGER},
+      is_certified = #{certified,jdbcType=BIT},
+      is_guaranteed = #{guaranteed,jdbcType=BIT},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      audit_flag = #{auditFlag,jdbcType=BIT},
+      is_pricing = #{pricing,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

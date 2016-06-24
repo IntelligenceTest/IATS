@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <context:annotation-config />
+  <context:component-scan base-package="com.autostreets.biz.auction.web.job" />
+
+  <bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="triggers">
+      <list>
+        <ref bean="auctionStartJobTrigger" />
+        <ref bean="auctionEndJobTrigger" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="auctionStartJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    <property name="startDelay" value="10000" />
+    <property name="repeatInterval" value="10000" />
+    <property name="jobDetail">
+      <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="auctionStartJob" />
+        <property name="targetMethod" value="doJob" />
+        <property name="concurrent" value="false" />
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="auctionEndJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    <property name="startDelay" value="10000" />
+    <property name="repeatInterval" value="10000" />
+    <property name="jobDetail">
+      <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="auctionEndJob" />
+        <property name="targetMethod" value="doJob" />
+        <property name="concurrent" value="false" />
+      </bean>
+    </property>
+  </bean>
+</beans>

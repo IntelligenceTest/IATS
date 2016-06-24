@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.VehicleSalesMapper" >
+	<select id="selectIdsByCondition" parameterType="com.autostreets.biz.auction.model.VehicleSales" resultType="java.lang.Integer">
+		select vs.id from vehicle_sales vs
+		inner join vehicle v
+			on vs.id = v.id
+		<where>
+			<if test="requirementType != null">
+				and vs.requirement_type = #{requirementType,jdbcType=INTEGER}
+			</if>
+			<if test="vehicleCode != null">
+				and v.code like concat('%',#{vehicleCode,jdbcType=VARCHAR},'%')
+			</if>
+		</where>
+	</select>
+</mapper>

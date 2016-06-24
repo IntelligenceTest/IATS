@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.UsedCarLogMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.UsedCarLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fixed_price_id" property="fixedPriceId" jdbcType="INTEGER" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    <result column="pre_used_car_status" property="preUsedCarStatus" jdbcType="BIT" />
+    <result column="current_used_car_status" property="currentUsedCarStatus" jdbcType="BIT" />
+    <result column="pre_vehicle_sale_status" property="preVehicleSaleStatus" jdbcType="BIT" />
+    <result column="current_vehicle_sale_status" property="currentVehicleSaleStatus" jdbcType="BIT" />
+    <result column="pre_latest" property="preLatest" jdbcType="BIT" />
+    <result column="current_latest" property="currentLatest" jdbcType="BIT" />
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="operation_time" property="operationTime" jdbcType="TIMESTAMP" />
+    <result column="operater" property="operater" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, fixed_price_id, vehicle_id, pre_used_car_status, current_used_car_status, pre_vehicle_sale_status, 
+    current_vehicle_sale_status, pre_latest, current_latest, action, operation_time, 
+    operater, remark
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.UsedCarLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from used_car_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from used_car_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from used_car_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.UsedCarLogExample" >
+    delete from used_car_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.autostreets.biz.auction.model.UsedCarLog" >
+    insert into used_car_log (id, fixed_price_id, vehicle_id, 
+      pre_used_car_status, current_used_car_status, pre_vehicle_sale_status, 
+      current_vehicle_sale_status, pre_latest, current_latest, 
+      action, operation_time, operater, 
+      remark)
+    values (#{id,jdbcType=INTEGER}, #{fixedPriceId,jdbcType=INTEGER}, #{vehicleId,jdbcType=INTEGER}, 
+      #{preUsedCarStatus,jdbcType=BIT}, #{currentUsedCarStatus,jdbcType=BIT}, #{preVehicleSaleStatus,jdbcType=BIT}, 
+      #{currentVehicleSaleStatus,jdbcType=BIT}, #{preLatest,jdbcType=BIT}, #{currentLatest,jdbcType=BIT}, 
+      #{action,jdbcType=VARCHAR}, #{operationTime,jdbcType=TIMESTAMP}, #{operater,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.autostreets.biz.auction.model.UsedCarLog" >
+    insert into used_car_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="fixedPriceId != null" >
+        fixed_price_id,
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id,
+      </if>
+      <if test="preUsedCarStatus != null" >
+        pre_used_car_status,
+      </if>
+      <if test="currentUsedCarStatus != null" >
+        current_used_car_status,
+      </if>
+      <if test="preVehicleSaleStatus != null" >
+        pre_vehicle_sale_status,
+      </if>
+      <if test="currentVehicleSaleStatus != null" >
+        current_vehicle_sale_status,
+      </if>
+      <if test="preLatest != null" >
+        pre_latest,
+      </if>
+      <if test="currentLatest != null" >
+        current_latest,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="operationTime != null" >
+        operation_time,
+      </if>
+      <if test="operater != null" >
+        operater,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fixedPriceId != null" >
+        #{fixedPriceId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleId != null" >
+        #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="preUsedCarStatus != null" >
+        #{preUsedCarStatus,jdbcType=BIT},
+      </if>
+      <if test="currentUsedCarStatus != null" >
+        #{currentUsedCarStatus,jdbcType=BIT},
+      </if>
+      <if test="preVehicleSaleStatus != null" >
+        #{preVehicleSaleStatus,jdbcType=BIT},
+      </if>
+      <if test="currentVehicleSaleStatus != null" >
+        #{currentVehicleSaleStatus,jdbcType=BIT},
+      </if>
+      <if test="preLatest != null" >
+        #{preLatest,jdbcType=BIT},
+      </if>
+      <if test="currentLatest != null" >
+        #{currentLatest,jdbcType=BIT},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="operationTime != null" >
+        #{operationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operater != null" >
+        #{operater,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.UsedCarLogExample" >
+    select count(*) from used_car_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update used_car_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.fixedPriceId != null" >
+        fixed_price_id = #{record.fixedPriceId,jdbcType=INTEGER},
+      </if>
+      <if test="record.vehicleId != null" >
+        vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.preUsedCarStatus != null" >
+        pre_used_car_status = #{record.preUsedCarStatus,jdbcType=BIT},
+      </if>
+      <if test="record.currentUsedCarStatus != null" >
+        current_used_car_status = #{record.currentUsedCarStatus,jdbcType=BIT},
+      </if>
+      <if test="record.preVehicleSaleStatus != null" >
+        pre_vehicle_sale_status = #{record.preVehicleSaleStatus,jdbcType=BIT},
+      </if>
+      <if test="record.currentVehicleSaleStatus != null" >
+        current_vehicle_sale_status = #{record.currentVehicleSaleStatus,jdbcType=BIT},
+      </if>
+      <if test="record.preLatest != null" >
+        pre_latest = #{record.preLatest,jdbcType=BIT},
+      </if>
+      <if test="record.currentLatest != null" >
+        current_latest = #{record.currentLatest,jdbcType=BIT},
+      </if>
+      <if test="record.action != null" >
+        action = #{record.action,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operationTime != null" >
+        operation_time = #{record.operationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.operater != null" >
+        operater = #{record.operater,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update used_car_log
+    set id = #{record.id,jdbcType=INTEGER},
+      fixed_price_id = #{record.fixedPriceId,jdbcType=INTEGER},
+      vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      pre_used_car_status = #{record.preUsedCarStatus,jdbcType=BIT},
+      current_used_car_status = #{record.currentUsedCarStatus,jdbcType=BIT},
+      pre_vehicle_sale_status = #{record.preVehicleSaleStatus,jdbcType=BIT},
+      current_vehicle_sale_status = #{record.currentVehicleSaleStatus,jdbcType=BIT},
+      pre_latest = #{record.preLatest,jdbcType=BIT},
+      current_latest = #{record.currentLatest,jdbcType=BIT},
+      action = #{record.action,jdbcType=VARCHAR},
+      operation_time = #{record.operationTime,jdbcType=TIMESTAMP},
+      operater = #{record.operater,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.UsedCarLog" >
+    update used_car_log
+    <set >
+      <if test="fixedPriceId != null" >
+        fixed_price_id = #{fixedPriceId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="preUsedCarStatus != null" >
+        pre_used_car_status = #{preUsedCarStatus,jdbcType=BIT},
+      </if>
+      <if test="currentUsedCarStatus != null" >
+        current_used_car_status = #{currentUsedCarStatus,jdbcType=BIT},
+      </if>
+      <if test="preVehicleSaleStatus != null" >
+        pre_vehicle_sale_status = #{preVehicleSaleStatus,jdbcType=BIT},
+      </if>
+      <if test="currentVehicleSaleStatus != null" >
+        current_vehicle_sale_status = #{currentVehicleSaleStatus,jdbcType=BIT},
+      </if>
+      <if test="preLatest != null" >
+        pre_latest = #{preLatest,jdbcType=BIT},
+      </if>
+      <if test="currentLatest != null" >
+        current_latest = #{currentLatest,jdbcType=BIT},
+      </if>
+      <if test="action != null" >
+        action = #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="operationTime != null" >
+        operation_time = #{operationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operater != null" >
+        operater = #{operater,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.UsedCarLog" >
+    update used_car_log
+    set fixed_price_id = #{fixedPriceId,jdbcType=INTEGER},
+      vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      pre_used_car_status = #{preUsedCarStatus,jdbcType=BIT},
+      current_used_car_status = #{currentUsedCarStatus,jdbcType=BIT},
+      pre_vehicle_sale_status = #{preVehicleSaleStatus,jdbcType=BIT},
+      current_vehicle_sale_status = #{currentVehicleSaleStatus,jdbcType=BIT},
+      pre_latest = #{preLatest,jdbcType=BIT},
+      current_latest = #{currentLatest,jdbcType=BIT},
+      action = #{action,jdbcType=VARCHAR},
+      operation_time = #{operationTime,jdbcType=TIMESTAMP},
+      operater = #{operater,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

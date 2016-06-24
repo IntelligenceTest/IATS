@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AuctionUploadLogMapper" >
+
+    <resultMap id="auctionUploadLogResultMap" type="com.autostreets.biz.auction.model.AuctionUploadLog">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+        <result column="oper_type" property="operType" jdbcType="INTEGER" />
+        <result column="member_num" property="memberNum" jdbcType="INTEGER" />
+        <result column="vehicle_num" property="vehicleNum" jdbcType="INTEGER" />
+        <result column="deal_num" property="dealNum" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="start_timestamp" property="auctionDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <select id="countByMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from auction_upload_log l left outer join auction a on l.auction_id = a.id
+        where 1=1
+        <if test="startTime != null">
+	        <![CDATA[
+	            and l.create_time >= #{startTime}
+	        ]]>
+        </if>
+        <if test="endTime != null">
+	        <![CDATA[
+	            and l.create_time <= #{endTime}
+	        ]]>
+        </if>
+        <if test="createBy != null">
+            and l.createBy in (${createByName})
+        </if>
+    </select>
+    
+    <select id="selectByMap" resultMap="auctionUploadLogResultMap" parameterType="java.util.Map">
+		SELECT
+			l.id,
+			l.auction_id,
+			l.oper_type,
+			l.member_num,
+			l.vehicle_num,
+			l.deal_num,
+			l.create_time,
+			l.created_by,
+			a.title,
+			a.start_timestamp
+		FROM
+			auction_upload_log l
+		LEFT OUTER JOIN auction a ON l.auction_id = a.id
+		WHERE 1 = 1
+        <if test="startTime != null">
+	        <![CDATA[
+	            and l.create_time >= #{startTime}
+	        ]]>
+        </if>
+        <if test="endTime != null">
+	        <![CDATA[
+	            and l.create_time <= #{endTime}
+	        ]]>
+        </if>
+        <if test="createBy != null">
+            and l.createBy in (${createByName})
+        </if>
+        limit #{offset}, #{limit}
+    </select>    	
+</mapper>

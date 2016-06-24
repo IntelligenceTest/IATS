@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.BidMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.Bid" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="auction_vehicle_id" property="auctionVehicleId" jdbcType="INTEGER" />
+    <result column="bidder_sid" property="bidderSid" jdbcType="VARCHAR" />
+    <result column="bidder_name" property="bidderName" jdbcType="VARCHAR" />
+    <result column="bidder_username" property="bidderUsername" jdbcType="VARCHAR" />
+    <result column="bid_timestamp" property="bidTimestamp" jdbcType="TIMESTAMP" />
+    <result column="origin_price" property="originPrice" jdbcType="DECIMAL" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="is_msg" property="msg" jdbcType="TINYINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, auction_vehicle_id, bidder_sid, bidder_name, bidder_username, bid_timestamp, 
+    origin_price, price, ip, is_msg, content
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.BidExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from bid
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null" >
+      limit #{pagination.begin} , #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bid
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bid
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.BidExample" >
+    delete from bid
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.Bid" >
+    insert into bid (id,  auction_vehicle_id, 
+      bidder_sid, bidder_name, bidder_username, 
+      bid_timestamp, origin_price, price, 
+      ip, is_msg, content)
+    values (#{id,jdbcType=INTEGER}, #{auctionVehicleId,jdbcType=INTEGER}, 
+      #{bidderSid,jdbcType=VARCHAR}, #{bidderName,jdbcType=VARCHAR}, #{bidderUsername,jdbcType=VARCHAR}, 
+      #{bidTimestamp,jdbcType=TIMESTAMP}, #{originPrice,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, 
+      #{ip,jdbcType=VARCHAR}, #{msg,jdbcType=TINYINT}, #{content,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.Bid" >
+    insert into bid
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="auctionVehicleId != null" >
+        auction_vehicle_id,
+      </if>
+      <if test="bidderSid != null" >
+        bidder_sid,
+      </if>
+      <if test="bidderName != null" >
+        bidder_name,
+      </if>
+      <if test="bidderUsername != null" >
+        bidder_username,
+      </if>
+      <if test="bidTimestamp != null" >
+        bid_timestamp,
+      </if>
+      <if test="originPrice != null" >
+        origin_price,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="msg != null" >
+        is_msg,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="auctionVehicleId != null" >
+        #{auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="bidderSid != null" >
+        #{bidderSid,jdbcType=VARCHAR},
+      </if>
+      <if test="bidderName != null" >
+        #{bidderName,jdbcType=VARCHAR},
+      </if>
+      <if test="bidderUsername != null" >
+        #{bidderUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="bidTimestamp != null" >
+        #{bidTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="originPrice != null" >
+        #{originPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="msg != null" >
+        #{msg,jdbcType=TINYINT},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.BidExample" >
+    select count(*) from bid
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bid
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.sid != null" >
+        sid = #{record.sid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auctionVehicleId != null" >
+        auction_vehicle_id = #{record.auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.bidderSid != null" >
+        bidder_sid = #{record.bidderSid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bidderName != null" >
+        bidder_name = #{record.bidderName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bidderUsername != null" >
+        bidder_username = #{record.bidderUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bidTimestamp != null" >
+        bid_timestamp = #{record.bidTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.originPrice != null" >
+        origin_price = #{record.originPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.price != null" >
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.ip != null" >
+        ip = #{record.ip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.msg != null" >
+        is_msg = #{record.msg,jdbcType=TINYINT},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bid
+    set id = #{record.id,jdbcType=INTEGER},
+      auction_vehicle_id = #{record.auctionVehicleId,jdbcType=INTEGER},
+      bidder_sid = #{record.bidderSid,jdbcType=VARCHAR},
+      bidder_name = #{record.bidderName,jdbcType=VARCHAR},
+      bidder_username = #{record.bidderUsername,jdbcType=VARCHAR},
+      bid_timestamp = #{record.bidTimestamp,jdbcType=TIMESTAMP},
+      origin_price = #{record.originPrice,jdbcType=DECIMAL},
+      price = #{record.price,jdbcType=DECIMAL},
+      ip = #{record.ip,jdbcType=VARCHAR},
+      is_msg = #{record.msg,jdbcType=TINYINT},
+      content = #{record.content,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.Bid" >
+    update bid
+    <set >
+      <if test="auctionVehicleId != null" >
+        auction_vehicle_id = #{auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="bidderSid != null" >
+        bidder_sid = #{bidderSid,jdbcType=VARCHAR},
+      </if>
+      <if test="bidderName != null" >
+        bidder_name = #{bidderName,jdbcType=VARCHAR},
+      </if>
+      <if test="bidderUsername != null" >
+        bidder_username = #{bidderUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="bidTimestamp != null" >
+        bid_timestamp = #{bidTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="originPrice != null" >
+        origin_price = #{originPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="msg != null" >
+        is_msg = #{msg,jdbcType=TINYINT},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.Bid" >
+    update bid
+    set 
+      auction_vehicle_id = #{auctionVehicleId,jdbcType=INTEGER},
+      bidder_sid = #{bidderSid,jdbcType=VARCHAR},
+      bidder_name = #{bidderName,jdbcType=VARCHAR},
+      bidder_username = #{bidderUsername,jdbcType=VARCHAR},
+      bid_timestamp = #{bidTimestamp,jdbcType=TIMESTAMP},
+      origin_price = #{originPrice,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      ip = #{ip,jdbcType=VARCHAR},
+      is_msg = #{msg,jdbcType=TINYINT},
+      content = #{content,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

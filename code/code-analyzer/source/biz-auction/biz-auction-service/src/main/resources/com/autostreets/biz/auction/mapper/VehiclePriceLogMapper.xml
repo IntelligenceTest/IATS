@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.VehiclePriceLogMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.VehiclePriceLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+    <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+    <result column="requirement_type" property="requirementType" jdbcType="BIT" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="created_timestamp" property="createdTimestamp" jdbcType="TIMESTAMP" />
+    <result column="fp_price" property="fpPrice" jdbcType="DECIMAL" />
+    <result column="new_vehicle_suggestion_price" property="newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+    <result column="has_tax_buy" property="hasTaxBuy" jdbcType="BIT" />
+    <result column="tax_buy" property="taxBuy" jdbcType="DECIMAL" />
+    <result column="purchase_id" property="purchaseId" jdbcType="INTEGER" />
+    <result column="sale_channel" property="saleChannel" jdbcType="BIT" />
+    <result column="channel_remark" property="channelRemark" jdbcType="VARCHAR" />
+    <result column="sale_type" property="saleType" jdbcType="BIT" />
+    <result column="is_need_approve" property="needApprove" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, vehicle_id, start_price, reserve_price, requirement_type, create_user, created_timestamp, 
+    fp_price, new_vehicle_suggestion_price, has_tax_buy, tax_buy, purchase_id, sale_channel, 
+    channel_remark, sale_type, is_need_approve
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.VehiclePriceLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from vehicle_price_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null" >
+      limit #{pagination.begin} , #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from vehicle_price_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from vehicle_price_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.VehiclePriceLogExample" >
+    delete from vehicle_price_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.VehiclePriceLog" >
+    insert into vehicle_price_log (id, vehicle_id, start_price, 
+      reserve_price, requirement_type, create_user, 
+      created_timestamp, fp_price, new_vehicle_suggestion_price, 
+      has_tax_buy, tax_buy, purchase_id, 
+      sale_channel, channel_remark, sale_type, 
+      is_need_approve)
+    values (#{id,jdbcType=INTEGER}, #{vehicleId,jdbcType=INTEGER}, #{startPrice,jdbcType=DECIMAL}, 
+      #{reservePrice,jdbcType=DECIMAL}, #{requirementType,jdbcType=BIT}, #{createUser,jdbcType=INTEGER}, 
+      #{createdTimestamp,jdbcType=TIMESTAMP}, #{fpPrice,jdbcType=DECIMAL}, #{newVehicleSuggestionPrice,jdbcType=DECIMAL}, 
+      #{hasTaxBuy,jdbcType=BIT}, #{taxBuy,jdbcType=DECIMAL}, #{purchaseId,jdbcType=INTEGER}, 
+      #{saleChannel,jdbcType=BIT}, #{channelRemark,jdbcType=VARCHAR}, #{saleType,jdbcType=BIT}, 
+      #{needApprove,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.VehiclePriceLog" >
+    insert into vehicle_price_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id,
+      </if>
+      <if test="startPrice != null" >
+        start_price,
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price,
+      </if>
+      <if test="requirementType != null" >
+        requirement_type,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp,
+      </if>
+      <if test="fpPrice != null" >
+        fp_price,
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price,
+      </if>
+      <if test="hasTaxBuy != null" >
+        has_tax_buy,
+      </if>
+      <if test="taxBuy != null" >
+        tax_buy,
+      </if>
+      <if test="purchaseId != null" >
+        purchase_id,
+      </if>
+      <if test="saleChannel != null" >
+        sale_channel,
+      </if>
+      <if test="channelRemark != null" >
+        channel_remark,
+      </if>
+      <if test="saleType != null" >
+        sale_type,
+      </if>
+      <if test="needApprove != null" >
+        is_need_approve,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleId != null" >
+        #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="startPrice != null" >
+        #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="requirementType != null" >
+        #{requirementType,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createdTimestamp != null" >
+        #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fpPrice != null" >
+        #{fpPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="hasTaxBuy != null" >
+        #{hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="taxBuy != null" >
+        #{taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="purchaseId != null" >
+        #{purchaseId,jdbcType=INTEGER},
+      </if>
+      <if test="saleChannel != null" >
+        #{saleChannel,jdbcType=BIT},
+      </if>
+      <if test="channelRemark != null" >
+        #{channelRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="saleType != null" >
+        #{saleType,jdbcType=BIT},
+      </if>
+      <if test="needApprove != null" >
+        #{needApprove,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.VehiclePriceLogExample" >
+    select count(*) from vehicle_price_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update vehicle_price_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.vehicleId != null" >
+        vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.startPrice != null" >
+        start_price = #{record.startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.reservePrice != null" >
+        reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.requirementType != null" >
+        requirement_type = #{record.requirementType,jdbcType=BIT},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=INTEGER},
+      </if>
+      <if test="record.createdTimestamp != null" >
+        created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.fpPrice != null" >
+        fp_price = #{record.fpPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.hasTaxBuy != null" >
+        has_tax_buy = #{record.hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="record.taxBuy != null" >
+        tax_buy = #{record.taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="record.purchaseId != null" >
+        purchase_id = #{record.purchaseId,jdbcType=INTEGER},
+      </if>
+      <if test="record.saleChannel != null" >
+        sale_channel = #{record.saleChannel,jdbcType=BIT},
+      </if>
+      <if test="record.channelRemark != null" >
+        channel_remark = #{record.channelRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.saleType != null" >
+        sale_type = #{record.saleType,jdbcType=BIT},
+      </if>
+      <if test="record.needApprove != null" >
+        is_need_approve = #{record.needApprove,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update vehicle_price_log
+    set id = #{record.id,jdbcType=INTEGER},
+      vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      start_price = #{record.startPrice,jdbcType=DECIMAL},
+      reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      requirement_type = #{record.requirementType,jdbcType=BIT},
+      create_user = #{record.createUser,jdbcType=INTEGER},
+      created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      fp_price = #{record.fpPrice,jdbcType=DECIMAL},
+      new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      has_tax_buy = #{record.hasTaxBuy,jdbcType=BIT},
+      tax_buy = #{record.taxBuy,jdbcType=DECIMAL},
+      purchase_id = #{record.purchaseId,jdbcType=INTEGER},
+      sale_channel = #{record.saleChannel,jdbcType=BIT},
+      channel_remark = #{record.channelRemark,jdbcType=VARCHAR},
+      sale_type = #{record.saleType,jdbcType=BIT},
+      is_need_approve = #{record.needApprove,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.VehiclePriceLog" >
+    update vehicle_price_log
+    <set >
+      <if test="vehicleId != null" >
+        vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="startPrice != null" >
+        start_price = #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="requirementType != null" >
+        requirement_type = #{requirementType,jdbcType=BIT},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fpPrice != null" >
+        fp_price = #{fpPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="hasTaxBuy != null" >
+        has_tax_buy = #{hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="taxBuy != null" >
+        tax_buy = #{taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="purchaseId != null" >
+        purchase_id = #{purchaseId,jdbcType=INTEGER},
+      </if>
+      <if test="saleChannel != null" >
+        sale_channel = #{saleChannel,jdbcType=BIT},
+      </if>
+      <if test="channelRemark != null" >
+        channel_remark = #{channelRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="saleType != null" >
+        sale_type = #{saleType,jdbcType=BIT},
+      </if>
+      <if test="needApprove != null" >
+        is_need_approve = #{needApprove,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.VehiclePriceLog" >
+    update vehicle_price_log
+    set vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      start_price = #{startPrice,jdbcType=DECIMAL},
+      reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      requirement_type = #{requirementType,jdbcType=BIT},
+      create_user = #{createUser,jdbcType=INTEGER},
+      created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      fp_price = #{fpPrice,jdbcType=DECIMAL},
+      new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      has_tax_buy = #{hasTaxBuy,jdbcType=BIT},
+      tax_buy = #{taxBuy,jdbcType=DECIMAL},
+      purchase_id = #{purchaseId,jdbcType=INTEGER},
+      sale_channel = #{saleChannel,jdbcType=BIT},
+      channel_remark = #{channelRemark,jdbcType=VARCHAR},
+      sale_type = #{saleType,jdbcType=BIT},
+      is_need_approve = #{needApprove,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

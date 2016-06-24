@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.OrderItemMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.OrderItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="commission" property="commission" jdbcType="DECIMAL" />
+    <result column="license_fee" property="licenseFee" jdbcType="DECIMAL" />
+    <result column="license_fee_type" property="licenseFeeType" jdbcType="BIT" />
+    <result column="ex_warehouse_fee" property="exWarehouseFee" jdbcType="DECIMAL" />
+    <result column="parking_fee" property="parkingFee" jdbcType="DECIMAL" />
+    <result column="traffic_fee" property="trafficFee" jdbcType="DECIMAL" />
+    <result column="traffic_violation_fee" property="trafficViolationFee" jdbcType="DECIMAL" />
+    <result column="bid_id" property="bidId" jdbcType="INTEGER" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    <result column="auction_vehicle_id" property="auctionVehicleId" jdbcType="INTEGER" />
+    <result column="guarantee_sid" property="guaranteeSid" jdbcType="VARCHAR" />
+    <result column="recondition_sid" property="reconditionSid" jdbcType="VARCHAR" />
+    <result column="created_timestamp" property="createdTimestamp" jdbcType="TIMESTAMP" />
+    <result column="final_price" property="finalPrice" jdbcType="DECIMAL" />
+    <result column="settle_price" property="settlePrice" jdbcType="DECIMAL" />
+    <result column="discount_price" property="discountPrice" jdbcType="DECIMAL" />
+    <result column="deal_type" property="dealType" jdbcType="BIT" />
+    <result column="sale_type" property="saleType" jdbcType="SMALLINT" />
+    <result column="client_commission_fee" property="clientCommissionFee" jdbcType="DECIMAL" />
+    <result column="buyer_commission_fee" property="buyerCommissionFee" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="order_type" property="orderType" jdbcType="SMALLINT" />
+    <result column="pre_price" property="prePrice" jdbcType="DECIMAL" />
+    <result column="fin_audit" property="finAudit" jdbcType="SMALLINT" />
+    <result column="is_enabled" property="enabled" jdbcType="BIT" />
+    <result column="collection_party" property="collectionParty" jdbcType="BIT" />
+    <result column="collection_model" property="collectionModel" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, order_id, commission, license_fee, license_fee_type, ex_warehouse_fee, parking_fee, 
+    traffic_fee, traffic_violation_fee, bid_id, vehicle_id, auction_vehicle_id, guarantee_sid, 
+    recondition_sid, created_timestamp, final_price, settle_price, discount_price, deal_type, 
+    sale_type, client_commission_fee, buyer_commission_fee, `status`, order_type, pre_price, 
+    fin_audit, is_enabled, collection_party, collection_model
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.OrderItemExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from order_item
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null" >
+      limit #{pagination.begin} , #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from order_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.OrderItemExample" >
+    delete from order_item
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.OrderItem" >
+    insert into order_item (id, order_id, commission, 
+      license_fee, license_fee_type, ex_warehouse_fee, 
+      parking_fee, traffic_fee, traffic_violation_fee, 
+      bid_id, vehicle_id, auction_vehicle_id, 
+      guarantee_sid, recondition_sid, created_timestamp, 
+      final_price, settle_price, discount_price, 
+      deal_type, sale_type, client_commission_fee, 
+      buyer_commission_fee, `status`, order_type, 
+      pre_price, fin_audit, is_enabled, 
+      collection_party, collection_model)
+    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{commission,jdbcType=DECIMAL}, 
+      #{licenseFee,jdbcType=DECIMAL}, #{licenseFeeType,jdbcType=BIT}, #{exWarehouseFee,jdbcType=DECIMAL}, 
+      #{parkingFee,jdbcType=DECIMAL}, #{trafficFee,jdbcType=DECIMAL}, #{trafficViolationFee,jdbcType=DECIMAL}, 
+      #{bidId,jdbcType=INTEGER}, #{vehicleId,jdbcType=INTEGER}, #{auctionVehicleId,jdbcType=INTEGER}, 
+      #{guaranteeSid,jdbcType=VARCHAR}, #{reconditionSid,jdbcType=VARCHAR}, #{createdTimestamp,jdbcType=TIMESTAMP}, 
+      #{finalPrice,jdbcType=DECIMAL}, #{settlePrice,jdbcType=DECIMAL}, #{discountPrice,jdbcType=DECIMAL}, 
+      #{dealType,jdbcType=BIT}, #{saleType,jdbcType=SMALLINT}, #{clientCommissionFee,jdbcType=DECIMAL}, 
+      #{buyerCommissionFee,jdbcType=DECIMAL}, #{status,jdbcType=SMALLINT}, #{orderType,jdbcType=SMALLINT}, 
+      #{prePrice,jdbcType=DECIMAL}, #{finAudit,jdbcType=SMALLINT}, #{enabled,jdbcType=BIT}, 
+      #{collectionParty,jdbcType=BIT}, #{collectionModel,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.OrderItem" >
+    insert into order_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="commission != null" >
+        commission,
+      </if>
+      <if test="licenseFee != null" >
+        license_fee,
+      </if>
+      <if test="licenseFeeType != null" >
+        license_fee_type,
+      </if>
+      <if test="exWarehouseFee != null" >
+        ex_warehouse_fee,
+      </if>
+      <if test="parkingFee != null" >
+        parking_fee,
+      </if>
+      <if test="trafficFee != null" >
+        traffic_fee,
+      </if>
+      <if test="trafficViolationFee != null" >
+        traffic_violation_fee,
+      </if>
+      <if test="bidId != null" >
+        bid_id,
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id,
+      </if>
+      <if test="auctionVehicleId != null" >
+        auction_vehicle_id,
+      </if>
+      <if test="guaranteeSid != null" >
+        guarantee_sid,
+      </if>
+      <if test="reconditionSid != null" >
+        recondition_sid,
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp,
+      </if>
+      <if test="finalPrice != null" >
+        final_price,
+      </if>
+      <if test="settlePrice != null" >
+        settle_price,
+      </if>
+      <if test="discountPrice != null" >
+        discount_price,
+      </if>
+      <if test="dealType != null" >
+        deal_type,
+      </if>
+      <if test="saleType != null" >
+        sale_type,
+      </if>
+      <if test="clientCommissionFee != null" >
+        client_commission_fee,
+      </if>
+      <if test="buyerCommissionFee != null" >
+        buyer_commission_fee,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="orderType != null" >
+        order_type,
+      </if>
+      <if test="prePrice != null" >
+        pre_price,
+      </if>
+      <if test="finAudit != null" >
+        fin_audit,
+      </if>
+      <if test="enabled != null" >
+        is_enabled,
+      </if>
+      <if test="collectionParty != null" >
+        collection_party,
+      </if>
+      <if test="collectionModel != null" >
+        collection_model,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="commission != null" >
+        #{commission,jdbcType=DECIMAL},
+      </if>
+      <if test="licenseFee != null" >
+        #{licenseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="licenseFeeType != null" >
+        #{licenseFeeType,jdbcType=BIT},
+      </if>
+      <if test="exWarehouseFee != null" >
+        #{exWarehouseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="parkingFee != null" >
+        #{parkingFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficFee != null" >
+        #{trafficFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficViolationFee != null" >
+        #{trafficViolationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="bidId != null" >
+        #{bidId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleId != null" >
+        #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="auctionVehicleId != null" >
+        #{auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="guaranteeSid != null" >
+        #{guaranteeSid,jdbcType=VARCHAR},
+      </if>
+      <if test="reconditionSid != null" >
+        #{reconditionSid,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTimestamp != null" >
+        #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finalPrice != null" >
+        #{finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="settlePrice != null" >
+        #{settlePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="discountPrice != null" >
+        #{discountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealType != null" >
+        #{dealType,jdbcType=BIT},
+      </if>
+      <if test="saleType != null" >
+        #{saleType,jdbcType=SMALLINT},
+      </if>
+      <if test="clientCommissionFee != null" >
+        #{clientCommissionFee,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerCommissionFee != null" >
+        #{buyerCommissionFee,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=SMALLINT},
+      </if>
+      <if test="prePrice != null" >
+        #{prePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="finAudit != null" >
+        #{finAudit,jdbcType=SMALLINT},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="collectionParty != null" >
+        #{collectionParty,jdbcType=BIT},
+      </if>
+      <if test="collectionModel != null" >
+        #{collectionModel,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.OrderItemExample" >
+    select count(*) from order_item
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update order_item
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderId != null" >
+        order_id = #{record.orderId,jdbcType=INTEGER},
+      </if>
+      <if test="record.commission != null" >
+        commission = #{record.commission,jdbcType=DECIMAL},
+      </if>
+      <if test="record.licenseFee != null" >
+        license_fee = #{record.licenseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.licenseFeeType != null" >
+        license_fee_type = #{record.licenseFeeType,jdbcType=BIT},
+      </if>
+      <if test="record.exWarehouseFee != null" >
+        ex_warehouse_fee = #{record.exWarehouseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.parkingFee != null" >
+        parking_fee = #{record.parkingFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.trafficFee != null" >
+        traffic_fee = #{record.trafficFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.trafficViolationFee != null" >
+        traffic_violation_fee = #{record.trafficViolationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.bidId != null" >
+        bid_id = #{record.bidId,jdbcType=INTEGER},
+      </if>
+      <if test="record.vehicleId != null" >
+        vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.auctionVehicleId != null" >
+        auction_vehicle_id = #{record.auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.guaranteeSid != null" >
+        guarantee_sid = #{record.guaranteeSid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reconditionSid != null" >
+        recondition_sid = #{record.reconditionSid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdTimestamp != null" >
+        created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.finalPrice != null" >
+        final_price = #{record.finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.settlePrice != null" >
+        settle_price = #{record.settlePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.discountPrice != null" >
+        discount_price = #{record.discountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.dealType != null" >
+        deal_type = #{record.dealType,jdbcType=BIT},
+      </if>
+      <if test="record.saleType != null" >
+        sale_type = #{record.saleType,jdbcType=SMALLINT},
+      </if>
+      <if test="record.clientCommissionFee != null" >
+        client_commission_fee = #{record.clientCommissionFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.buyerCommissionFee != null" >
+        buyer_commission_fee = #{record.buyerCommissionFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.status != null" >
+        `status` = #{record.status,jdbcType=SMALLINT},
+      </if>
+      <if test="record.orderType != null" >
+        order_type = #{record.orderType,jdbcType=SMALLINT},
+      </if>
+      <if test="record.prePrice != null" >
+        pre_price = #{record.prePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.finAudit != null" >
+        fin_audit = #{record.finAudit,jdbcType=SMALLINT},
+      </if>
+      <if test="record.enabled != null" >
+        is_enabled = #{record.enabled,jdbcType=BIT},
+      </if>
+      <if test="record.collectionParty != null" >
+        collection_party = #{record.collectionParty,jdbcType=BIT},
+      </if>
+      <if test="record.collectionModel != null" >
+        collection_model = #{record.collectionModel,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update order_item
+    set id = #{record.id,jdbcType=INTEGER},
+      order_id = #{record.orderId,jdbcType=INTEGER},
+      commission = #{record.commission,jdbcType=DECIMAL},
+      license_fee = #{record.licenseFee,jdbcType=DECIMAL},
+      license_fee_type = #{record.licenseFeeType,jdbcType=BIT},
+      ex_warehouse_fee = #{record.exWarehouseFee,jdbcType=DECIMAL},
+      parking_fee = #{record.parkingFee,jdbcType=DECIMAL},
+      traffic_fee = #{record.trafficFee,jdbcType=DECIMAL},
+      traffic_violation_fee = #{record.trafficViolationFee,jdbcType=DECIMAL},
+      bid_id = #{record.bidId,jdbcType=INTEGER},
+      vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      auction_vehicle_id = #{record.auctionVehicleId,jdbcType=INTEGER},
+      guarantee_sid = #{record.guaranteeSid,jdbcType=VARCHAR},
+      recondition_sid = #{record.reconditionSid,jdbcType=VARCHAR},
+      created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      final_price = #{record.finalPrice,jdbcType=DECIMAL},
+      settle_price = #{record.settlePrice,jdbcType=DECIMAL},
+      discount_price = #{record.discountPrice,jdbcType=DECIMAL},
+      deal_type = #{record.dealType,jdbcType=BIT},
+      sale_type = #{record.saleType,jdbcType=SMALLINT},
+      client_commission_fee = #{record.clientCommissionFee,jdbcType=DECIMAL},
+      buyer_commission_fee = #{record.buyerCommissionFee,jdbcType=DECIMAL},
+      `status` = #{record.status,jdbcType=SMALLINT},
+      order_type = #{record.orderType,jdbcType=SMALLINT},
+      pre_price = #{record.prePrice,jdbcType=DECIMAL},
+      fin_audit = #{record.finAudit,jdbcType=SMALLINT},
+      is_enabled = #{record.enabled,jdbcType=BIT},
+      collection_party = #{record.collectionParty,jdbcType=BIT},
+      collection_model = #{record.collectionModel,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.OrderItem" >
+    update order_item
+    <set >
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="commission != null" >
+        commission = #{commission,jdbcType=DECIMAL},
+      </if>
+      <if test="licenseFee != null" >
+        license_fee = #{licenseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="licenseFeeType != null" >
+        license_fee_type = #{licenseFeeType,jdbcType=BIT},
+      </if>
+      <if test="exWarehouseFee != null" >
+        ex_warehouse_fee = #{exWarehouseFee,jdbcType=DECIMAL},
+      </if>
+      <if test="parkingFee != null" >
+        parking_fee = #{parkingFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficFee != null" >
+        traffic_fee = #{trafficFee,jdbcType=DECIMAL},
+      </if>
+      <if test="trafficViolationFee != null" >
+        traffic_violation_fee = #{trafficViolationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="bidId != null" >
+        bid_id = #{bidId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="auctionVehicleId != null" >
+        auction_vehicle_id = #{auctionVehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="guaranteeSid != null" >
+        guarantee_sid = #{guaranteeSid,jdbcType=VARCHAR},
+      </if>
+      <if test="reconditionSid != null" >
+        recondition_sid = #{reconditionSid,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finalPrice != null" >
+        final_price = #{finalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="settlePrice != null" >
+        settle_price = #{settlePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="discountPrice != null" >
+        discount_price = #{discountPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealType != null" >
+        deal_type = #{dealType,jdbcType=BIT},
+      </if>
+      <if test="saleType != null" >
+        sale_type = #{saleType,jdbcType=SMALLINT},
+      </if>
+      <if test="clientCommissionFee != null" >
+        client_commission_fee = #{clientCommissionFee,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerCommissionFee != null" >
+        buyer_commission_fee = #{buyerCommissionFee,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="orderType != null" >
+        order_type = #{orderType,jdbcType=SMALLINT},
+      </if>
+      <if test="prePrice != null" >
+        pre_price = #{prePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="finAudit != null" >
+        fin_audit = #{finAudit,jdbcType=SMALLINT},
+      </if>
+      <if test="enabled != null" >
+        is_enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="collectionParty != null" >
+        collection_party = #{collectionParty,jdbcType=BIT},
+      </if>
+      <if test="collectionModel != null" >
+        collection_model = #{collectionModel,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.OrderItem" >
+    update order_item
+    set order_id = #{orderId,jdbcType=INTEGER},
+      commission = #{commission,jdbcType=DECIMAL},
+      license_fee = #{licenseFee,jdbcType=DECIMAL},
+      license_fee_type = #{licenseFeeType,jdbcType=BIT},
+      ex_warehouse_fee = #{exWarehouseFee,jdbcType=DECIMAL},
+      parking_fee = #{parkingFee,jdbcType=DECIMAL},
+      traffic_fee = #{trafficFee,jdbcType=DECIMAL},
+      traffic_violation_fee = #{trafficViolationFee,jdbcType=DECIMAL},
+      bid_id = #{bidId,jdbcType=INTEGER},
+      vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      auction_vehicle_id = #{auctionVehicleId,jdbcType=INTEGER},
+      guarantee_sid = #{guaranteeSid,jdbcType=VARCHAR},
+      recondition_sid = #{reconditionSid,jdbcType=VARCHAR},
+      created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      final_price = #{finalPrice,jdbcType=DECIMAL},
+      settle_price = #{settlePrice,jdbcType=DECIMAL},
+      discount_price = #{discountPrice,jdbcType=DECIMAL},
+      deal_type = #{dealType,jdbcType=BIT},
+      sale_type = #{saleType,jdbcType=SMALLINT},
+      client_commission_fee = #{clientCommissionFee,jdbcType=DECIMAL},
+      buyer_commission_fee = #{buyerCommissionFee,jdbcType=DECIMAL},
+      `status` = #{status,jdbcType=SMALLINT},
+      order_type = #{orderType,jdbcType=SMALLINT},
+      pre_price = #{prePrice,jdbcType=DECIMAL},
+      fin_audit = #{finAudit,jdbcType=SMALLINT},
+      is_enabled = #{enabled,jdbcType=BIT},
+      collection_party = #{collectionParty,jdbcType=BIT},
+      collection_model = #{collectionModel,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

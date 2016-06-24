@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AppointmentUsedcarMapper" >
+	<select id="selectByMap" resultType="java.util.HashMap" parameterType="java.util.Map">
+  		SELECT
+			au.id,
+			au.create_time createTime,
+			v.brand,
+			v.brand_series brandSeries,
+			v.vehicle_model vehicleModel,
+			v.register_license_years registerLicenseYears,
+			v.display_mileage displayMileage,
+			v.swept_volume_standard sweptVolumeStandard,
+			fp.price,
+			au.customer_name customerName,
+			au.cell_no cellNo,
+			au.province,
+			au.city,
+			fp.status
+		FROM
+			appointment_usedcar au,
+			fixed_price fp,
+			vehicle v
+		WHERE
+			au.ref_sid = fp.id
+		AND fp.vehicle_id = v.id
+        <if test="startTime != null">
+      	<![CDATA[
+        	and au.create_time >= #{startTime}
+      	]]>
+      	</if>
+      	<if test="endTime != null">
+      	<![CDATA[
+        	and au.create_time <= #{endTime}
+      	]]>
+      	</if>
+      	<if test="organId != null and organId != ''" >
+	      and v.vehicle_src_id = ${organId}
+	    </if>
+        order by au.create_time desc
+   </select>
+   
+   <select id="selectAppointmentUsedcarCount" parameterType="com.autostreets.biz.auction.model.AppointmentUsedcarExample" resultType="java.lang.Integer" >
+    SELECT
+		count(*)
+	FROM
+		appointment_usedcar au,
+		fixed_price fp,
+		vehicle v
+	WHERE
+		au.ref_sid = fp.id
+	AND fp.vehicle_id = v.id
+	AND v.vehicle_src_type = 1
+	AND au.sale_type = 2
+    <if test="startTime != null">
+      	<![CDATA[
+        	and au.create_time >= #{startTime}
+      	]]>
+      	</if>
+      	<if test="endTime != null">
+      	<![CDATA[
+        	and au.create_time <= #{endTime}
+      	]]>
+    </if>
+    <if test="organId != null and organId != ''" >
+      and v.vehicle_src_id = ${organId}
+    </if>
+  </select>
+  
+  <select id="selectAppointmentUsedcar" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.AppointmentUsedcarExample" >
+    SELECT
+	au.id,
+	au.sale_type,
+	au.ref_sid,
+	au.customer_name,
+	au.cell_no,
+	au.province,
+	au.city,
+	au.source,
+	au.create_time,
+	au.deal_status,
+	au.memo,
+	au.deal_user,
+	au.deal_time
+	FROM
+		appointment_usedcar au,
+		fixed_price fp,
+		vehicle v
+	WHERE
+		au.ref_sid = fp.id
+	AND fp.vehicle_id = v.id
+	AND v.vehicle_src_type = 1
+	AND au.sale_type = 2
+    <if test="startTime != null">
+      	<![CDATA[
+        	and au.create_time >= #{startTime}
+      	]]>
+    </if>
+    <if test="endTime != null">
+      	<![CDATA[
+        	and au.create_time <= #{endTime}
+      	]]>
+     </if>
+    <if test="organId != null and organId != ''" >
+      and v.vehicle_src_id = ${organId}
+    </if>
+    order by au.create_time desc
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  
+</mapper>

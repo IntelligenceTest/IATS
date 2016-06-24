@@ -1,0 +1,1202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AuctionVehicleMapper" >
+  <resultMap id="AuctionVehicleItemOrderMap" type="java.util.HashMap" >
+       <id column="id" property="id" jdbcType="VARCHAR" />
+       <result column="auction_id" property="auctionId" jdbcType="VARCHAR" />
+       <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+       <result column="brand" property="brand" jdbcType="VARCHAR" />
+       <result column="brand_series" property="brandSeries" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="registerLicenseYears" jdbcType="VARCHAR" />
+       <result column="start_price" property="startPrice" jdbcType="VARCHAR" />
+       <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+       <result column="client" property="client" jdbcType="VARCHAR" />
+       <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+       <result column="auction_vehicle_order" property="auctionVehicleOrder" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="auctionVehicleResultMap" type="com.autostreets.biz.auction.model.AuctionVehicle">
+       <id column="id" property="id" jdbcType="VARCHAR" />
+       <result column="auction_id" property="auctionId" jdbcType="VARCHAR" />
+       <result column="vehicle_id" property="vehicleId" jdbcType="VARCHAR" />
+       <result column="reservePrice" property="reservePrice" jdbcType="DECIMAL" />
+       <result column="startPrice" property="startPrice" jdbcType="DECIMAL" />
+       <result column="plus_range" property="plusRange" jdbcType="SMALLINT" />
+       <result column="status" property="status" jdbcType="VARCHAR" />
+       <result column="bid_quantity" property="bidQuantity" jdbcType="INTEGER" />
+       <result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
+       <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+       <result column="code" property="code" jdbcType="VARCHAR" />
+       <result column="photo_name" property="photoName" jdbcType="VARCHAR" />
+       <result column="photo_desc" property="photoDesc" jdbcType="VARCHAR" />
+       <result column="first_photo_url" property="photoUrl" jdbcType="VARCHAR" />
+       <result column="brand" property="brand" jdbcType="VARCHAR" />
+       <result column="vehicle_model" property="vehicleModel" jdbcType="VARCHAR" />
+       <result column="selled_name" property="selledName" jdbcType="VARCHAR" />
+       <result column="type" property="type" jdbcType="VARCHAR" />
+       <result column="saleStatus" property="saleStatus" jdbcType="VARCHAR" />
+       <result column="start_timestamp" property="startTimestamp" jdbcType="TIMESTAMP" />
+       <result column="bidder_name" property="bidderName" jdbcType="VARCHAR" />
+       <result column="final_price" property="finalPrice" jdbcType="DECIMAL" />
+       <result column="maxPrice" property="maxPrice" jdbcType="DECIMAL" />
+       <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+       <result column="license_code" property="licenseCode" jdbcType="VARCHAR" />
+       <result column="swept_volume" property="sweptVolume" jdbcType="VARCHAR" />
+       <result column="swept_volume_type" property="sweptVolumeType" jdbcType="VARCHAR" />
+       <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
+       <result column="register_license_years" property="registerLicenseYears" jdbcType="VARCHAR" />
+       <result column="vehicle_appraiser" property="vehicleAppraiser" jdbcType="VARCHAR" />
+       <result column="evaluation_dept" property="evaluationDept" jdbcType="VARCHAR" />
+       <result column="orderId" property="orderId" jdbcType="VARCHAR" />
+       <result column="bidder_sid" property="bidderSid" jdbcType="VARCHAR" />
+       <result column="orderItemId" property="orderItemId" jdbcType="VARCHAR" />
+       <result column="auction_type" property="auctionType" jdbcType="VARCHAR" />
+       <result column="av_type" property="avType" jdbcType="VARCHAR" />
+       <result column="vehicle_src_type" property="vehicleSrcType" jdbcType="SMALLINT" />
+       <result column="vehicle_src_id" property="vehicle.vehicleSrcId" jdbcType="INTEGER" />
+       <result column="audit_flag" property="vehicle.auditFlag" jdbcType="TINYINT" />
+ </resultMap>
+ 
+  <resultMap id="exportCatalogMap" type="java.util.HashMap" >
+       <id column="id" property="id" jdbcType="VARCHAR" />
+       <result column="auction_id" property="auctionId" jdbcType="VARCHAR" />
+       <result column="auction_vehicle_order" property="auctionVehicleOrder" jdbcType="INTEGER" />
+       <result column="vehicle_src_id" property="vehicleSrcId" jdbcType="INTEGER" />
+       <result column="code" property="code" jdbcType="VARCHAR" />
+       <result column="swept_volume" property="sweptVolume" jdbcType="DECIMAL" />
+       <result column="vin_code" property="vinCode" jdbcType="VARCHAR" />
+       <result column="display_mileage" property="displayMileage" jdbcType="DECIMAL" />
+       <result column="vehicle_desc" property="vehicleDesc" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- 查询拍卖会拍品 -->
+  <select id="listAuctionVehicleByAcutionId" resultMap="AuctionVehicleItemOrderMap" parameterType="java.util.HashMap">
+	 select t1.id,
+	 		t1.auction_id,
+	 		t2.license_code, 
+			t2.brand,
+			t2.brand_series,
+			t2.vehicle_model,
+			<!-- 以下转换其实无效 --> 
+			<!-- date_format(t2.register_license_years,'%Y-%m-%d') register_license_years, -->
+			t2.register_license_years,
+			t1.start_price,
+			t1.reserve_price,
+			t1.client,
+			t2.source,
+			t1.auction_vehicle_order,
+			t2.vin_code 
+			from auction_vehicle t1 
+			left join vehicle t2 on t1.vehicle_id=t2.id and t1.is_latest = 1 
+			where t1.auction_id=#{auctionId} and t1.status in (0,1,2,3,4,5,6)
+  </select>
+  
+  <!-- 远通集团导出目录 -->
+  <select id="exportCatalog" resultType="com.autostreets.biz.auction.model.AuctionVehicle" parameterType="com.autostreets.biz.auction.model.Auction">
+	 SELECT 
+	 	av.auction_vehicle_order 'auctionVehicleOrder',v.vehicle_src_id 'vehicleSrcId',
+	 	v.id 'vehicleId',v.code,v.brand,v.vin_code 'vinCode',v.swept_volume 'sweptVolume',
+	 	v.display_mileage 'displayMileage',v.vehicle_desc 'vehicleDesc' 
+	 FROM auction a 
+	 	INNER JOIN auction_vehicle av 
+	 		ON a.id=av.auction_id 
+	 	INNER JOIN vehicle v 
+	 		ON av.vehicle_id=v.id
+		AND a.id=#{id}
+		ORDER BY av.auction_vehicle_order
+  </select>
+  
+   <!-- 
+  拍品首页分页总数查询
+  ******************************
+  C:2014年7月17日 20:41:53
+  U:2014年9月19日 13:14:54（添加订单状态为0过滤） 
+  Roceys
+  V5.0
+  -->
+  <select id="selectAuctionVehiclesTotal"  resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+      <if test="status != null">
+        select count(*)
+	      <if test='status==9'>
+	          FROM vehicle v
+	          <if test="isDealer">
+	          		inner join vehicle_sales vs
+	          		on v.id= vs.id
+	          </if>
+                <include refid="auctionVehicle_Where_Clause"/>
+	      </if>
+	      <if test='status !=9 and status !=99'>
+	            FROM auction_vehicle av 
+                inner join vehicle v 
+                on v.id = av.vehicle_id and av.is_enable = 1 and v.requirement_type=0
+                <if test="isDealer">
+	          		inner join vehicle_sales vs
+	          		on v.id= vs.id
+	           	</if>
+                left outer join auction a 
+                on av.auction_id = a.id
+                left outer join order_item oi on oi.auction_vehicle_id = av.id and oi.status = 0
+                left outer join `order` o on o.id=oi.order_id
+                <include refid="auctionVehicle_Where_Clause"/>
+	      </if>
+	      <if test='status ==99'>
+	            FROM vehicle v
+	           <if test="isDealer">
+	          		inner join vehicle_sales vs
+	          		on v.id= vs.id
+	           	</if>
+		      LEFT OUTER JOIN auction_vehicle av
+		        ON v.id = av.vehicle_id and av.is_latest = 1 and av.is_enable = 1
+		      LEFT OUTER JOIN auction a
+		        ON av.auction_id = a.id
+		      LEFT OUTER JOIN order_item oi
+		         ON oi.auction_vehicle_id = av.id and oi.status = 0
+		      LEFT OUTER JOIN `order` o
+		        ON o.id = oi.order_id
+		          <include refid="auctionVehicle_Where_Clause"/>
+	      </if>
+      </if>
+  </select>
+  <!-- 
+    加载拍品首页数据
+  ******************************
+  2014年7月09日 20:37:49
+  Roceys
+   -->
+  <select id="selectAuctionVehicles"  resultMap="auctionVehicleResultMap" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+		<if test="status != null ">
+			<if test='status==9'>
+			    <include refid="queryVehicleBySaleStatus"/>
+			</if>
+			<if test='status !=9 and status !=99'>
+			         <include refid="queryAuctionVehicle"/>
+			</if>
+			<if test='status == 99'>
+			     <include refid="queryAll"/>
+			</if>
+			<if test="orderByClause != null" >
+			  order by ${orderByClause}
+			</if>
+			<if test="pagination != null and pagination.begin >= 0" >
+			  limit #{pagination.begin}, #{pagination.length}
+			</if>
+		</if>
+  </select>
+  <!-- 
+     拍品管理查询条件
+  *****************************
+  C:2014年7月16日 11:24:51
+  U:2014年7月24日 20:56:55（增加待售车辆不显示待拍卖车辆）
+  U:2014年7月24日 21:04:22  （SQL优化）
+  U:2014年7月25日 23:18:00 （所有参加过拍品的车辆都不显示）
+  U:2014年8月7日 14:50:36 （增加已审核）
+  V:6.0
+  Roceys
+  -->
+  <sql id="auctionVehicle_Where_Clause" >
+    <where>
+        <if test="status != null">
+              <if test='status==9'>
+                   <!-- 待销售车辆查询 -->
+		            and v.sale_status = 0 
+				    <choose>
+				    	<when test="isDealer">
+				    		 and vs.requirement_type=0
+				    	</when>
+				    	<otherwise>
+				    		 and v.requirement_type=0
+				    	</otherwise>
+				    </choose>
+		            and not exists ( select 0 from auction_vehicle av where av.vehicle_id = v.id)
+                     <if test="evalStartTimestamp != null">
+                       <![CDATA[ and v.created_time >= #{evalStartTimestamp,jdbcType=TIMESTAMP} ]]> 
+                     </if>
+                     <if test="evalEndTimestamp != null">
+                        <![CDATA[ and v.created_time <= #{evalEndTimestamp, jdbcType=TIMESTAMP} ]]>
+                     </if>
+                      <if test="vehicleAppraiser != null and vehicleAppraiser !=''">
+                        and v.vehicle_appraiser like CONCAT('%','${vehicleAppraiser}','%')
+                      </if>
+              </if>
+              <if test='status !=9 and status != 99'>
+                     and av.is_latest = 1 
+                     and av.status= #{status}
+		             <if test="startTimestamp != null">
+		               <![CDATA[ and av.plan_start_time >= #{startTimestamp,jdbcType=TIMESTAMP} ]]> 
+		             </if>
+		             <if test="endTimestamp != null">
+		                <![CDATA[ and av.plan_start_time <= #{endTimestamp, jdbcType=TIMESTAMP} ]]>
+		             </if>
+		              <if test="type != null and type !=''">
+		                and av.auction_type like CONCAT('%','${type}','%')
+		              </if>
+                     <if test="evalStartTimestamp != null">
+                       <![CDATA[ and v.created_time >= #{evalStartTimestamp,jdbcType=TIMESTAMP} ]]> 
+                     </if>
+                     <if test="evalEndTimestamp != null">
+                        <![CDATA[ and v.created_time <= #{evalEndTimestamp, jdbcType=TIMESTAMP} ]]>
+                     </if>
+                      <if test="vehicleAppraiser != null and vehicleAppraiser !=''">
+                        and v.vehicle_appraiser like CONCAT('%','${vehicleAppraiser}','%')
+                      </if>
+              </if>
+              <if test='status ==99'>
+                     AND v.sale_status is not null 
+				    <choose>
+				    	<when test="isDealer">
+				    		 and vs.requirement_type=0
+				    	</when>
+				    	<otherwise>
+				    		 and v.requirement_type=0
+				    	</otherwise>
+				    </choose>
+				      <if test="startTimestamp != null">
+                       <![CDATA[ and av.plan_start_time >= #{startTimestamp,jdbcType=TIMESTAMP} ]]> 
+                     </if>
+                     <if test="endTimestamp != null">
+                        <![CDATA[ and av.plan_start_time <= #{endTimestamp, jdbcType=TIMESTAMP} ]]>
+                     </if>
+                      <if test="type != null and type != '' ">
+                        and av.auction_type like CONCAT('%','${type}','%')
+                      </if>
+                     <if test="evalStartTimestamp != null">
+                       <![CDATA[ and v.created_time >= #{evalStartTimestamp,jdbcType=TIMESTAMP} ]]> 
+                     </if>
+                     <if test="evalEndTimestamp != null">
+                        <![CDATA[ and v.created_time <= #{evalEndTimestamp, jdbcType=TIMESTAMP} ]]>
+                     </if>
+                      <if test="vehicleAppraiser != null and vehicleAppraiser !=''">
+                        and v.vehicle_appraiser like CONCAT('%','${vehicleAppraiser}','%')
+                      </if>
+              </if>
+         <if test="brand != null and brand !=''">
+            and v.brand = #{brand}
+         </if>
+         <if test="vinCode != null and vinCode !=''">
+            and v.vin_code like CONCAT('%','${vinCode}','%')
+         </if>
+         <if test="licenseCode != null and licenseCode !=''">
+            and v.license_code like CONCAT('%','${licenseCode}','%')
+         </if>
+           <if test="code != null and code !=''">
+             and v.code like CONCAT('%','${code}','%')
+	     </if>
+         <if test="auctionCode != null and auctionCode !=''">
+            and a.code like CONCAT('%','${auctionCode}','%')
+         </if>
+         <if test="evaluationDept != null and evaluationDept !=''">
+            and v.evaluation_dept like CONCAT('%','${evaluationDept}','%')
+         </if>
+         <!-- V7.0 -->
+         <if test="requirementType != null and requirementType !=''">
+            and v.requirement_type = #{requirementType}
+         </if>
+         <if test="registerProvince != null and registerProvince !=''">
+            and v.register_province = #{registerProvince}
+         </if>
+         <if test="registerCity != null and registerCity !=''">
+            and v.register_city = #{registerCity}
+         </if>
+         <if test="vehicleType != null and vehicleType !=''">
+            and v.vehicle_type = #{vehicleType}
+         </if>
+         <if test="currentProvince != null and currentProvince !=''">
+            and v.current_province = #{currentProvince}
+         </if>
+         <if test="currentCity != null and currentCity !=''">
+            and v.current_city = #{currentCity}
+         </if>
+         <!-- 竞拍省市 -->
+         <if test="province != null and province !=''">
+            and av.province = #{province}
+         </if>
+         <if test="city != null and city !=''">
+            and av.city = #{city}
+         </if>
+        </if>
+        <!--拍品类型:(有底价、无底价) edit by zjz at 2014-12-22 16:29:50  -->
+         <if test="avType != null">
+            and av.av_type like CONCAT('%','${avType}','%')
+         </if>
+	    <if test="orgIds != null and orgIds.size()>0 ">
+	    	and v.vehicle_src_id in
+			<foreach item="item" index="index" collection="orgIds" open="(" separator="," close=")">
+				#{item}
+      		</foreach>
+         </if>
+         <!-- 商家后台权限控制 edit by zjz at 2015-11-24 15:38:10-->
+         <if test="vehicle != null and vehicle.vehicleSrcIds != null  and vehicle.vehicleSrcIds.size() > 0">
+         	  and v.vehicle_src_id in
+     				<foreach item="item" index="index" collection="vehicle.vehicleSrcIds" 
+                    				open="(" separator="," close=")">
+                   				#{item}
+            		</foreach> 
+         </if>
+         <!-- 只查询已定价(销售方式已确定)的车辆 edit by zjz at 2015-11-25 10:44:36-->
+         <if test="vehicle != null and vehicle.pricing!=null">
+         	  and v.is_pricing = #{vehicle.pricing,jdbcType=BIT}
+         </if>
+         <!-- 商家审核通过的车辆 edit by zjz at 2015-11-25 10:44:36-->
+         <if test="vehicle != null and vehicle.auditFlag!=null">
+         	  and v.audit_flag = #{vehicle.auditFlag,jdbcType=BIT}
+         </if>
+         <!-- 拍品管理增加热门推荐筛选 -->
+         <if test="recommend!=null">
+         	and is_recommend=${recommend}
+         </if>
+       </where>
+  </sql>
+  <!-- 查询条件处理：车辆待售状态查询加载 -->
+  <sql id="queryVehicleBySaleStatus">
+      select v.code
+            ,v.source
+            ,v.first_photo_url
+            ,v.brand
+            ,v.vehicle_model
+            ,v.selled_name
+            ,null type
+            ,v.sale_status saleStatus
+            ,null status
+            ,null start_timestamp
+            ,v.start_bid_price startPrice
+            ,null plus_range
+            ,null auction_type
+            ,v.reserve_price reservePrice
+            ,null bidder_name
+            ,null final_price
+            ,null bid_quantity
+            ,null maxPrice
+            ,null plan_start_time
+            ,null plan_end_time
+            ,v.vin_code
+            ,v.license_code
+            ,v.swept_volume
+            ,v.swept_volume_type
+            ,v.body_color
+            ,v.register_license_years
+            ,v.vehicle_appraiser
+            ,v.evaluation_dept
+            ,v.id vehicle_id
+            ,null id
+            ,null auction_id
+            ,null orderId
+            ,null bidder_sid
+            ,null orderItemSid
+            ,v.current_province province
+            ,v.current_city city,
+             v.vehicle_src_type,
+             v.audit_flag,
+             v.vehicle_src_id
+        from vehicle v 
+         <if test="isDealer">
+          		inner join vehicle_sales vs
+          		on v.id= vs.id
+	     </if>
+           <include refid="auctionVehicle_Where_Clause"/>
+  </sql>
+  
+   <!-- 
+  查询条件处理：拍品查询加载 
+  ***********************************
+  U:2014年7月26日 01:45:04
+  U:2014年8月7日 14:55:56 （增加车辆已审核）
+  U:2014年9月19日 13:16:20（增加订单状态为0过滤）
+  V:5.0
+  -->
+  <sql id="queryAuctionVehicle">
+        SELECT av.province,av.city,
+        <include refid="auctionVehicle_Index_Column_List"/>
+            FROM auction_vehicle av 
+                inner join vehicle v 
+                on v.id = av.vehicle_id and av.is_enable = 1 and v.requirement_type=0
+                <if test="isDealer">
+	          		inner join vehicle_sales vs
+	          		on v.id= vs.id
+	     		</if>
+                left outer join auction a 
+                on av.auction_id = a.id
+                left outer join order_item oi on oi.auction_vehicle_id = av.id and oi.status = 0
+                left outer join `order` o on o.id=oi.order_id
+          <include refid="auctionVehicle_Where_Clause"/>
+          order by av.created_timestamp desc
+  </sql>
+  
+    <!-- 
+    拍品管理首页列表
+    *******************************
+    C:2014年7月16日 11:33:11
+    U:2014年7月27日 19:28:46（起拍价、保留价显示万元，加价幅度显示元）
+    U:2014年8月11日 20:16:44 （委托人查询）
+    Roceys
+    V4.0
+   -->
+  <sql id="auctionVehicle_Index_Column_List" >
+    v.code,
+    v.source,
+    v.first_photo_url,
+    v.brand,
+    v.vehicle_model,
+    v.selled_name,
+    a.type,
+    v.sale_status saleStatus,
+    av.status,
+    a.start_timestamp,
+    case when av.start_price is null then v.start_bid_price else av.start_price end startPrice,
+    av.plus_range,
+    av.auction_type,
+    av.created_timestamp,
+    case when av.reserve_price is null then v.reserve_price else av.reserve_price end reservePrice,
+    o.bidder_name,
+    oi.final_price,
+    av.bid_quantity,
+    av.max_bid_price maxPrice,
+    av.plan_start_time,
+    av.plan_end_time,
+    v.vin_code,
+    v.license_code,
+    v.swept_volume,
+    v.swept_volume_type,
+    v.body_color,
+    v.register_license_years,
+    v.vehicle_appraiser,
+    v.evaluation_dept,
+    case when av.vehicle_id is null then v.id else av.vehicle_id end vehicle_id,
+    av.id,
+    av.auction_id,
+    o.id orderId,
+    o.bidder_sid,
+    oi.id orderItemSid,
+    av.av_type,
+    v.vehicle_src_type,
+    v.audit_flag,
+    v.vehicle_src_id,
+    av.province,
+    av.city,
+    av.is_recommend recommend,
+    av.license_fee licenseFee, 
+    av.ex_warehouse_fee exWarehouseFee, 
+    av.parking_fee parkingFee, 
+    av.traffic_fee trafficFee, 
+    av.traffic_violation_fee trafficViolationFee,
+    av.buyer_fixed_commission buyerFixedCommission,
+    av.buyer_commission_rate buyerCommissionRate
+  </sql>
+  
+    <!-- 查询条件处理：车辆与拍品全部加载 
+    ****************************************
+    U:2014年9月19日 13:16:52（增加订单状态为0过滤）
+    Roceys
+    V:5.0
+  -->
+  <sql id="queryAll">
+	  SELECT av.province,av.city,
+	  <include refid="auctionVehicle_Index_Column_List"/>
+	    FROM
+	  vehicle v
+	  <if test="isDealer">
+       		inner join vehicle_sales vs
+       		on v.id= vs.id
+	   </if>
+	  LEFT OUTER JOIN auction_vehicle av
+	    ON v.id = av.vehicle_id and av.is_latest = 1 and av.is_enable = 1
+	  LEFT OUTER JOIN auction a
+	    ON av.auction_id = a.id
+	  LEFT OUTER JOIN order_item oi
+	     ON oi.auction_vehicle_id = av.id and oi.status in (0,4,5,8,11,12)
+	  LEFT OUTER JOIN `order` o
+	    ON o.id = oi.order_id
+	    <include refid="auctionVehicle_Where_Clause"/>
+		order by av.created_timestamp desc
+  </sql>
+  
+    
+  <!-- 
+    1. 根据车辆ID查询车辆信息
+    ***************************
+    2014年7月10日 15:36:03
+    Roceys
+   -->
+  <select id="selectVehicle" resultType="com.autostreets.biz.auction.model.AuctionVehicle" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+		select v.code,v.brand,v.source,v.vehicle_model vehicleModel,v.sale_status saleStatus,
+		  v.start_bid_price startPrice,v.reserve_price reservePrice,
+		  v.vin_code vinCode,v.license_code licenseCode,v.swept_volume sweptVolume,v.swept_volume_type sweptVolumeType,
+		  v.register_license_years registerLicenseYears,v.vehicle_appraiser vehicleAppraiser,v.id vehicleId
+		from vehicle v
+		where v.id=#{vehicleId}
+  </select>
+  
+    <!-- 
+  1.根据车辆标识和拍品关联表标识查询对应拍品信息
+  2.此处为已经拍卖（有拍卖会id、及拍品关联id）
+  ******************************
+  2014年7月10日 12:37:49
+  Roceys
+   -->
+  <select id="selectAuctionVehicle"  resultType="com.autostreets.biz.auction.model.AuctionVehicle" parameterType="com.autostreets.biz.auction.model.AuctionVehicle" >
+		select v.code,
+		       v.source,
+		       v.brand,
+		       v.vehicle_model vehicleModel,
+		       v.sale_status saleStatus,
+		       case when av.start_price is null then v.start_bid_price else av.start_price end startPrice,
+		       case when av.reserve_price is null then v.reserve_price else av.reserve_price end reservePrice,
+		       v.vin_code vinCode,
+		       v.license_code licenseCode,
+		       v.swept_volume sweptVolume,
+		       v.swept_volume_type sweptVolumeType,
+		       v.register_license_years registerLicenseYears,
+		       v.vehicle_appraiser vehicleAppraiser,
+		       case when av.vehicle_id is null then v.id else av.vehicle_id end vehicleId,av.av_type avType,
+		       <include refid="auctionVehicle_Column_List"/>
+		  from auction_vehicle av,vehicle v 
+		 where v.id=#{vehicleId} and av.id = #{id}
+  </select>
+  
+    <!-- 
+  拍品自定义公用列：
+  无startprice 和 reservePrice 、vehicle_sid
+  拍品编辑
+   -->
+  <sql id="auctionVehicle_Column_List" >
+    av.id, 
+    av.auction_id auctionId, 
+    av.plus_range plusRange, 
+    av.is_display_reserve_price displayReservePrice, 
+    av.status, 
+    av.is_done isDone, 
+    av.created_by createdBy, 
+    av.created_timestamp createdTimestamp, 
+    av.bid_quantity bidQuantity,
+    av.commission_percent commissionPercent, 
+    av.license_fee licenseFee, 
+    av.ex_warehouse_fee exWarehouseFee, 
+    av.parking_fee parkingFee, 
+    av.traffic_fee trafficFee, 
+    av.traffic_violation_fee trafficViolationFee, 
+    av.client_commission_rate clientCommissionRate, 
+    av.client_fixed_commission clientFixedCommission, 
+    av.buyer_commission_rate buyerCommissionRate, 
+    av.buyer_fixed_commission buyerFixedCommission, 
+    av.see_car_time seeCarTime, 
+    av.see_car_addr seeCarAddr, 
+    av.plan_start_time planStartTime, 
+    av.plan_end_time planEndTime, 
+    av.client,av.auction_type auctionType,
+    av.auction_vehicle_order auctionVehicleOrder, 
+    av.is_enable enable,
+    av.model_desc modelDesc,
+    av.vehicle_desc vehicleDesc,
+    av.auction_model auctionModel,
+    av.province,
+    av.city,
+    av.av_type,
+    av.is_recommend recommend,
+    av.is_activity activity,
+    av.activity_title activityTitle
+  </sql>
+  
+  <update id="volumeSetPrice" parameterType="java.util.Map">
+    update auction_vehicle set start_price = #{startPrice},plus_range = #{plusRange} where auction_id = #{auctionId}
+  </update>
+  
+   <!-- 
+         根据车辆ID查询及是否最新拍品、拍品状态，通过创建时间获得最新拍品ID
+    **********************************
+   -->
+  <select id="selectAvId" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+       select id from (
+		  select av.id,av.vehicle_id,av.created_timestamp,av.is_latest,av.auction_id,av.auction_type 
+		  from auction_vehicle av 
+		      where av.is_latest=#{latest} and av.vehicle_id=#{vehicleId} and av.status = ${status}
+		      order by av.created_timestamp desc
+	   ) af group by vehicle_id order by created_timestamp desc
+  </select>
+  
+  <select id="getOnlineAunctionCount" resultType="java.lang.Integer">
+  <![CDATA[
+     select count(distinct left(plan_start_time, 10))  from auction_vehicle where auction_type = 1 and plan_start_time < CURDATE()
+  ]]>
+  </select>
+  
+  <select id="isOnlineAunction" resultType="java.lang.Integer">
+  <![CDATA[
+    select count(1) from auction_vehicle where  plan_start_time >= CURDATE()
+  ]]>
+  </select>
+  
+  <resultMap id="auctionVehicleMap" type="com.autostreets.biz.auction.model.AuctionVehicle" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    <result column="av_no" property="avNo" jdbcType="VARCHAR" />
+    <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+    <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+    <result column="plus_range" property="plusRange" jdbcType="SMALLINT" />
+    <result column="is_display_reserve_price" property="displayReservePrice" jdbcType="BIT" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="is_done" property="done" jdbcType="BIT" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="created_timestamp" property="createdTimestamp" jdbcType="TIMESTAMP" />
+    <result column="max_bid_price" property="maxBidPrice" jdbcType="DECIMAL" />
+    <result column="bid_quantity" property="bidQuantity" jdbcType="INTEGER" />
+    <result column="commission_percent" property="commissionPercent" jdbcType="DECIMAL" />
+    <result column="license_fee" property="licenseFee" jdbcType="DECIMAL" />
+    <result column="ex_warehouse_fee" property="exWarehouseFee" jdbcType="DECIMAL" />
+    <result column="parking_fee" property="parkingFee" jdbcType="DECIMAL" />
+    <result column="traffic_fee" property="trafficFee" jdbcType="DECIMAL" />
+    <result column="traffic_violation_fee" property="trafficViolationFee" jdbcType="DECIMAL" />
+    <result column="client_commission_rate" property="clientCommissionRate" jdbcType="DECIMAL" />
+    <result column="client_fixed_commission" property="clientFixedCommission" jdbcType="DECIMAL" />
+    <result column="buyer_commission_rate" property="buyerCommissionRate" jdbcType="DECIMAL" />
+    <result column="buyer_fixed_commission" property="buyerFixedCommission" jdbcType="DECIMAL" />
+    <result column="see_car_time" property="seeCarTime" jdbcType="VARCHAR" />
+    <result column="see_car_addr" property="seeCarAddr" jdbcType="VARCHAR" />
+    <result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
+    <result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+    <result column="client" property="client" jdbcType="VARCHAR" />
+    <result column="auction_type" property="auctionType" jdbcType="BIT" />
+    <result column="auction_vehicle_order" property="auctionVehicleOrder" jdbcType="SMALLINT" />
+    <result column="is_enable" property="enable" jdbcType="BIT" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="is_activity" property="activity" jdbcType="BIT" />
+    <result column="activity_title" property="activityTitle" jdbcType="VARCHAR" />
+    <result column="code" property="vehicle.code" jdbcType="VARCHAR" />
+    <result column="license_code" property="vehicle.licenseCode" jdbcType="VARCHAR" />
+    <result column="register_license_years" property="vehicle.registerLicenseYears" jdbcType="DATE" />
+    <result column="display_mileage" property="vehicle.displayMileage" jdbcType="VARCHAR" />
+    <result column="brand" property="vehicle.brand" jdbcType="VARCHAR" />
+    <result column="vehicle_model" property="vehicle.vehicleModel" jdbcType="VARCHAR" />
+    <result column="swept_volume_standard" property="vehicle.sweptVolumeStandard" jdbcType="VARCHAR" />
+    <result column="selled_name" property="vehicle.selledName" jdbcType="VARCHAR" />
+    <result column="first_photo_url" property="vehicle.firstPhotoUrl" jdbcType="VARCHAR" />
+    <result column="register_city" property="vehicle.registerCity" jdbcType="VARCHAR" />
+    <result column="vehicle_desc" property="vehicle.vehicleDesc" jdbcType="VARCHAR" />
+    <result column="is_certified" property="vehicle.certified" jdbcType="BIT" />
+    <result column="is_guaranteed" property="vehicle.guaranteed" jdbcType="BIT" />
+    <result column="source" property="vehicle.source" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <select id="findAuctionVehicle1" parameterType="java.util.Map" resultMap="auctionVehicleMap">
+    select a.id,
+           a.auction_id,
+           a.av_no,
+           v.code,
+           a.vehicle_id,
+           a.reserve_price,
+           a.start_price,
+           a.plus_range,
+           a.is_display_reserve_price,
+           a.status,
+           a.is_done,
+           a.created_by,
+           a.created_timestamp,
+           a.max_bid_price,
+           a.bid_quantity,
+           a.commission_percent,
+           a.license_fee, 
+           a.ex_warehouse_fee, 
+           a.parking_fee, 
+           a.traffic_fee, 
+           a.traffic_violation_fee, 
+           a.client_commission_rate, 
+           a.client_fixed_commission, 
+           a.buyer_commission_rate, 
+           a.buyer_fixed_commission, 
+           a.see_car_time, 
+           a.see_car_addr, 
+           a.plan_start_time, 
+           a.plan_end_time, 
+           a.client, 
+           a.auction_type, 
+           a.auction_vehicle_order, 
+           a.is_enable,
+           a.city,
+           v.license_code,
+           v.register_license_years,
+           v.display_mileage,
+           v.brand,
+           v.vehicle_model,
+           v.swept_volume_standard,
+           v.selled_name, 
+           v.first_photo_url, 
+           v.is_certified, 
+           v.is_guaranteed, 
+           a.is_activity, 
+           a.activity_title,
+           v.source,
+           a.is_recommend recommend
+    from auction_vehicle a, vehicle v
+    where a.vehicle_id = v.id 
+      and a.auction_type =  #{auctionType}
+      and a.is_latest = 1 
+      <if test="status == null">
+      <![CDATA[
+        and a.status <> 0
+      ]]>
+      </if>
+      <if test="status != null">
+        and a.status = #{status}
+      </if>
+      <if test="city != null and city != ''">
+      <![CDATA[
+        and a.city = #{city}
+      ]]>
+      </if>
+      <if test="recommend">
+	   and a.is_recommend = 1
+	  </if> 
+      <if test="startPriceMin != null">
+      <![CDATA[
+        and a.start_price >= #{startPriceMin}
+      ]]>
+      </if>
+      <if test="startPriceMax != null">
+      <![CDATA[
+        and a.start_price < #{startPriceMax}
+      ]]>
+      </if>
+      <if test="displayMileageMin != null">
+      <![CDATA[
+        and v.display_mileage >= #{displayMileageMin}
+      ]]>
+      </if>
+      <if test="displayMileageMax != null">
+      <![CDATA[
+        and v.display_mileage < #{displayMileageMax}
+      ]]>
+      </if>
+      <if test="vehicleAgeMin != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+      ]]>
+      </if>
+      <if test="vehicleAgeMax != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+      ]]>
+      </if>
+      <if test="dateStart != null">
+      <![CDATA[
+        and plan_end_time >= #{dateStart}
+      ]]>
+      </if>
+      <if test="dateEnd != null">
+      <![CDATA[
+        and plan_end_time <= #{dateEnd}
+      ]]>
+      </if>
+    order by a.is_activity desc, if(a.status = 5, 0, a.status), plan_end_time
+    limit #{offset}, #{limit}
+  </select>
+  
+  <select id="findAuctionVehicleRecommend" resultMap="auctionVehicleMap" >
+    select a.id,
+           a.auction_id,
+           a.av_no,
+           v.code,
+           a.vehicle_id,
+           a.reserve_price,
+           a.start_price,
+           a.plus_range,
+           a.is_display_reserve_price,
+           a.status,
+           a.is_done,
+           a.created_by,
+           a.created_timestamp,
+           a.max_bid_price,
+           a.bid_quantity,
+           a.commission_percent,
+           a.license_fee, 
+           a.ex_warehouse_fee, 
+           a.parking_fee, 
+           a.traffic_fee, 
+           a.traffic_violation_fee, 
+           a.client_commission_rate, 
+           a.client_fixed_commission, 
+           a.buyer_commission_rate, 
+           a.buyer_fixed_commission, 
+           a.see_car_time, 
+           a.see_car_addr, 
+           a.plan_start_time, 
+           a.plan_end_time, 
+           a.client, 
+           a.auction_type, 
+           a.auction_vehicle_order, 
+           a.is_enable,
+           a.city,
+           v.license_code,
+           v.register_license_years,
+           v.display_mileage,
+           v.brand,
+           v.vehicle_model,
+           v.swept_volume_standard,
+           v.selled_name, 
+           v.first_photo_url, 
+           v.is_certified, 
+           v.is_guaranteed, 
+           a.is_activity, 
+           a.activity_title
+    from auction_vehicle a, vehicle v
+    where a.vehicle_id = v.id 
+      and a.auction_type = 1 
+      and a.is_latest = 1 
+      and a.is_recommend = 1
+	  and a.plan_end_time >= CURDATE()
+    order by RAND()
+  </select>
+  
+   <select id="getCityList" resultType="java.lang.String">
+    <![CDATA[
+       select distinct city from auction_vehicle where auction_type = 1 AND status <> '0' and city is not null and city <> '' and plan_end_time >= curdate()
+    ]]>
+  </select>
+  
+  <!-- 拍卖城市列表 -->
+  <select id="getCityListforAuction" resultType="java.util.Map" parameterType="java.util.Map" >
+  <![CDATA[
+    select city, max(is_activity) act from auction_vehicle 
+    							 where auction_type = #{auctionType} 
+    						       and status <> '0' 
+    						       and city is not null 
+    						       and city <> '' 
+    						       and plan_end_time >= curdate() 
+    						       and is_latest = 1
+    						  group by city 
+    						  order by act desc
+  ]]>
+  </select>
+  
+  <select id="countAuctionVehicle1" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select
+      count(a.id)
+    from auction_vehicle a, vehicle v
+    where a.vehicle_id = v.id
+      and a.auction_type = #{auctionType}
+      and a.is_latest = 1 
+      <![CDATA[
+      and a.status <> 0
+      ]]>
+      <if test="status != null">
+        and a.status = #{status} 
+      </if>
+      <if test="recommend">
+	   and a.is_recommend = 1
+	  </if> 
+      <if test="city != null and city != ''">
+      <![CDATA[
+        and city = #{city}
+      ]]>
+      </if>
+      <if test="startPriceMin != null">
+      <![CDATA[
+        and a.start_price >= #{startPriceMin}
+      ]]>
+      </if>
+      <if test="startPriceMax != null">
+      <![CDATA[
+        and a.start_price < #{startPriceMax}
+      ]]>
+      </if>
+      <if test="displayMileageMin != null">
+      <![CDATA[
+        and v.display_mileage >= #{displayMileageMin}
+      ]]>
+      </if>
+      <if test="displayMileageMax != null">
+      <![CDATA[
+        and v.display_mileage < #{displayMileageMax}
+      ]]>
+      </if>
+      <if test="vehicleAgeMin != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+      ]]>
+      </if>
+      <if test="vehicleAgeMax != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+      ]]>
+      </if>
+      <if test="dateStart != null">
+      <![CDATA[
+        and plan_end_time >= #{dateStart}
+      ]]>
+      </if>
+      <if test="dateEnd != null">
+      <![CDATA[
+        and plan_end_time <= #{dateEnd}
+      ]]>
+      </if>
+  </select>
+  
+   <select id="countAuctionVehicle" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select
+      count(a.id)
+    from auction_vehicle a, vehicle v
+    where a.vehicle_id = v.id
+      and a.auction_id = #{auctionId}
+      <if test="startPriceMin != null">
+      <![CDATA[
+        and a.start_price >= #{startPriceMin}
+      ]]>
+      </if>
+      <if test="startPriceMax != null">
+      <![CDATA[
+        and a.start_price < #{startPriceMax}
+      ]]>
+      </if>
+      <if test="displayMileageMin != null">
+      <![CDATA[
+        and v.display_mileage >= #{displayMileageMin}
+      ]]>
+      </if>
+      <if test="displayMileageMax != null">
+      <![CDATA[
+        and v.display_mileage < #{displayMileageMax}
+      ]]>
+      </if>
+      <if test="vehicleAgeMin != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+      ]]>
+      </if>
+      <if test="vehicleAgeMax != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+      ]]>
+      </if>
+  </select>
+  
+  <select id="findAuctionVehicle" parameterType="java.util.Map" resultMap="auctionVehicleMap">
+    select a.id,
+           a.auction_id,
+           a.av_no,
+           v.code,
+           a.vehicle_id,
+           a.reserve_price,
+           a.start_price,
+           a.plus_range,
+           a.is_display_reserve_price,
+           a.status,
+           a.is_done,
+           a.created_by,
+           a.created_timestamp,
+           a.max_bid_price,
+           a.bid_quantity,
+           a.commission_percent,
+           a.license_fee, 
+           a.ex_warehouse_fee, 
+           a.parking_fee, 
+           a.traffic_fee, 
+           a.traffic_violation_fee, 
+           a.client_commission_rate, 
+           a.client_fixed_commission, 
+           a.buyer_commission_rate, 
+           a.buyer_fixed_commission, 
+           a.see_car_time, 
+           a.see_car_addr, 
+           a.plan_start_time, 
+           a.plan_end_time, 
+           a.client, 
+           a.auction_type, 
+           a.auction_vehicle_order, 
+           a.is_enable,
+           a.city,
+           v.license_code,
+           v.register_license_years,
+           v.display_mileage,
+           v.brand,
+           v.vehicle_model,
+           v.swept_volume_standard,
+           v.selled_name, 
+           v.first_photo_url,
+           v.register_city, 
+           v.vehicle_desc, 
+           v.is_certified, 
+           v.is_guaranteed, 
+           a.is_activity, 
+           a.activity_title,
+           v.source
+    from auction_vehicle a, vehicle v
+    where a.vehicle_id = v.id
+      and a.auction_id = #{auctionId}
+      <if test="startPriceMin != null">
+      <![CDATA[
+        and a.start_price >= #{startPriceMin}
+      ]]>
+      </if>
+      <if test="startPriceMax != null">
+      <![CDATA[
+        and a.start_price < #{startPriceMax}
+      ]]>
+      </if>
+      <if test="displayMileageMin != null">
+      <![CDATA[
+        and v.display_mileage >= #{displayMileageMin}
+      ]]>
+      </if>
+      <if test="displayMileageMax != null">
+      <![CDATA[
+        and v.display_mileage < #{displayMileageMax}
+      ]]>
+      </if>
+      <if test="vehicleAgeMin != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 >= #{vehicleAgeMin}
+      ]]>
+      </if>
+      <if test="vehicleAgeMax != null">
+      <![CDATA[
+        and (to_days(now()) - to_days(str_to_date(concat(register_license_years, '01'), '%Y%m%d'))) / 365 < #{vehicleAgeMax}
+      ]]>
+      </if>
+    order by auction_vehicle_order
+    
+    <if test="offset != null and null != limit" >
+	    limit #{offset}, #{limit}
+    </if>
+  </select>
+  
+   <update id="resetOnlineEndTime" parameterType="java.util.Map">
+    update auction_vehicle set online_end_time = null where id = #{avId}
+   </update>
+   
+   
+   <select id="getOnceBidAuction" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.AuctionVehicle">
+  	SELECT 
+	    av.id,av.vehicle_id vehicleId,av.status, av.auction_type, av.end_time, v.brand, 
+	    v.vehicle_model 'vehicleModel', v.selled_name 'selledName', av.av_no, v.code,av.online_end_time
+	FROM
+	    auction_vehicle av 
+	    INNER JOIN vehicle v 
+	        ON av.vehicle_id = v.id
+	WHERE
+	    av.auction_type = 2 
+	    AND av.status = 3
+	    <if test="startTimestamp != null and startTimestamp != '' ">
+	      <![CDATA[
+	        and plan_end_time >= #{startTimestamp}
+	      ]]>
+	      </if>
+	      <if test="endTimestamp != null and endTimestamp != '' ">
+	      <![CDATA[
+	        and plan_end_time <= #{endTimestamp}
+	      ]]>
+	    </if>
+	    ORDER BY av.end_time DESC
+	<if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  <select id="getOnceBidAuctionCount" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.AuctionVehicle">
+  	SELECT 
+	    count(*)
+	FROM
+	    auction_vehicle av 
+	    INNER JOIN vehicle v 
+	        ON av.vehicle_id = v.id
+	WHERE 
+	    av.auction_type = 2 
+	    AND av.status = 3
+	    <if test="startTimestamp != null and startTimestamp != '' ">
+	      <![CDATA[
+	        and plan_end_time >= #{startTimestamp}
+	      ]]>
+	      </if>
+	      <if test="endTimestamp != null and endTimestamp != '' ">
+	      <![CDATA[
+	        and plan_end_time <= #{endTimestamp}
+	      ]]>
+	    </if>
+  </select>
+  
+  
+  <!-- 同步拍助手优化2.0 -->
+  <resultMap type="com.autostreets.biz.auction.model.AuctionVehicle" id="AuctionVehicleListMap">
+  	<id column="id" property="id" jdbcType="INTEGER" />
+  	<result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+  	<result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+  	<result column="parking_fee" property="parkingFee" jdbcType="DECIMAL" />
+  	<result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+  	<result column="ex_warehouse_fee" property="exWarehouseFee" jdbcType="DECIMAL" />
+  	<result column="license_fee" property="licenseFee" jdbcType="DECIMAL" />
+  	<result column="commission_percent" property="commissionPercent" jdbcType="DECIMAL" />
+  	<result column="plus_range" property="plusRange" jdbcType="SMALLINT" />
+  	<result column="status" property="status" jdbcType="INTEGER" />
+  	<result column="auction_vehicle_order" property="auctionVehicleOrder" jdbcType="INTEGER" />
+  	<result column="auction_id" property="auctionId" jdbcType="INTEGER" />
+  	<result column="max_bid_price" property="maxBidPrice" jdbcType="DECIMAL" />
+  	
+  	<result column="swept_volume_standard" property="vehicle.sweptVolumeStandard" jdbcType="VARCHAR" />
+  	<result column="display_mileage" property="vehicle.displayMileage" jdbcType="VARCHAR" />
+  	<result column="license_code" property="vehicle.licenseCode" jdbcType="VARCHAR" />
+  	<result column="register_city" property="vehicle.registerCity" jdbcType="VARCHAR" />
+  	<result column="brand" property="vehicle.brand" jdbcType="VARCHAR" />
+  	<result column="first_photo_url" property="vehicle.firstPhotoUrl" jdbcType="VARCHAR" />
+  	<result column="selled_name" property="vehicle.selledName" jdbcType="VARCHAR" />
+  	<result column="vehicle_model" property="vehicle.vehicleModel" jdbcType="VARCHAR" />
+  	<result column="vehicleId" property="vehicle.id" jdbcType="VARCHAR" />
+  	<result column="vehicleDesc" property="vehicle.vehicleDesc" jdbcType="VARCHAR" />
+  	<result column="buyer_commission_rate" property="buyerCommissionRate" jdbcType="DECIMAL" />
+  	<result column="buyer_fixed_commission" property="buyerFixedCommission" jdbcType="DECIMAL" />
+  	<result column="online_end_time" property="onlineEndTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="getAuctionVehicles" resultMap="AuctionVehicleListMap" parameterType="java.lang.Integer">
+  	SELECT 
+	    av.id, av.parking_fee, av.ex_warehouse_fee, av.license_fee, 
+	    av.commission_percent, av.plus_range, av.status, 
+	    av.auction_vehicle_order,av.start_price, 
+	    v.swept_volume_standard, 
+	    v.display_mileage, v.license_code, 
+	    v.register_city, v.brand,v.first_photo_url,
+	    v.selled_name,v.vehicle_model,v.id 'vehicleId',v.vehicle_desc vehicleDesc
+	FROM
+	    auction_vehicle av 
+	    INNER JOIN vehicle v 
+	        ON av.vehicle_id = v.id 
+	        WHERE av.auction_id = #{auctionId}
+	ORDER BY auction_vehicle_order
+  </select>
+  
+  <select id="getAuctionVehicleAndVehicle" resultMap="AuctionVehicleListMap" parameterType="java.lang.Integer">
+  	SELECT 
+	    av.id, av.parking_fee, av.ex_warehouse_fee, av.license_fee, 
+	    av.commission_percent, av.plus_range, av.status, 
+	    av.auction_vehicle_order,av.start_price,av.auction_id,
+	    v.swept_volume_standard, 
+	    v.display_mileage, v.license_code, 
+	    v.register_city, v.brand,v.first_photo_url,
+	    v.selled_name,v.vehicle_model,v.id 'vehicleId',av.max_bid_price,v.vehicle_desc vehicleDesc,av.buyer_commission_rate,av.buyer_fixed_commission,av.online_end_time
+	FROM
+	    auction_vehicle av 
+	    INNER JOIN vehicle v 
+	        ON av.vehicle_id = v.id 
+	        WHERE av.id = #{avId}
+	ORDER BY auction_vehicle_order
+  </select>
+  
+    <!-- 仓储推送拍卖会目录 查询vin码和顺序号 -->
+    <select id="selectStockRemovalAuction" parameterType="java.lang.Integer"
+        resultType="com.autostreets.biz.auction.model.Vehicle">
+        SELECT av.auction_vehicle_order as auctionVehicleOrder,v.vin_code as vinCode
+        FROM vehicle v JOIN auction_vehicle av 
+        on v.id=av.vehicle_id 
+        where av.auction_id=#{auctionid}
+        ORDER BY av.auction_vehicle_order
+    </select>
+    
+    <select id="getNextAvList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    	SELECT id,auction_id,status FROM auction_vehicle 
+    	WHERE auction_id=#{auctionId} ORDER BY auction_vehicle_order
+    </select>
+    <select id="selectOnlineDealSum" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select count(*) 
+     from auction_vehicle ave,`order` o ,order_item oi 
+     where ave.id = oi.auction_vehicle_id 
+      and oi.order_id = o.id 
+      and o.bidder_sid !='000'
+     and ave.auction_id=#{auctionId}
+    </select>
+</mapper>

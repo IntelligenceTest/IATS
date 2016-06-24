@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.VehicleSalesMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.VehicleSales" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="requirement_type" property="requirementType" jdbcType="BIT" />
+    <result column="start_price" property="startPrice" jdbcType="DECIMAL" />
+    <result column="reserve_price" property="reservePrice" jdbcType="DECIMAL" />
+    <result column="fp_price" property="fpPrice" jdbcType="DECIMAL" />
+    <result column="new_vehicle_suggestion_price" property="newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+    <result column="has_tax_buy" property="hasTaxBuy" jdbcType="BIT" />
+    <result column="tax_buy" property="taxBuy" jdbcType="DECIMAL" />
+    <result column="sales_channel" property="salesChannel" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, requirement_type, start_price, reserve_price, fp_price, new_vehicle_suggestion_price, 
+    has_tax_buy, tax_buy, sales_channel, create_time, modify_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.VehicleSalesExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from vehicle_sales
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from vehicle_sales
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from vehicle_sales
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.VehicleSalesExample" >
+    delete from vehicle_sales
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.autostreets.biz.auction.model.VehicleSales" >
+    insert into vehicle_sales (id, requirement_type, start_price, 
+      reserve_price, fp_price, new_vehicle_suggestion_price, 
+      has_tax_buy, tax_buy, sales_channel, 
+      create_time, modify_time)
+    values (#{id,jdbcType=INTEGER}, #{requirementType,jdbcType=BIT}, #{startPrice,jdbcType=DECIMAL}, 
+      #{reservePrice,jdbcType=DECIMAL}, #{fpPrice,jdbcType=DECIMAL}, #{newVehicleSuggestionPrice,jdbcType=DECIMAL}, 
+      #{hasTaxBuy,jdbcType=BIT}, #{taxBuy,jdbcType=DECIMAL}, #{salesChannel,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.autostreets.biz.auction.model.VehicleSales" >
+    insert into vehicle_sales
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="requirementType != null" >
+        requirement_type,
+      </if>
+      <if test="startPrice != null" >
+        start_price,
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price,
+      </if>
+      <if test="fpPrice != null" >
+        fp_price,
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price,
+      </if>
+      <if test="hasTaxBuy != null" >
+        has_tax_buy,
+      </if>
+      <if test="taxBuy != null" >
+        tax_buy,
+      </if>
+      <if test="salesChannel != null" >
+        sales_channel,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="requirementType != null" >
+        #{requirementType,jdbcType=BIT},
+      </if>
+      <if test="startPrice != null" >
+        #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="fpPrice != null" >
+        #{fpPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="hasTaxBuy != null" >
+        #{hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="taxBuy != null" >
+        #{taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="salesChannel != null" >
+        #{salesChannel,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.VehicleSalesExample" >
+    select count(*) from vehicle_sales
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update vehicle_sales
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.requirementType != null" >
+        requirement_type = #{record.requirementType,jdbcType=BIT},
+      </if>
+      <if test="record.startPrice != null" >
+        start_price = #{record.startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.reservePrice != null" >
+        reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.fpPrice != null" >
+        fp_price = #{record.fpPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.hasTaxBuy != null" >
+        has_tax_buy = #{record.hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="record.taxBuy != null" >
+        tax_buy = #{record.taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="record.salesChannel != null" >
+        sales_channel = #{record.salesChannel,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modifyTime != null" >
+        modify_time = #{record.modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update vehicle_sales
+    set id = #{record.id,jdbcType=INTEGER},
+      requirement_type = #{record.requirementType,jdbcType=BIT},
+      start_price = #{record.startPrice,jdbcType=DECIMAL},
+      reserve_price = #{record.reservePrice,jdbcType=DECIMAL},
+      fp_price = #{record.fpPrice,jdbcType=DECIMAL},
+      new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      has_tax_buy = #{record.hasTaxBuy,jdbcType=BIT},
+      tax_buy = #{record.taxBuy,jdbcType=DECIMAL},
+      sales_channel = #{record.salesChannel,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      modify_time = #{record.modifyTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.VehicleSales" >
+    update vehicle_sales
+    <set >
+      <if test="requirementType != null" >
+        requirement_type = #{requirementType,jdbcType=BIT},
+      </if>
+      <if test="startPrice != null" >
+        start_price = #{startPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="reservePrice != null" >
+        reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="fpPrice != null" >
+        fp_price = #{fpPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="hasTaxBuy != null" >
+        has_tax_buy = #{hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="taxBuy != null" >
+        tax_buy = #{taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="salesChannel != null" >
+        sales_channel = #{salesChannel,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.VehicleSales" >
+    update vehicle_sales
+    set requirement_type = #{requirementType,jdbcType=BIT},
+      start_price = #{startPrice,jdbcType=DECIMAL},
+      reserve_price = #{reservePrice,jdbcType=DECIMAL},
+      fp_price = #{fpPrice,jdbcType=DECIMAL},
+      new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      has_tax_buy = #{hasTaxBuy,jdbcType=BIT},
+      tax_buy = #{taxBuy,jdbcType=DECIMAL},
+      sales_channel = #{salesChannel,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

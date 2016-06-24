@@ -1,0 +1,802 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.AuctionMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.Auction" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="created_timestamp" property="createdTimestamp" jdbcType="TIMESTAMP" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="start_timestamp" property="startTimestamp" jdbcType="TIMESTAMP" />
+    <result column="end_timestamp" property="endTimestamp" jdbcType="TIMESTAMP" />
+    <result column="auction_model" property="auctionModel" jdbcType="BIT" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="contact" property="contact" jdbcType="VARCHAR" />
+    <result column="contact_tellphone" property="contactTellphone" jdbcType="VARCHAR" />
+    <result column="is_deposit_margin" property="depositMargin" jdbcType="BIT" />
+    <result column="vehicle_margin" property="vehicleMargin" jdbcType="DECIMAL" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="video_url" property="videoUrl" jdbcType="VARCHAR" />
+    <result column="audio_url" property="audioUrl" jdbcType="VARCHAR" />
+    <result column="auctioneer_cellphone" property="auctioneerCellphone" jdbcType="VARCHAR" />
+    <result column="vehicle_quantity" property="vehicleQuantity" jdbcType="SMALLINT" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="is_enable" property="enable" jdbcType="BIT" />
+    <result column="auction_margin" property="auctionMargin" jdbcType="DECIMAL" />
+    <result column="transaction_guide" property="transactionGuide" jdbcType="VARCHAR" />
+    <result column="notice" property="notice" jdbcType="VARCHAR" />
+    <result column="auction_model_desc" property="auctionModelDesc" jdbcType="VARCHAR" />
+    <result column="acution_vehicle_desc" property="acutionVehicleDesc" jdbcType="VARCHAR" />
+    <result column="current_av_id" property="currentAvId" jdbcType="INTEGER" />
+    <result column="end_display_time" property="endDisplayTime" jdbcType="TIMESTAMP" />
+    <result column="is_special" property="special" jdbcType="BIT" />
+    <result column="place_id" property="placeId" jdbcType="INTEGER" />
+    <result column="driveway_id" property="drivewayId" jdbcType="INTEGER" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="banner1_url" property="banner1Url" jdbcType="VARCHAR" />
+    <result column="banner2_url" property="banner2Url" jdbcType="VARCHAR" />
+    <result column="banner3_url" property="banner3Url" jdbcType="VARCHAR" />
+    <result column="auction_num" property="auctionNum" jdbcType="INTEGER" />
+    <result column="is_push_tms" property="pushTms" jdbcType="BIT" />
+    <result column="parker_cellphone" property="parkerCellphone" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="vehicle_max" property="vehicleMax" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, code, title, created_by, created_timestamp, type, start_timestamp, end_timestamp, 
+    auction_model, province, city, address, contact, contact_tellphone, is_deposit_margin, 
+    vehicle_margin, content, video_url, audio_url, auctioneer_cellphone, vehicle_quantity, 
+    status, is_enable, auction_margin, transaction_guide, notice, auction_model_desc, 
+    acution_vehicle_desc, current_av_id, end_display_time, is_special, place_id, driveway_id, 
+    pic_url, banner1_url, banner2_url, banner3_url, auction_num, is_push_tms, parker_cellphone, 
+    org_id, vehicle_max
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.AuctionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from auction
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null and pagination.begin >= 0" >
+      limit #{pagination.begin}, #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from auction
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from auction
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.AuctionExample" >
+    delete from auction
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.autostreets.biz.auction.model.Auction" >
+    insert into auction (id, code, title, 
+      created_by, created_timestamp, type, 
+      start_timestamp, end_timestamp, auction_model, 
+      province, city, address, 
+      contact, contact_tellphone, is_deposit_margin, 
+      vehicle_margin, content, video_url, 
+      audio_url, auctioneer_cellphone, vehicle_quantity, 
+      status, is_enable, auction_margin, 
+      transaction_guide, notice, auction_model_desc, 
+      acution_vehicle_desc, current_av_id, end_display_time, 
+      is_special, place_id, driveway_id, 
+      pic_url, banner1_url, banner2_url, 
+      banner3_url, auction_num, is_push_tms, 
+      parker_cellphone, org_id, vehicle_max
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{createdBy,jdbcType=VARCHAR}, #{createdTimestamp,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
+      #{startTimestamp,jdbcType=TIMESTAMP}, #{endTimestamp,jdbcType=TIMESTAMP}, #{auctionModel,jdbcType=BIT}, 
+      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{contact,jdbcType=VARCHAR}, #{contactTellphone,jdbcType=VARCHAR}, #{depositMargin,jdbcType=BIT}, 
+      #{vehicleMargin,jdbcType=DECIMAL}, #{content,jdbcType=VARCHAR}, #{videoUrl,jdbcType=VARCHAR}, 
+      #{audioUrl,jdbcType=VARCHAR}, #{auctioneerCellphone,jdbcType=VARCHAR}, #{vehicleQuantity,jdbcType=SMALLINT}, 
+      #{status,jdbcType=BIT}, #{enable,jdbcType=BIT}, #{auctionMargin,jdbcType=DECIMAL}, 
+      #{transactionGuide,jdbcType=VARCHAR}, #{notice,jdbcType=VARCHAR}, #{auctionModelDesc,jdbcType=VARCHAR}, 
+      #{acutionVehicleDesc,jdbcType=VARCHAR}, #{currentAvId,jdbcType=VARCHAR}, #{endDisplayTime,jdbcType=TIMESTAMP}, 
+      #{special,jdbcType=BIT}, #{placeId,jdbcType=INTEGER}, #{drivewayId,jdbcType=INTEGER}, 
+      #{picUrl,jdbcType=VARCHAR}, #{banner1Url,jdbcType=VARCHAR}, #{banner2Url,jdbcType=VARCHAR}, 
+      #{banner3Url,jdbcType=VARCHAR}, #{auctionNum,jdbcType=INTEGER}, #{pushTms,jdbcType=BIT}, 
+      #{parkerCellphone,jdbcType=VARCHAR}, #{orgId,jdbcType=INTEGER}, #{vehicleMax,jdbcType=SMALLINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.autostreets.biz.auction.model.Auction" >
+    insert into auction
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="startTimestamp != null" >
+        start_timestamp,
+      </if>
+      <if test="endTimestamp != null" >
+        end_timestamp,
+      </if>
+      <if test="auctionModel != null" >
+        auction_model,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="contact != null" >
+        contact,
+      </if>
+      <if test="contactTellphone != null" >
+        contact_tellphone,
+      </if>
+      <if test="depositMargin != null" >
+        is_deposit_margin,
+      </if>
+      <if test="vehicleMargin != null" >
+        vehicle_margin,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="videoUrl != null" >
+        video_url,
+      </if>
+      <if test="audioUrl != null" >
+        audio_url,
+      </if>
+      <if test="auctioneerCellphone != null" >
+        auctioneer_cellphone,
+      </if>
+      <if test="vehicleQuantity != null" >
+        vehicle_quantity,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="enable != null" >
+        is_enable,
+      </if>
+      <if test="auctionMargin != null" >
+        auction_margin,
+      </if>
+      <if test="transactionGuide != null" >
+        transaction_guide,
+      </if>
+      <if test="notice != null" >
+        notice,
+      </if>
+      <if test="auctionModelDesc != null" >
+        auction_model_desc,
+      </if>
+      <if test="acutionVehicleDesc != null" >
+        acution_vehicle_desc,
+      </if>
+      <if test="currentAvId != null" >
+        current_av_id,
+      </if>
+      <if test="endDisplayTime != null" >
+        end_display_time,
+      </if>
+      <if test="special != null" >
+        is_special,
+      </if>
+      <if test="placeId != null" >
+        place_id,
+      </if>
+      <if test="drivewayId != null" >
+        driveway_id,
+      </if>
+      <if test="picUrl != null" >
+        pic_url,
+      </if>
+      <if test="banner1Url != null" >
+        banner1_url,
+      </if>
+      <if test="banner2Url != null" >
+        banner2_url,
+      </if>
+      <if test="banner3Url != null" >
+        banner3_url,
+      </if>
+      <if test="auctionNum != null" >
+        auction_num,
+      </if>
+      <if test="pushTms != null" >
+        is_push_tms,
+      </if>
+      <if test="parkerCellphone != null" >
+        parker_cellphone,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="vehicleMax != null" >
+        vehicle_max,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTimestamp != null" >
+        #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="startTimestamp != null" >
+        #{startTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTimestamp != null" >
+        #{endTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auctionModel != null" >
+        #{auctionModel,jdbcType=BIT},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null" >
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="contactTellphone != null" >
+        #{contactTellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="depositMargin != null" >
+        #{depositMargin,jdbcType=BIT},
+      </if>
+      <if test="vehicleMargin != null" >
+        #{vehicleMargin,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null" >
+        #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="audioUrl != null" >
+        #{audioUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="auctioneerCellphone != null" >
+        #{auctioneerCellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleQuantity != null" >
+        #{vehicleQuantity,jdbcType=SMALLINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=BIT},
+      </if>
+      <if test="auctionMargin != null" >
+        #{auctionMargin,jdbcType=DECIMAL},
+      </if>
+      <if test="transactionGuide != null" >
+        #{transactionGuide,jdbcType=VARCHAR},
+      </if>
+      <if test="notice != null" >
+        #{notice,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionModelDesc != null" >
+        #{auctionModelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="acutionVehicleDesc != null" >
+        #{acutionVehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="currentAvId != null" >
+        #{currentAvId,jdbcType=VARCHAR},
+      </if>
+      <if test="endDisplayTime != null" >
+        #{endDisplayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="special != null" >
+        #{special,jdbcType=BIT},
+      </if>
+      <if test="placeId != null" >
+        #{placeId,jdbcType=INTEGER},
+      </if>
+      <if test="drivewayId != null" >
+        #{drivewayId,jdbcType=INTEGER},
+      </if>
+      <if test="picUrl != null" >
+        #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="banner1Url != null" >
+        #{banner1Url,jdbcType=VARCHAR},
+      </if>
+      <if test="banner2Url != null" >
+        #{banner2Url,jdbcType=VARCHAR},
+      </if>
+      <if test="banner3Url != null" >
+        #{banner3Url,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionNum != null" >
+        #{auctionNum,jdbcType=INTEGER},
+      </if>
+      <if test="pushTms != null" >
+        #{pushTms,jdbcType=BIT},
+      </if>
+      <if test="parkerCellphone != null" >
+        #{parkerCellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleMax != null" >
+        #{vehicleMax,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.AuctionExample" >
+    select count(*) from auction
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update auction
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdBy != null" >
+        created_by = #{record.createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdTimestamp != null" >
+        created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.startTimestamp != null" >
+        start_timestamp = #{record.startTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endTimestamp != null" >
+        end_timestamp = #{record.endTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.auctionModel != null" >
+        auction_model = #{record.auctionModel,jdbcType=BIT},
+      </if>
+      <if test="record.province != null" >
+        province = #{record.province,jdbcType=VARCHAR},
+      </if>
+      <if test="record.city != null" >
+        city = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contact != null" >
+        contact = #{record.contact,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactTellphone != null" >
+        contact_tellphone = #{record.contactTellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.depositMargin != null" >
+        is_deposit_margin = #{record.depositMargin,jdbcType=BIT},
+      </if>
+      <if test="record.vehicleMargin != null" >
+        vehicle_margin = #{record.vehicleMargin,jdbcType=DECIMAL},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.videoUrl != null" >
+        video_url = #{record.videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.audioUrl != null" >
+        audio_url = #{record.audioUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auctioneerCellphone != null" >
+        auctioneer_cellphone = #{record.auctioneerCellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehicleQuantity != null" >
+        vehicle_quantity = #{record.vehicleQuantity,jdbcType=SMALLINT},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.enable != null" >
+        is_enable = #{record.enable,jdbcType=BIT},
+      </if>
+      <if test="record.auctionMargin != null" >
+        auction_margin = #{record.auctionMargin,jdbcType=DECIMAL},
+      </if>
+      <if test="record.transactionGuide != null" >
+        transaction_guide = #{record.transactionGuide,jdbcType=VARCHAR},
+      </if>
+      <if test="record.notice != null" >
+        notice = #{record.notice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auctionModelDesc != null" >
+        auction_model_desc = #{record.auctionModelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.acutionVehicleDesc != null" >
+        acution_vehicle_desc = #{record.acutionVehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.currentAvId != null" >
+        current_av_id = #{record.currentAvId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endDisplayTime != null" >
+        end_display_time = #{record.endDisplayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.special != null" >
+        is_special = #{record.special,jdbcType=BIT},
+      </if>
+      <if test="record.placeId != null" >
+        place_id = #{record.placeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.drivewayId != null" >
+        driveway_id = #{record.drivewayId,jdbcType=INTEGER},
+      </if>
+      <if test="record.picUrl != null" >
+        pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.banner1Url != null" >
+        banner1_url = #{record.banner1Url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.banner2Url != null" >
+        banner2_url = #{record.banner2Url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.banner3Url != null" >
+        banner3_url = #{record.banner3Url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auctionNum != null" >
+        auction_num = #{record.auctionNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.pushTms != null" >
+        is_push_tms = #{record.pushTms,jdbcType=BIT},
+      </if>
+      <if test="record.parkerCellphone != null" >
+        parker_cellphone = #{record.parkerCellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgId != null" >
+        org_id = #{record.orgId,jdbcType=INTEGER},
+      </if>
+      <if test="record.vehicleMax != null" >
+        vehicle_max = #{record.vehicleMax,jdbcType=SMALLINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update auction
+    set id = #{record.id,jdbcType=INTEGER},
+      code = #{record.code,jdbcType=VARCHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      created_by = #{record.createdBy,jdbcType=VARCHAR},
+      created_timestamp = #{record.createdTimestamp,jdbcType=TIMESTAMP},
+      type = #{record.type,jdbcType=INTEGER},
+      start_timestamp = #{record.startTimestamp,jdbcType=TIMESTAMP},
+      end_timestamp = #{record.endTimestamp,jdbcType=TIMESTAMP},
+      auction_model = #{record.auctionModel,jdbcType=BIT},
+      province = #{record.province,jdbcType=VARCHAR},
+      city = #{record.city,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      contact = #{record.contact,jdbcType=VARCHAR},
+      contact_tellphone = #{record.contactTellphone,jdbcType=VARCHAR},
+      is_deposit_margin = #{record.depositMargin,jdbcType=BIT},
+      vehicle_margin = #{record.vehicleMargin,jdbcType=DECIMAL},
+      content = #{record.content,jdbcType=VARCHAR},
+      video_url = #{record.videoUrl,jdbcType=VARCHAR},
+      audio_url = #{record.audioUrl,jdbcType=VARCHAR},
+      auctioneer_cellphone = #{record.auctioneerCellphone,jdbcType=VARCHAR},
+      vehicle_quantity = #{record.vehicleQuantity,jdbcType=SMALLINT},
+      status = #{record.status,jdbcType=BIT},
+      is_enable = #{record.enable,jdbcType=BIT},
+      auction_margin = #{record.auctionMargin,jdbcType=DECIMAL},
+      transaction_guide = #{record.transactionGuide,jdbcType=VARCHAR},
+      notice = #{record.notice,jdbcType=VARCHAR},
+      auction_model_desc = #{record.auctionModelDesc,jdbcType=VARCHAR},
+      acution_vehicle_desc = #{record.acutionVehicleDesc,jdbcType=VARCHAR},
+      current_av_id = #{record.currentAvId,jdbcType=VARCHAR},
+      end_display_time = #{record.endDisplayTime,jdbcType=TIMESTAMP},
+      is_special = #{record.special,jdbcType=BIT},
+      place_id = #{record.placeId,jdbcType=INTEGER},
+      driveway_id = #{record.drivewayId,jdbcType=INTEGER},
+      pic_url = #{record.picUrl,jdbcType=VARCHAR},
+      banner1_url = #{record.banner1Url,jdbcType=VARCHAR},
+      banner2_url = #{record.banner2Url,jdbcType=VARCHAR},
+      banner3_url = #{record.banner3Url,jdbcType=VARCHAR},
+      auction_num = #{record.auctionNum,jdbcType=INTEGER},
+      is_push_tms = #{record.pushTms,jdbcType=BIT},
+      parker_cellphone = #{record.parkerCellphone,jdbcType=VARCHAR},
+      org_id = #{record.orgId,jdbcType=INTEGER},
+      vehicle_max = #{record.vehicleMax,jdbcType=SMALLINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.Auction" >
+    update auction
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null" >
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTimestamp != null" >
+        created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="startTimestamp != null" >
+        start_timestamp = #{startTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTimestamp != null" >
+        end_timestamp = #{endTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auctionModel != null" >
+        auction_model = #{auctionModel,jdbcType=BIT},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null" >
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="contactTellphone != null" >
+        contact_tellphone = #{contactTellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="depositMargin != null" >
+        is_deposit_margin = #{depositMargin,jdbcType=BIT},
+      </if>
+      <if test="vehicleMargin != null" >
+        vehicle_margin = #{vehicleMargin,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null" >
+        video_url = #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="audioUrl != null" >
+        audio_url = #{audioUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="auctioneerCellphone != null" >
+        auctioneer_cellphone = #{auctioneerCellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleQuantity != null" >
+        vehicle_quantity = #{vehicleQuantity,jdbcType=SMALLINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="enable != null" >
+        is_enable = #{enable,jdbcType=BIT},
+      </if>
+      <if test="auctionMargin != null" >
+        auction_margin = #{auctionMargin,jdbcType=DECIMAL},
+      </if>
+      <if test="transactionGuide != null" >
+        transaction_guide = #{transactionGuide,jdbcType=VARCHAR},
+      </if>
+      <if test="notice != null" >
+        notice = #{notice,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionModelDesc != null" >
+        auction_model_desc = #{auctionModelDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="acutionVehicleDesc != null" >
+        acution_vehicle_desc = #{acutionVehicleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="currentAvId != null" >
+        current_av_id = #{currentAvId,jdbcType=VARCHAR},
+      </if>
+      <if test="endDisplayTime != null" >
+        end_display_time = #{endDisplayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="special != null" >
+        is_special = #{special,jdbcType=BIT},
+      </if>
+      <if test="placeId != null" >
+        place_id = #{placeId,jdbcType=INTEGER},
+      </if>
+      <if test="drivewayId != null" >
+        driveway_id = #{drivewayId,jdbcType=INTEGER},
+      </if>
+      <if test="picUrl != null" >
+        pic_url = #{picUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="banner1Url != null" >
+        banner1_url = #{banner1Url,jdbcType=VARCHAR},
+      </if>
+      <if test="banner2Url != null" >
+        banner2_url = #{banner2Url,jdbcType=VARCHAR},
+      </if>
+      <if test="banner3Url != null" >
+        banner3_url = #{banner3Url,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionNum != null" >
+        auction_num = #{auctionNum,jdbcType=INTEGER},
+      </if>
+      <if test="pushTms != null" >
+        is_push_tms = #{pushTms,jdbcType=BIT},
+      </if>
+      <if test="parkerCellphone != null" >
+        parker_cellphone = #{parkerCellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="vehicleMax != null" >
+        vehicle_max = #{vehicleMax,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.Auction" >
+    update auction
+    set code = #{code,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      created_timestamp = #{createdTimestamp,jdbcType=TIMESTAMP},
+      type = #{type,jdbcType=INTEGER},
+      start_timestamp = #{startTimestamp,jdbcType=TIMESTAMP},
+      end_timestamp = #{endTimestamp,jdbcType=TIMESTAMP},
+      auction_model = #{auctionModel,jdbcType=BIT},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      contact_tellphone = #{contactTellphone,jdbcType=VARCHAR},
+      is_deposit_margin = #{depositMargin,jdbcType=BIT},
+      vehicle_margin = #{vehicleMargin,jdbcType=DECIMAL},
+      content = #{content,jdbcType=VARCHAR},
+      video_url = #{videoUrl,jdbcType=VARCHAR},
+      audio_url = #{audioUrl,jdbcType=VARCHAR},
+      auctioneer_cellphone = #{auctioneerCellphone,jdbcType=VARCHAR},
+      vehicle_quantity = #{vehicleQuantity,jdbcType=SMALLINT},
+      status = #{status,jdbcType=BIT},
+      is_enable = #{enable,jdbcType=BIT},
+      auction_margin = #{auctionMargin,jdbcType=DECIMAL},
+      transaction_guide = #{transactionGuide,jdbcType=VARCHAR},
+      notice = #{notice,jdbcType=VARCHAR},
+      auction_model_desc = #{auctionModelDesc,jdbcType=VARCHAR},
+      acution_vehicle_desc = #{acutionVehicleDesc,jdbcType=VARCHAR},
+      current_av_id = #{currentAvId,jdbcType=VARCHAR},
+      end_display_time = #{endDisplayTime,jdbcType=TIMESTAMP},
+      is_special = #{special,jdbcType=BIT},
+      place_id = #{placeId,jdbcType=INTEGER},
+      driveway_id = #{drivewayId,jdbcType=INTEGER},
+      pic_url = #{picUrl,jdbcType=VARCHAR},
+      banner1_url = #{banner1Url,jdbcType=VARCHAR},
+      banner2_url = #{banner2Url,jdbcType=VARCHAR},
+      banner3_url = #{banner3Url,jdbcType=VARCHAR},
+      auction_num = #{auctionNum,jdbcType=INTEGER},
+      is_push_tms = #{pushTms,jdbcType=BIT},
+      parker_cellphone = #{parkerCellphone,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=INTEGER},
+      vehicle_max = #{vehicleMax,jdbcType=SMALLINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

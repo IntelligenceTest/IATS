@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.autostreets.biz.auction.mapper.FixedPriceMapper" >
+  <resultMap id="BaseResultMap" type="com.autostreets.biz.auction.model.FixedPrice" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="vehicle_id" property="vehicleId" jdbcType="INTEGER" />
+    <result column="deposit" property="deposit" jdbcType="DECIMAL" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="low_price_group" property="lowPriceGroup" jdbcType="DECIMAL" />
+    <result column="has_tax_buy" property="hasTaxBuy" jdbcType="BIT" />
+    <result column="tax_buy" property="taxBuy" jdbcType="DECIMAL" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="where_store" property="whereStore" jdbcType="VARCHAR" />
+    <result column="address_detail_store" property="addressDetailStore" jdbcType="VARCHAR" />
+    <result column="service_time" property="serviceTime" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="is_hidden" property="hidden" jdbcType="BIT" />
+    <result column="is_latest" property="latest" jdbcType="BIT" />
+    <result column="apply_shelves_time" property="applyShelvesTime" jdbcType="TIMESTAMP" />
+    <result column="sell_time" property="sellTime" jdbcType="TIMESTAMP" />
+    <result column="off_shelves_time" property="offShelvesTime" jdbcType="TIMESTAMP" />
+    <result column="off_shelves_remark" property="offShelvesRemark" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="is_enabled" property="enabled" jdbcType="BIT" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="fav_count" property="favCount" jdbcType="INTEGER" />
+    <result column="click_count" property="clickCount" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="new_vehicle_suggestion_price" property="newVehicleSuggestionPrice" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, code, vehicle_id, deposit, price, low_price_group, has_tax_buy, tax_buy, province, 
+    city, where_store, address_detail_store, service_time, `status`, is_hidden, is_latest, 
+    apply_shelves_time, sell_time, off_shelves_time, off_shelves_remark, create_time, 
+    update_time, is_enabled, update_user, create_user, memo, fav_count, click_count, 
+    phone, new_vehicle_suggestion_price
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.autostreets.biz.auction.model.FixedPriceExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from fixed_price
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="pagination != null" >
+      limit #{pagination.begin} , #{pagination.length}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fixed_price
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fixed_price
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.autostreets.biz.auction.model.FixedPriceExample" >
+    delete from fixed_price
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.FixedPrice" >
+    insert into fixed_price (id, code, vehicle_id, 
+      deposit, price, low_price_group, 
+      has_tax_buy, tax_buy, province, 
+      city, where_store, address_detail_store, 
+      service_time, `status`, is_hidden, 
+      is_latest, apply_shelves_time, sell_time, 
+      off_shelves_time, off_shelves_remark, create_time, 
+      update_time, is_enabled, update_user, 
+      create_user, memo, fav_count, 
+      click_count, phone, new_vehicle_suggestion_price
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{vehicleId,jdbcType=INTEGER}, 
+      #{deposit,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, #{lowPriceGroup,jdbcType=DECIMAL}, 
+      #{hasTaxBuy,jdbcType=BIT}, #{taxBuy,jdbcType=DECIMAL}, #{province,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{whereStore,jdbcType=VARCHAR}, #{addressDetailStore,jdbcType=VARCHAR}, 
+      #{serviceTime,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{hidden,jdbcType=BIT}, 
+      #{latest,jdbcType=BIT}, #{applyShelvesTime,jdbcType=TIMESTAMP}, #{sellTime,jdbcType=TIMESTAMP}, 
+      #{offShelvesTime,jdbcType=TIMESTAMP}, #{offShelvesRemark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{enabled,jdbcType=BIT}, #{updateUser,jdbcType=INTEGER}, 
+      #{createUser,jdbcType=INTEGER}, #{memo,jdbcType=VARCHAR}, #{favCount,jdbcType=INTEGER}, 
+      #{clickCount,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{newVehicleSuggestionPrice,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.autostreets.biz.auction.model.FixedPrice" >
+    insert into fixed_price
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id,
+      </if>
+      <if test="deposit != null" >
+        deposit,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="lowPriceGroup != null" >
+        low_price_group,
+      </if>
+      <if test="hasTaxBuy != null" >
+        has_tax_buy,
+      </if>
+      <if test="taxBuy != null" >
+        tax_buy,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="whereStore != null" >
+        where_store,
+      </if>
+      <if test="addressDetailStore != null" >
+        address_detail_store,
+      </if>
+      <if test="serviceTime != null" >
+        service_time,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="hidden != null" >
+        is_hidden,
+      </if>
+      <if test="latest != null" >
+        is_latest,
+      </if>
+      <if test="applyShelvesTime != null" >
+        apply_shelves_time,
+      </if>
+      <if test="sellTime != null" >
+        sell_time,
+      </if>
+      <if test="offShelvesTime != null" >
+        off_shelves_time,
+      </if>
+      <if test="offShelvesRemark != null" >
+        off_shelves_remark,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="enabled != null" >
+        is_enabled,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="favCount != null" >
+        fav_count,
+      </if>
+      <if test="clickCount != null" >
+        click_count,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleId != null" >
+        #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="deposit != null" >
+        #{deposit,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="lowPriceGroup != null" >
+        #{lowPriceGroup,jdbcType=DECIMAL},
+      </if>
+      <if test="hasTaxBuy != null" >
+        #{hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="taxBuy != null" >
+        #{taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="whereStore != null" >
+        #{whereStore,jdbcType=VARCHAR},
+      </if>
+      <if test="addressDetailStore != null" >
+        #{addressDetailStore,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceTime != null" >
+        #{serviceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="hidden != null" >
+        #{hidden,jdbcType=BIT},
+      </if>
+      <if test="latest != null" >
+        #{latest,jdbcType=BIT},
+      </if>
+      <if test="applyShelvesTime != null" >
+        #{applyShelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sellTime != null" >
+        #{sellTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offShelvesTime != null" >
+        #{offShelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offShelvesRemark != null" >
+        #{offShelvesRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="favCount != null" >
+        #{favCount,jdbcType=INTEGER},
+      </if>
+      <if test="clickCount != null" >
+        #{clickCount,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" resultType="java.lang.Integer" parameterType="com.autostreets.biz.auction.model.FixedPriceExample" >
+    select count(*) from fixed_price
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update fixed_price
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehicleId != null" >
+        vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.deposit != null" >
+        deposit = #{record.deposit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.price != null" >
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.lowPriceGroup != null" >
+        low_price_group = #{record.lowPriceGroup,jdbcType=DECIMAL},
+      </if>
+      <if test="record.hasTaxBuy != null" >
+        has_tax_buy = #{record.hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="record.taxBuy != null" >
+        tax_buy = #{record.taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="record.province != null" >
+        province = #{record.province,jdbcType=VARCHAR},
+      </if>
+      <if test="record.city != null" >
+        city = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.whereStore != null" >
+        where_store = #{record.whereStore,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressDetailStore != null" >
+        address_detail_store = #{record.addressDetailStore,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serviceTime != null" >
+        service_time = #{record.serviceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        `status` = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.hidden != null" >
+        is_hidden = #{record.hidden,jdbcType=BIT},
+      </if>
+      <if test="record.latest != null" >
+        is_latest = #{record.latest,jdbcType=BIT},
+      </if>
+      <if test="record.applyShelvesTime != null" >
+        apply_shelves_time = #{record.applyShelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sellTime != null" >
+        sell_time = #{record.sellTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.offShelvesTime != null" >
+        off_shelves_time = #{record.offShelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.offShelvesRemark != null" >
+        off_shelves_remark = #{record.offShelvesRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.enabled != null" >
+        is_enabled = #{record.enabled,jdbcType=BIT},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=INTEGER},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.favCount != null" >
+        fav_count = #{record.favCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.clickCount != null" >
+        click_count = #{record.clickCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update fixed_price
+    set id = #{record.id,jdbcType=INTEGER},
+      code = #{record.code,jdbcType=VARCHAR},
+      vehicle_id = #{record.vehicleId,jdbcType=INTEGER},
+      deposit = #{record.deposit,jdbcType=DECIMAL},
+      price = #{record.price,jdbcType=DECIMAL},
+      low_price_group = #{record.lowPriceGroup,jdbcType=DECIMAL},
+      has_tax_buy = #{record.hasTaxBuy,jdbcType=BIT},
+      tax_buy = #{record.taxBuy,jdbcType=DECIMAL},
+      province = #{record.province,jdbcType=VARCHAR},
+      city = #{record.city,jdbcType=VARCHAR},
+      where_store = #{record.whereStore,jdbcType=VARCHAR},
+      address_detail_store = #{record.addressDetailStore,jdbcType=VARCHAR},
+      service_time = #{record.serviceTime,jdbcType=VARCHAR},
+      `status` = #{record.status,jdbcType=BIT},
+      is_hidden = #{record.hidden,jdbcType=BIT},
+      is_latest = #{record.latest,jdbcType=BIT},
+      apply_shelves_time = #{record.applyShelvesTime,jdbcType=TIMESTAMP},
+      sell_time = #{record.sellTime,jdbcType=TIMESTAMP},
+      off_shelves_time = #{record.offShelvesTime,jdbcType=TIMESTAMP},
+      off_shelves_remark = #{record.offShelvesRemark,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_enabled = #{record.enabled,jdbcType=BIT},
+      update_user = #{record.updateUser,jdbcType=INTEGER},
+      create_user = #{record.createUser,jdbcType=INTEGER},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      fav_count = #{record.favCount,jdbcType=INTEGER},
+      click_count = #{record.clickCount,jdbcType=INTEGER},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      new_vehicle_suggestion_price = #{record.newVehicleSuggestionPrice,jdbcType=DECIMAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.autostreets.biz.auction.model.FixedPrice" >
+    update fixed_price
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleId != null" >
+        vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      </if>
+      <if test="deposit != null" >
+        deposit = #{deposit,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="lowPriceGroup != null" >
+        low_price_group = #{lowPriceGroup,jdbcType=DECIMAL},
+      </if>
+      <if test="hasTaxBuy != null" >
+        has_tax_buy = #{hasTaxBuy,jdbcType=BIT},
+      </if>
+      <if test="taxBuy != null" >
+        tax_buy = #{taxBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="whereStore != null" >
+        where_store = #{whereStore,jdbcType=VARCHAR},
+      </if>
+      <if test="addressDetailStore != null" >
+        address_detail_store = #{addressDetailStore,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceTime != null" >
+        service_time = #{serviceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=BIT},
+      </if>
+      <if test="hidden != null" >
+        is_hidden = #{hidden,jdbcType=BIT},
+      </if>
+      <if test="latest != null" >
+        is_latest = #{latest,jdbcType=BIT},
+      </if>
+      <if test="applyShelvesTime != null" >
+        apply_shelves_time = #{applyShelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sellTime != null" >
+        sell_time = #{sellTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offShelvesTime != null" >
+        off_shelves_time = #{offShelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offShelvesRemark != null" >
+        off_shelves_remark = #{offShelvesRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enabled != null" >
+        is_enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="favCount != null" >
+        fav_count = #{favCount,jdbcType=INTEGER},
+      </if>
+      <if test="clickCount != null" >
+        click_count = #{clickCount,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="newVehicleSuggestionPrice != null" >
+        new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.autostreets.biz.auction.model.FixedPrice" >
+    update fixed_price
+    set code = #{code,jdbcType=VARCHAR},
+      vehicle_id = #{vehicleId,jdbcType=INTEGER},
+      deposit = #{deposit,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      low_price_group = #{lowPriceGroup,jdbcType=DECIMAL},
+      has_tax_buy = #{hasTaxBuy,jdbcType=BIT},
+      tax_buy = #{taxBuy,jdbcType=DECIMAL},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      where_store = #{whereStore,jdbcType=VARCHAR},
+      address_detail_store = #{addressDetailStore,jdbcType=VARCHAR},
+      service_time = #{serviceTime,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=BIT},
+      is_hidden = #{hidden,jdbcType=BIT},
+      is_latest = #{latest,jdbcType=BIT},
+      apply_shelves_time = #{applyShelvesTime,jdbcType=TIMESTAMP},
+      sell_time = #{sellTime,jdbcType=TIMESTAMP},
+      off_shelves_time = #{offShelvesTime,jdbcType=TIMESTAMP},
+      off_shelves_remark = #{offShelvesRemark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_enabled = #{enabled,jdbcType=BIT},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=INTEGER},
+      memo = #{memo,jdbcType=VARCHAR},
+      fav_count = #{favCount,jdbcType=INTEGER},
+      click_count = #{clickCount,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      new_vehicle_suggestion_price = #{newVehicleSuggestionPrice,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- add by zxf -->
+      <select id="selectCityByVehicleProvince" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select fp.city as city, count(1) cnt
+        from fixed_price fp
+        join vehicle v on fp.vehicle_id = v.id
+        where fp.province = #{value, jdbcType=VARCHAR}
+          and (fp.status != 0 and fp.status != 1 and fp.status != 6) and fp.is_latest = 1 
+        group by city
+        order by 2 desc, 1 asc
+      </select> 
+</mapper>
