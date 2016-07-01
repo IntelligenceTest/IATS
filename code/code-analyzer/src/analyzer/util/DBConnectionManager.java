@@ -2,6 +2,8 @@ package analyzer.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -119,7 +121,7 @@ public class DBConnectionManager {
 		// InputStream is =
 		// super.getClass().getResourceAsStream("/jdbc.properties");
 
-		FileInputStream file = new FileInputStream("conf/jdbc.properties");
+		FileInputStream file = new FileInputStream("config/jdbc.properties");
 		Properties dbProps = new Properties();
 		try {
 			dbProps.load(file);
@@ -127,13 +129,13 @@ public class DBConnectionManager {
 			e.printStackTrace();
 			return;
 		}
-		// String logFile = dbProps.getProperty("logfile", "logs\\newslog.txt");
-		// try {
-		// this.log = new PrintWriter(new FileWriter(logFile, true), true);
-		// } catch (IOException e) {
-		// System.err.println("无法打开日志文件: " + logFile);
-		// this.log = new PrintWriter(System.err);
-		// }
+		String logFile = dbProps.getProperty("logfile", "logs\\newslog.txt");
+		try {
+			this.log = new PrintWriter(new FileWriter(logFile, true), true);
+		} catch (IOException e) {
+			System.err.println("无法打开日志文件: " + logFile);
+			this.log = new PrintWriter(System.err);
+		}
 		loadDrivers(dbProps);
 		createPools(dbProps);
 	}
@@ -158,13 +160,13 @@ public class DBConnectionManager {
 
 	private void log(String msg) {
 
-		// log.println(new Date() + ": " + msg);
+		log.println(new Date() + ": " + msg);
 	}
 
 	private void log(Throwable e, String msg) {
 
-		// log.println(new Date() + ": " + msg);
-		// e.printStackTrace(log);
+		log.println(new Date() + ": " + msg);
+		e.printStackTrace(log);
 	}
 
 	class DBConnectionPool {
